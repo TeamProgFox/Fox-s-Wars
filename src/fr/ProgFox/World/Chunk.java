@@ -5,8 +5,10 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 
 import java.nio.FloatBuffer;
+import java.util.Random;
 
 import org.lwjgl.BufferUtils;
+
 import fr.ProgFox.Game.Entity.Player;
 import fr.ProgFox.Math.Vec4;
 import fr.ProgFox.Shader.ColorShader;
@@ -29,13 +31,17 @@ public class Chunk {
 	private Shader shader;
 	private Vector3f pos;
 	private World world;
+	private Tree tree;
+	private Random random;
 
-	public Chunk(float x, float y, float z, Noise noise, World world) {
+	public Chunk(float x, float y, float z, Noise noise, Random seed, World world) {
 		this.noise = noise;
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		this.world = world;
+		this.random = seed;
+		tree = new Tree(world, random);
 		blocks = new Block[SIZE][HEIGHT][SIZE];
 		shader = new ColorShader();
 		generate();
@@ -51,14 +57,14 @@ public class Chunk {
 					int y2 = (int) this.y * HEIGHT + y;
 					int z2 = (int) this.z * SIZE + z;
 					if (noise.getNoise(x2, z2) > y2) {
-						if (Math.random() < 0.5f) {
+						if (random.nextFloat() < 0.5f) {
 							blocks[x][y][z] = block;
 						} else {
 							blocks[x][y][z] = block2;
 						}
 						noBlockUp = noise.getNoise(x2, z2) > y2 && noise.getNoise(x2, z2) < y2 + 1;
-						if (Math.random() < 0.04f && noBlockUp) {
-							Tree.addTRee(blocks, x, y, z);
+						if (random.nextFloat() < 0.04f && noBlockUp) {
+							tree.addTRee(blocks, x, y, z);
 						}
 					}
 				}
@@ -200,13 +206,6 @@ public class Chunk {
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(0);
 	}
-	public void renderNewChunk(Player player){
-		glDrawArrays(GL_QUADS, 0, bufferSize);
-	}
-
-	public void renderGUI() {
-
-	}
 
 	public Block getBlock(float x, float y, float z) {
 		if (x < 0 || y < 0 || z < 0 || x >= SIZE || y >= HEIGHT || z >= SIZE)
@@ -219,7 +218,10 @@ public class Chunk {
 			return;
 
 		blocks[(int) x][(int) y][(int) z] = block;
-		updateChunk();
+
+		if (buffer != null) {
+			updateChunk();
+		}
 	}
 
 	public void removeBlock(float x, float y, float z) {
@@ -227,7 +229,9 @@ public class Chunk {
 			return;
 
 		blocks[(int) x][(int) y][(int) z] = null;
-		updateChunk();
+		if (buffer != null) {
+			updateChunk();
+		}
 	}
 
 	public void changeToSelectBlock(float x, float y, float z, Block block) {

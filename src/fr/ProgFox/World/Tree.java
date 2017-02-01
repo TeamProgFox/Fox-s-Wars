@@ -1,13 +1,22 @@
 package fr.ProgFox.World;
 
+import java.util.Random;
+
 import fr.ProgFox.Math.Mathf;
 import fr.ProgFox.World.Blocks.Block;
 
 public class Tree {
-	public static void addTRee(Block[][][] blocks, int x, int y, int z) {
+	private World world;
+	private Random random;
+	public Tree(World world, Random random){
+
+	this.world = world;
+	this.random = random;
+	}
+	public void addTRee(Block[][][] blocks, int x, int y, int z) {
 		if (x < 0 || y < 0 || z < 0 || x >= Chunk.SIZE || y >= Chunk.HEIGHT || z >= Chunk.SIZE)
 			return;
-		if (Math.random() > 0.2f) {
+		if (random.nextFloat() > 0.2f) {
 
 			SimpleTree(blocks, x, y, z);
 		} else {
@@ -16,8 +25,7 @@ public class Tree {
 		}
 	}
 
-	public static void SimpleTree(Block[][][] blocks, int x, int y, int z) {
-
+	public void SimpleTree(Block[][][] blocks, int x, int y, int z) {
 		if (x > Chunk.SIZE - 6 || z > Chunk.SIZE - 6)
 			return;
 		if (x < 6 || z < 6)
@@ -104,7 +112,7 @@ public class Tree {
 		blocks[x - 2][y + 7][z] = Block.LEAF;
 	}
 
-	public static void SapinTree(Block[][][] blocks, int x, int y, int z) {
+	public void SapinTree(Block[][][] blocks, int x, int y, int z) {
 		if (x > Chunk.SIZE - 6 || z > Chunk.SIZE - 6)
 			return;
 		if (x < 6 || z < 6)

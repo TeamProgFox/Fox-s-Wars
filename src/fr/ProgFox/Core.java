@@ -21,7 +21,7 @@ public class Core {
 	// ----
 	public Core() {
 		DisplayManager.create(width, height, "Fox's Wars");
-		world = new World();
+		world = new World(12346);
 		
 		int sizeX = World.SIZE * 16;
 		int sizeZ = World.SIZE * 16;

@@ -1,8 +1,9 @@
 package fr.ProgFox.Game.Entity;
 
-import org.lwjgl.input.Keyboard; 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.util.glu.GLU;
 
 import fr.ProgFox.Game.Raycast;
 import fr.ProgFox.Math.Mat4;
@@ -12,7 +13,7 @@ import fr.ProgFox.World.Chunk;
 import fr.ProgFox.World.World;
 import fr.ProgFox.World.Blocks.Block;
 import fr.ProgFox.newMath.Vector3f;
-
+import static org.lwjgl.opengl.GL11.*;
 public class Player extends Entity {
 	public Vector3f position;
 	public Vector3f rotation;
@@ -352,7 +353,6 @@ public class Player extends Entity {
 		r.setZ(sinY * cosP);
 		r.normalize();
 		return r;
-
 	}
 
 	public Mat4 getPerspectiveProjection() {
@@ -364,8 +364,11 @@ public class Player extends Entity {
 
 		t2.rotate(new Vec3(0, 1, 0), rotation.getY());
 
-		Mat4 p = new Mat4().perspective(70.0F, Display.getWidth() / Display.getHeight(), 0.1F, 1000.0F);
+		Mat4 p = new Mat4().perspective(70.0F, (float) Display.getWidth() / (float) Display.getHeight(), 0.1F, 1000.0F);
 		return p.mul(t.toMatrix().mul(t2.toMatrix()));
+		
+		
+		
 	}
 
 }
