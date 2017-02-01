@@ -3,6 +3,7 @@ package fr.ProgFox.World;
 import java.util.Random;
 
 import fr.ProgFox.Game.Entity.Player;
+import fr.ProgFox.Logs.Logs;
 import fr.ProgFox.World.Blocks.Block;
 
 public class World {
@@ -10,16 +11,19 @@ public class World {
 	public Noise noise;
 	public Chunk[][] chunks;
 	private Random random;
+
 	public World(long seed) {
-		
+
 		random = new Random(seed);
-		noise = new Noise(random.nextLong(), 15, 10);
+		noise = new Noise(random.nextLong(), 15, 15);
 		chunks = new Chunk[100][100];
 		for (int x = 0; x < SIZE; x++) {
 			for (int z = 0; z < SIZE; z++) {
 				chunks[x][z] = new Chunk(x, 0, z, noise, random, this);
 			}
 		}
+		new Logs().Info("FIN DE LA GENERATION DES CHUNKS");
+
 		for (int x = 0; x < SIZE; x++) {
 			for (int z = 0; z < SIZE; z++) {
 				chunks[x][z].createChunk();
@@ -41,13 +45,13 @@ public class World {
 		float xP2 = (float) Math.abs(player.position.x / 16 - 3);
 		float zP2 = (float) Math.abs(player.position.z / 16 - 3);
 
-//		if (getChunk(xP2, 0) == null) {
-//			chunks[(int) xP2][(int) 0] = new Chunk(xP2, 0, 0, noise, seed, this);
-//			chunks[(int) xP2][(int) 0].createChunk();
-//
-//		} else {
-//			chunks[(int) xP2][(int) 0].render(player);
-//		}
+		// if (getChunk(xP2, 0) == null) {
+		// chunks[(int) xP2][(int) 0] = new Chunk(xP2, 0, 0, noise, seed, this);
+		// chunks[(int) xP2][(int) 0].createChunk();
+		//
+		// } else {
+		// chunks[(int) xP2][(int) 0].render(player);
+		// }
 		int renderDistance = 10;
 		for (int x = 0; x < SIZE; x++) {
 			for (int z = 0; z < SIZE; z++) {

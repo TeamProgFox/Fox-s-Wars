@@ -14,6 +14,7 @@ import fr.ProgFox.World.World;
 import fr.ProgFox.World.Blocks.Block;
 import fr.ProgFox.newMath.Vector3f;
 import static org.lwjgl.opengl.GL11.*;
+
 public class Player extends Entity {
 	public Vector3f position;
 	public Vector3f rotation;
@@ -94,7 +95,7 @@ public class Player extends Entity {
 			zDir = getRight().mul(new Vector3f(-speed, 0, -speed)).getZ();
 			move(xDir, yDir, zDir);
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && grounded  && !flyMode) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && grounded && !flyMode) {
 
 			isJumping = true;
 
@@ -184,7 +185,17 @@ public class Player extends Entity {
 				int rx = x22 + xp;
 				int ry = y22 + yp;
 				int rz = z22 + zp;
-
+				int posX = (int) Math.abs(position.x);
+				int posY = (int) Math.abs(position.y);
+				int posZ = (int) Math.abs(position.z);
+				System.out.print(rx + " " + posX + " / ");
+				System.out.print(ry + " " + (posY - 1) + " / ");
+				System.out.print(rz + " " + posZ + " / ");
+				System.out.println();
+				if (rx == posX && ry == posY - 1 && rz == posZ)
+					return;
+				if(ry == posY && rx == posX && rz == posZ)
+					return;
 				world.addBlock(rx, ry, rz, Block.LEAF);
 				Chunk.canBreakBlock = false;
 			}
@@ -221,7 +232,7 @@ public class Player extends Entity {
 
 	public void actionTimeGestion() {
 
-		breakSpeedFactor += 0.1f;
+		breakSpeedFactor += 0.2f;
 		if (breakSpeedFactor > 2) {
 			breakSpeedFactor = 0;
 		}
@@ -269,14 +280,14 @@ public class Player extends Entity {
 
 		float rayon = 0.3f;
 
-		float x0 = Math.abs(position.getX() + xDir) - rayon;
-		float x1 = Math.abs(position.getX() + xDir) + rayon;
+		float x0 = -(position.getX() + xDir) - rayon;
+		float x1 = -(position.getX() + xDir) + rayon;
 
-		float y0 = Math.abs(position.getY() + yDir) - rayon - 0.40f;
-		float y1 = Math.abs(position.getY() + yDir) + rayon;
+		float y0 = -(position.getY() + yDir) - rayon - 0.40f;
+		float y1 = -(position.getY() + yDir) + rayon;
 
-		float z0 = Math.abs(position.getZ() + zDir) - rayon;
-		float z1 = Math.abs(position.getZ() + zDir) + rayon;
+		float z0 = -(position.getZ() + zDir) - rayon;
+		float z1 = -(position.getZ() + zDir) + rayon;
 
 		if (world.getBlock(x0, y0, z0) != null) {
 			// System.out.println("1");
@@ -365,9 +376,7 @@ public class Player extends Entity {
 
 		Mat4 p = new Mat4().perspective(70.0F, (float) Display.getWidth() / (float) Display.getHeight(), 0.1F, 1000.0F);
 		return p.mul(t.toMatrix().mul(t2.toMatrix()));
-		
-		
-		
+
 	}
 
 }

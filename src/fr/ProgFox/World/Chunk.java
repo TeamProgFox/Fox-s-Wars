@@ -27,7 +27,8 @@ public class Chunk {
 	private float x, y, z;
 	public Block[][][] blocks;
 	public static boolean canBreakBlock = true;
-	public static boolean noBlockUp;
+	public static boolean grounded;
+	public static boolean grounded2;
 	private Shader shader;
 	private Vector3f pos;
 	private World world;
@@ -41,7 +42,7 @@ public class Chunk {
 		this.z = z;
 		this.world = world;
 		this.random = seed;
-		tree = new Tree(this, random);
+		tree = new Tree(world, random);
 		blocks = new Block[SIZE][HEIGHT][SIZE];
 		shader = new ColorShader();
 		generate();
@@ -56,14 +57,14 @@ public class Chunk {
 					int x2 = (int) this.x * SIZE + x;
 					int y2 = (int) this.y * HEIGHT + y;
 					int z2 = (int) this.z * SIZE + z;
-					if (noise.getNoise(x2, z2) > y2) {
+					if (noise.getNoise(x2, z2) > y2 - 4) {
+						grounded = noise.getNoise(x2, z2) > y2 - 4 && noise.getNoise(x2, z2) < y2 - 3;
 						if (random.nextFloat() < 0.5f) {
 							blocks[x][y][z] = block;
 						} else {
 							blocks[x][y][z] = block2;
 						}
-						noBlockUp = noise.getNoise(x2, z2) > y2 && noise.getNoise(x2, z2) < y2 + 1;
-						if (random.nextFloat() < 0.04f && noBlockUp) {
+						if (random.nextFloat() < 0.04f && grounded) {
 							tree.addTRee(blocks, x, y, z);
 						}
 					}

@@ -1,9 +1,13 @@
 package fr.ProgFox;
 
 import static org.lwjgl.opengl.GL11.*;
+
+import java.util.Random;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
+
 import fr.ProgFox.World.World;
 import fr.ProgFox.newMath.Vector3f;
 import fr.ProgFox.renderer.Camera;
@@ -17,11 +21,13 @@ public class Core {
 	Camera cam;
 	World world;
 	public static int width = 1200, height = 600;
-
+	private Random seeds;
 	// ----
 	public Core() {
 		DisplayManager.create(width, height, "Fox's Wars");
-		world = new World(12346);
+		seeds = new Random();
+		System.out.println(seeds.nextLong());
+		world = new World(seeds.nextLong());
 		
 		int sizeX = World.SIZE * 16;
 		int sizeZ = World.SIZE * 16;

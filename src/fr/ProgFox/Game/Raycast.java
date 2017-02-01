@@ -13,7 +13,7 @@ public class Raycast {
 	public Raycast(Player player) {
 		this.player = player;
 		this.points = new ArrayList<Vector3f>();
-		for (int i = 0; i < 3 * 32; i++) {
+		for (int i = 0; i < 2 * 32; i++) {
 			points.add(new Vector3f());
 		}
 	}
