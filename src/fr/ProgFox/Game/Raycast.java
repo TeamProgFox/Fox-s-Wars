@@ -9,6 +9,8 @@ import fr.ProgFox.newMath.Vector3f;
 public class Raycast {
 	private List<Vector3f> points;
 	private Player player;
+	private int teste1 = 0;
+	private int teste2 = 0;
 
 	public Raycast(Player player) {
 		this.player = player;
@@ -31,7 +33,7 @@ public class Raycast {
 		int i = 0;
 		for (Vector3f v : points) {
 			Vector3f pos = pos2.copy().add(dir2.copy().mul(i / 16.0f));
-		//	pos.y += 1f;
+			// pos.y += 1f;
 			v.set(pos);
 			i++;
 		}
@@ -42,13 +44,13 @@ public class Raycast {
 
 			boolean block = world.getBlock(v.x, v.y, v.z) != null;
 
-			if (block){
-				//AMETTRE ICI
+			if (block) {
+				// AMETTRE ICI
 				return new Vector3f(v.x, v.y, v.z);
 			}
-			
+
 		}
-		
+
 		return null;
 
 	}

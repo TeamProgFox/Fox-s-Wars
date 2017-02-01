@@ -2,15 +2,23 @@ package fr.ProgFox.World;
 
 import java.util.Random;
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
+
 import fr.ProgFox.Game.Entity.Player;
 import fr.ProgFox.Logs.Logs;
+import fr.ProgFox.Shader.ColorShader;
+import fr.ProgFox.Shader.Shader;
 import fr.ProgFox.World.Blocks.Block;
+import fr.ProgFox.World.Buffer.VBO;
+import fr.ProgFox.newMath.Vector3f;
 
 public class World {
-	public static final int SIZE = 10;
+	public static final int SIZE = 5;
 	public Noise noise;
 	public Chunk[][] chunks;
 	private Random random;
+	private VBO quads;
+	private Shader shader;
 
 	public World(long seed) {
 
@@ -29,6 +37,16 @@ public class World {
 				chunks[x][z].createChunk();
 			}
 		}
+		quads = new VBO();
+		shader = new ColorShader();
+		quads.init(4, shader);
+
+		quads.addVertex(0, 0, 0, new Vector3f(1, 0, 0));
+		quads.addVertex(1, 0, 0, new Vector3f(1, 0, 0));
+		quads.addVertex(1, 1, 0, new Vector3f(1, 0, 0));
+		quads.addVertex(0, 1, 0, new Vector3f(1, 0, 0));
+		quads.end();
+
 	}
 
 	public void update() {
@@ -44,6 +62,17 @@ public class World {
 		float zP1 = (float) Math.abs(player.position.z / 16);
 		float xP2 = (float) Math.abs(player.position.x / 16 - 3);
 		float zP2 = (float) Math.abs(player.position.z / 16 - 3);
+		float pX = (float) (-(player.position.x) + player.getForward().x);
+		float pY = (float) (-(player.position.y) - player.getForward().y);
+		float pZ = (float) (-(player.position.z) + player.getForward().z);
+		quads.render(player);
+		float size = 0.01f;
+		quads.clearBuffer();
+		quads.update(pX, pY, pZ, new Vector3f(1, 0, 0));
+		quads.update(pX + size, pY, pZ, new Vector3f(1, 0, 0));
+		quads.update(pX + size, pY + size, pZ, new Vector3f(1, 0, 0));
+		quads.update(pX, pY + size, pZ, new Vector3f(1, 0, 0));
+		quads.end();
 
 		// if (getChunk(xP2, 0) == null) {
 		// chunks[(int) xP2][(int) 0] = new Chunk(xP2, 0, 0, noise, seed, this);
@@ -52,6 +81,7 @@ public class World {
 		// } else {
 		// chunks[(int) xP2][(int) 0].render(player);
 		// }
+
 		int renderDistance = 10;
 		for (int x = 0; x < SIZE; x++) {
 			for (int z = 0; z < SIZE; z++) {
@@ -122,6 +152,19 @@ public class World {
 		float z3 = z % Chunk.SIZE;
 
 		chunk.removeBlock(x3, y3, z3);
+		if ((int) x3 == 15) {
+			getChunk(xx + 1, zz).updateChunk();
+		}
+		if ((int) x3 == 0 && (int) xx > 0) {
+			getChunk(xx - 1, zz).updateChunk();
+		}
+		if ((int) z3 == 15) {
+			getChunk(xx, zz + 1).updateChunk();
+		}
+		if ((int) z3 == 0 && (int) zz > 0) {
+			getChunk(xx, zz - 1).updateChunk();
+		}
+
 	}
 
 	public Chunk getChunk(float x, float z) {

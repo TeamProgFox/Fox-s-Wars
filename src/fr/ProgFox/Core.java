@@ -22,17 +22,17 @@ public class Core {
 	World world;
 	public static int width = 1200, height = 600;
 	private Random seeds;
+
 	// ----
 	public Core() {
 		DisplayManager.create(width, height, "Fox's Wars");
 		seeds = new Random();
 		System.out.println(seeds.nextLong());
 		world = new World(seeds.nextLong());
-		
+
 		int sizeX = World.SIZE * 16;
 		int sizeZ = World.SIZE * 16;
-		
-		
+
 		cam = new Camera(new Vector3f(-sizeX / 2, -30, -sizeZ / 2), world);
 		// cam.setPerspectiveProjection(70.0f, 0.1f, 1000.0f);
 

@@ -143,6 +143,7 @@ public class Player extends Entity {
 				if (selectedBlock != Block.INFO) {
 					world.addSelectBlock(lastPos.x, lastPos.y, lastPos.z, lastBlock);
 				}
+	
 			}
 			if (selectedBlock != Block.INFO) {
 				lastBlock = selectedBlock;
@@ -194,7 +195,7 @@ public class Player extends Entity {
 				System.out.println();
 				if (rx == posX && ry == posY - 1 && rz == posZ)
 					return;
-				if(ry == posY && rx == posX && rz == posZ)
+				if (ry == posY && rx == posX && rz == posZ)
 					return;
 				world.addBlock(rx, ry, rz, Block.LEAF);
 				Chunk.canBreakBlock = false;
@@ -353,15 +354,14 @@ public class Player extends Entity {
 	public Vector3f getDirection() {
 
 		Vector3f r = new Vector3f();
-		float cosY = (float) Math.cos(Math.toRadians(rotation.getY() - 90));
-		float sinY = (float) Math.sin(Math.toRadians(rotation.getY() - 90));
-		float cosP = (float) Math.cos(Math.toRadians(-rotation.getX()));
-		float sinP = (float) Math.sin(Math.toRadians(-rotation.getX()));
+		float cosY = (float) Math.cos(Math.toRadians(rotation.getY() + 90));
+		float sinY = (float) Math.sin(Math.toRadians(rotation.getY() + 90));
+		float cosP = (float) Math.cos(Math.toRadians(rotation.getX()));
+		float sinP = (float) Math.sin(Math.toRadians(rotation.getX()));
 
 		r.setX(cosY * cosP);
 		r.setY(sinP);
 		r.setZ(sinY * cosP);
-		r.normalize();
 		return r;
 	}
 
