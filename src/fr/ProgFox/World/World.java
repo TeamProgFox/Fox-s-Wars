@@ -22,7 +22,6 @@ public class World {
 			for (int z = 0; z < SIZE; z++) {
 				chunks[x][z].createChunk();
 			}
-			//TESTE 
 		}
 	}
 
