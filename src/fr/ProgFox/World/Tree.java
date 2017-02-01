@@ -6,13 +6,15 @@ import fr.ProgFox.Math.Mathf;
 import fr.ProgFox.World.Blocks.Block;
 
 public class Tree {
-	private World world;
+	private Chunk chunk;
 	private Random random;
-	public Tree(World world, Random random){
 
-	this.world = world;
-	this.random = random;
+	public Tree(Chunk chunk, Random random) {
+
+		this.chunk = chunk;
+		this.random = random;
 	}
+
 	public void addTRee(Block[][][] blocks, int x, int y, int z) {
 		if (x < 0 || y < 0 || z < 0 || x >= Chunk.SIZE || y >= Chunk.HEIGHT || z >= Chunk.SIZE)
 			return;
@@ -34,7 +36,6 @@ public class Tree {
 		for (int i = 0; i < 6; i++) {
 			blocks[x][y + i][z] = Block.WOOD;
 		}
-
 		blocks[x + 1][y + 4][z + 1] = Block.LEAF;
 		blocks[x + 2][y + 4][z + 1] = Block.LEAF;
 		blocks[x - 1][y + 4][z + 1] = Block.LEAF;

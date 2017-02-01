@@ -41,7 +41,7 @@ public class Chunk {
 		this.z = z;
 		this.world = world;
 		this.random = seed;
-		tree = new Tree(world, random);
+		tree = new Tree(this, random);
 		blocks = new Block[SIZE][HEIGHT][SIZE];
 		shader = new ColorShader();
 		generate();

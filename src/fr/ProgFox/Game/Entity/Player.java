@@ -94,10 +94,9 @@ public class Player extends Entity {
 			zDir = getRight().mul(new Vector3f(-speed, 0, -speed)).getZ();
 			move(xDir, yDir, zDir);
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && grounded && timeToJump > 1 && !flyMode) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && grounded  && !flyMode) {
 
 			isJumping = true;
-			timeToJump = 0;
 
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && flyMode) {
