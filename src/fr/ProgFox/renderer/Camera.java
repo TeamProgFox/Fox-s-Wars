@@ -24,7 +24,7 @@ public class Camera {
 		this.world = world;
 		
 		
-		
+		//TESTE D'ENVOI DE FICHIER !
 		
 	}
 
