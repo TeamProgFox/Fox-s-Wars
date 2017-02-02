@@ -3,15 +3,17 @@ package fr.ProgFox.Game.Entity;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.util.glu.GLU;
 
 import fr.ProgFox.Game.Raycast;
 import fr.ProgFox.Math.Mat4;
 import fr.ProgFox.Math.Transform;
 import fr.ProgFox.Math.Vec3;
+import fr.ProgFox.Shader.ColorShader;
+import fr.ProgFox.Shader.Shader;
 import fr.ProgFox.World.Chunk;
 import fr.ProgFox.World.World;
 import fr.ProgFox.World.Blocks.Block;
+import fr.ProgFox.World.Buffer.VBO;
 import fr.ProgFox.newMath.Vector3f;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -33,12 +35,58 @@ public class Player extends Entity {
 	private Block selectedBlock;
 	public Vector3f selectedPosition;
 	private boolean teste = true;
+	private VBO select;
+	private Shader shader;
 	int vbo;
 
 	public Player(World world) {
 		this.world = world;
 		selectedPosition = new Vector3f(0, 0, 0);
 		raycast = new Raycast(this);
+		select = new VBO();
+		shader = new ColorShader();
+		int x2 = (int) 0;
+		int y2 = (int) 0;
+		int z2 = (int) 0;
+		select.init(24, shader);
+		select.addVertex(x2, y2, z2, new Vector3f(1, 1, 1));
+		select.addVertex(x2 + 1, y2, z2, new Vector3f(1, 1, 1));
+
+		select.addVertex(x2, y2 + 1, z2, new Vector3f(1, 1, 1));
+		select.addVertex(x2 + 1, y2 + 1, z2, new Vector3f(1, 1, 1));
+
+		select.addVertex(x2, y2, z2 + 1, new Vector3f(1, 1, 1));
+		select.addVertex(x2 + 1, y2, z2 + 1, new Vector3f(1, 1, 1));
+
+		select.addVertex(x2, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
+		select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
+
+		select.addVertex(x2, y2, z2, new Vector3f(1, 1, 1));
+		select.addVertex(x2, y2, z2 + 1, new Vector3f(1, 1, 1));
+
+		select.addVertex(x2, y2 + 1, z2, new Vector3f(1, 1, 1));
+		select.addVertex(x2, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
+
+		select.addVertex(x2 + 1, y2, z2, new Vector3f(1, 1, 1));
+		select.addVertex(x2 + 1, y2, z2 + 1, new Vector3f(1, 1, 1));
+
+		select.addVertex(x2 + 1, y2 + 1, z2, new Vector3f(1, 1, 1));
+		select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
+
+		select.addVertex(x2, y2, z2, new Vector3f(1, 1, 1));
+		select.addVertex(x2, y2 + 1, z2, new Vector3f(1, 1, 1));
+
+		select.addVertex(x2 + 1, y2, z2, new Vector3f(1, 1, 1));
+		select.addVertex(x2 + 1, y2 + 1, z2, new Vector3f(1, 1, 1));
+
+		select.addVertex(x2, y2, z2 + 1, new Vector3f(1, 1, 1));
+		select.addVertex(x2, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
+
+		select.addVertex(x2 + 1, y2, z2 + 1, new Vector3f(1, 1, 1));
+		select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
+
+		glLineWidth(5);
+		select.end();
 	}
 
 	public void update() {
@@ -51,7 +99,60 @@ public class Player extends Entity {
 		raycast.update();
 	}
 
-	float speed = 0.3f;
+	public void render() {
+		int x2 = (int) selectedPosition.x;
+		int y2 = (int) selectedPosition.y;
+		int z2 = (int) selectedPosition.z;
+		if (teste) {
+
+			select.init(24, shader);
+			select.clearBuffer();
+			select.addVertex(x2, y2, z2, new Vector3f(1, 1, 1));
+			select.addVertex(x2 + 1, y2, z2, new Vector3f(1, 1, 1));
+
+			select.addVertex(x2, y2 + 1, z2, new Vector3f(1, 1, 1));
+			select.addVertex(x2 + 1, y2 + 1, z2, new Vector3f(1, 1, 1));
+
+			select.addVertex(x2, y2, z2 + 1, new Vector3f(1, 1, 1));
+			select.addVertex(x2 + 1, y2, z2 + 1, new Vector3f(1, 1, 1));
+
+			select.addVertex(x2, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
+			select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
+
+			select.addVertex(x2, y2, z2, new Vector3f(1, 1, 1));
+			select.addVertex(x2, y2, z2 + 1, new Vector3f(1, 1, 1));
+
+			select.addVertex(x2, y2 + 1, z2, new Vector3f(1, 1, 1));
+			select.addVertex(x2, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
+
+			select.addVertex(x2 + 1, y2, z2, new Vector3f(1, 1, 1));
+			select.addVertex(x2 + 1, y2, z2 + 1, new Vector3f(1, 1, 1));
+
+			select.addVertex(x2 + 1, y2 + 1, z2, new Vector3f(1, 1, 1));
+			select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
+
+			select.addVertex(x2, y2, z2, new Vector3f(1, 1, 1));
+			select.addVertex(x2, y2 + 1, z2, new Vector3f(1, 1, 1));
+
+			select.addVertex(x2 + 1, y2, z2, new Vector3f(1, 1, 1));
+			select.addVertex(x2 + 1, y2 + 1, z2, new Vector3f(1, 1, 1));
+
+			select.addVertex(x2, y2, z2 + 1, new Vector3f(1, 1, 1));
+			select.addVertex(x2, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
+
+			select.addVertex(x2 + 1, y2, z2 + 1, new Vector3f(1, 1, 1));
+			select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
+
+			glLineWidth(2);
+			select.end();
+			teste = false;
+		}
+
+		select.render(this, GL_LINES);
+
+	}
+
+	float speed = 0.1f;
 	float sensibilite = 3;
 
 	public void input() {
@@ -132,31 +233,6 @@ public class Player extends Entity {
 	Vector3f nowPos;
 
 	public void removeAndAddBlockGestion() {
-		nowPos = selectedPosition;
-
-		if (teste) {
-			if (world.getBlock(nowPos.x, nowPos.y, nowPos.z) != Block.INFO) {
-				world.addSelectBlock(nowPos.x, nowPos.y, nowPos.z, Block.INFO);
-				// System.out.println("LAST BLOCK = " + lastBlock);
-				// System.out.println("LAST POS = " + (int) lastPos.x + "/" +
-				// (int) lastPos.y + "/" + (int) lastPos.z);
-				if (selectedBlock != Block.INFO) {
-					world.addSelectBlock(lastPos.x, lastPos.y, lastPos.z, lastBlock);
-				}
-	
-			}
-			if (selectedBlock != Block.INFO) {
-				lastBlock = selectedBlock;
-				lastPos = nowPos;
-			}
-			teste = false;
-		}
-		// System.out.println(selectedPosition.y + " / " + (int)
-		// selectedPosition.y);
-
-		// System.out.println(selectedPosition.y);
-		// System.out.println((int)selectedPosition.y + 0.3f);*
-
 		if (Chunk.canBreakBlock) {
 			if (Mouse.isButtonDown(0)) {
 
@@ -239,7 +315,7 @@ public class Player extends Entity {
 		}
 
 		InfoSpeedFactor += 0.1f;
-		if (InfoSpeedFactor > 0.75f) {
+		if (InfoSpeedFactor > 1.5f) {
 			InfoSpeedFactor = 0;
 			teste = true;
 		}

@@ -235,12 +235,6 @@ public class Chunk {
 		}
 	}
 
-	public void changeToSelectBlock(float x, float y, float z, Block block) {
-		if (x < 0 || y < 0 || z < 0 || x >= SIZE || y >= HEIGHT || z >= SIZE)
-			return;
 
-		blocks[(int) x][(int) y][(int) z] = block;
-		updateChunk();
-	}
 
 }

@@ -9,8 +9,7 @@ import fr.ProgFox.newMath.Vector3f;
 public class Raycast {
 	private List<Vector3f> points;
 	private Player player;
-	private int teste1 = 0;
-	private int teste2 = 0;
+	public static int teste = 0;
 
 	public Raycast(Player player) {
 		this.player = player;
@@ -46,8 +45,11 @@ public class Raycast {
 
 			if (block) {
 				// AMETTRE ICI
+				teste = 1;
 				return new Vector3f(v.x, v.y, v.z);
 			}
+
+			
 
 		}
 

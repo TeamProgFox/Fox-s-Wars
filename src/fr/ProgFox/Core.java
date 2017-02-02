@@ -8,6 +8,8 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
+import fr.ProgFox.Game.Game;
+import fr.ProgFox.Game.Raycast;
 import fr.ProgFox.World.World;
 import fr.ProgFox.newMath.Vector3f;
 import fr.ProgFox.renderer.Camera;
@@ -20,21 +22,22 @@ public class Core {
 	public static int teste = 1;
 	Camera cam;
 	World world;
+	Game game;
 	public static int width = 1200, height = 600;
 	private Random seeds;
 
 	// ----
 	public Core() {
+		game = new Game();
 		DisplayManager.create(width, height, "Fox's Wars");
 		seeds = new Random();
 		System.out.println(seeds.nextLong());
-		world = new World(seeds.nextLong());
+		world = new World(-6956537684988609768L);
 
 		int sizeX = World.SIZE * 16;
 		int sizeZ = World.SIZE * 16;
 
 		cam = new Camera(new Vector3f(-sizeX / 2, -30, -sizeZ / 2), world);
-		// cam.setPerspectiveProjection(70.0f, 0.1f, 1000.0f);
 
 	}
 
@@ -110,6 +113,7 @@ public class Core {
 				Display.setTitle("Fox's Wars : FPS = " + frames + "/ TPS = " + ticks + " | coords : "
 						+ cam.getPosition().getX() + "/" + cam.getPosition().getY() + "/" + cam.getPosition().getZ());
 				ticks = 0;
+				Raycast.teste = 0;
 				frames = 0;
 			}
 		}
