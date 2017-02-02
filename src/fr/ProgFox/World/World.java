@@ -15,8 +15,6 @@ public class World {
 	public Noise noise;
 	public Chunk[][] chunks;
 	private Random random;
-	private VBO quads;
-	private Shader shader;
 
 	public World(long seed) {
 
@@ -59,10 +57,8 @@ public class World {
 						chunks[x][z].render(player);
 					}
 				}
-
 			}
 		}
-
 	}
 
 	public Block getBlock(float x, float y, float z) {

@@ -3,7 +3,6 @@ package fr.ProgFox.Game.Entity;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-
 import fr.ProgFox.Game.Raycast;
 import fr.ProgFox.Math.Mat4;
 import fr.ProgFox.Math.Transform;
@@ -15,6 +14,7 @@ import fr.ProgFox.World.World;
 import fr.ProgFox.World.Blocks.Block;
 import fr.ProgFox.World.Buffer.VBO;
 import fr.ProgFox.newMath.Vector3f;
+
 import static org.lwjgl.opengl.GL11.*;
 
 public class Player extends Entity {
@@ -45,6 +45,10 @@ public class Player extends Entity {
 		raycast = new Raycast(this);
 		select = new VBO();
 		shader = new ColorShader();
+		init();
+	}
+
+	public void init() {
 		int x2 = (int) 0;
 		int y2 = (int) 0;
 		int z2 = (int) 0;
@@ -87,14 +91,14 @@ public class Player extends Entity {
 
 		glLineWidth(5);
 		select.end();
+
 	}
 
 	public void update() {
-		if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
-			flyMode = true;
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_G)) {
-			flyMode = false;
+		if (Keyboard.next()) {
+			if (Keyboard.isKeyDown(Keyboard.KEY_F3)) {
+				flyMode = !flyMode;
+			}
 		}
 		raycast.update();
 	}
@@ -280,7 +284,10 @@ public class Player extends Entity {
 	}
 
 	public void gravity() {
-		gravityFactor += 0.01f;
+
+		if (!flyMode)
+			gravityFactor += 0.01f;
+
 		if (isJumping) {
 			jumpFactor += 0.02f;
 

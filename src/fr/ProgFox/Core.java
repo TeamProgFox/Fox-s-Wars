@@ -28,17 +28,15 @@ public class Core {
 
 	// ----
 	public Core() {
-		game = new Game();
 		DisplayManager.create(width, height, "Fox's Wars");
 		seeds = new Random();
 		System.out.println(seeds.nextLong());
 		world = new World(-6956537684988609768L);
+		int posX = World.SIZE * 16;
+		int posZ = World.SIZE * 16;
+		cam = new Camera(new Vector3f(-posX / 2, -30, -posZ / 2), world);
 
-		int sizeX = World.SIZE * 16;
-		int sizeZ = World.SIZE * 16;
-
-		cam = new Camera(new Vector3f(-sizeX / 2, -30, -sizeZ / 2), world);
-
+		game = new Game(cam, world);
 	}
 
 	public void update() {
@@ -48,19 +46,19 @@ public class Core {
 			Mouse.setGrabbed(true);
 		if (!Mouse.isGrabbed())
 			return;
-		cam.input();
-		world.update();
+		game.update();
 	}
 
 	public void render() {
 		if (Display.wasResized()) {
-			teste = 2;
 			glViewport(0, 0, Display.getWidth(), Display.getHeight());
 		}
 		DisplayManager.clearBuffers();
-		// cam.getPerspectiveProjection();
-		// cam.update();
-		world.render(cam.player);
+		game.render();
+	}
+
+	public void renderGUI() {
+		game.renderGUI();
 	}
 
 	public void start() {
@@ -98,6 +96,7 @@ public class Core {
 				lastTickTime += tickTime;
 			} else if (System.nanoTime() - lastRenderTime > RenderTime) {
 				render();
+				renderGUI();
 				DisplayManager.update();
 				frames++;
 				lastRenderTime += RenderTime;
