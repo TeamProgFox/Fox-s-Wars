@@ -96,7 +96,7 @@ public class Player extends Entity {
 
 	public void update() {
 		if (Keyboard.next()) {
-			if (Keyboard.isKeyDown(Keyboard.KEY_F3)) {
+			if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
 				flyMode = !flyMode;
 			}
 		}
