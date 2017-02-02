@@ -24,7 +24,7 @@ public class Game {
 	public void update() {
 		cam.input();
 		world.update();
-
+		System.out.println("lol");
 	}
 
 	public void render() {
