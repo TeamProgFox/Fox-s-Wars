@@ -50,39 +50,5 @@ public class Game {
 		
 		cube.add(x, y, z, 0.005f, true);
 		cube.render(cam.player, GL_QUADS);
-//		crosser.init(24, shader);
-//		float size = 0.002f;
-//		crosser.addVertex(x - size, y - size, z - size, new Vec3(1, 1, 1));
-//		crosser.addVertex(x + size, y - size, z - size, new Vec3(1, 1, 1));
-//		crosser.addVertex(x + size, y - size, z + size, new Vec3(1, 1, 1));
-//		crosser.addVertex(x - size, y - size, z + size, new Vec3(1, 1, 1));
-//
-//		crosser.addVertex(x - size, y + size, z - size, new Vec3(1, 1, 1));
-//		crosser.addVertex(x + size, y + size, z - size, new Vec3(1, 1, 1));
-//		crosser.addVertex(x + size, y + size, z + size, new Vec3(1, 1, 1));
-//		crosser.addVertex(x - size, y + size, z + size, new Vec3(1, 1, 1));
-//
-//		crosser.addVertex(x - size, y - size, z - size, new Vec3(1, 1, 1));
-//		crosser.addVertex(x + size, y - size, z - size, new Vec3(1, 1, 1));
-//		crosser.addVertex(x + size, y + size, z - size, new Vec3(1, 1, 1));
-//		crosser.addVertex(x - size, y + size, z - size, new Vec3(1, 1, 1));
-//
-//		crosser.addVertex(x - size, y - size, z + size, new Vec3(1, 1, 1));
-//		crosser.addVertex(x + size, y - size, z + size, new Vec3(1, 1, 1));
-//		crosser.addVertex(x + size, y + size, z + size, new Vec3(1, 1, 1));
-//		crosser.addVertex(x - size, y + size, z + size, new Vec3(1, 1, 1));
-//
-//		crosser.addVertex(x - size, y - size, z - size, new Vec3(1, 1, 1));
-//		crosser.addVertex(x - size, y - size, z + size, new Vec3(1, 1, 1));
-//		crosser.addVertex(x - size, y + size, z + size, new Vec3(1, 1, 1));
-//		crosser.addVertex(x - size, y + size, z - size, new Vec3(1, 1, 1));
-//
-//		crosser.addVertex(x + size, y - size, z - size, new Vec3(1, 1, 1));
-//		crosser.addVertex(x + size, y - size, z + size, new Vec3(1, 1, 1));
-//		crosser.addVertex(x + size, y + size, z + size, new Vec3(1, 1, 1));
-//		crosser.addVertex(x + size, y + size, z - size, new Vec3(1, 1, 1));
-//
-//		crosser.end();
-//		crosser.render(cam.player, GL_QUADS);
 	}
 }
