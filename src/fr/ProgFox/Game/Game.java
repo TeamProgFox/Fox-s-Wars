@@ -1,5 +1,4 @@
 package fr.ProgFox.Game;
-//TESTE
 import fr.ProgFox.Game.Entity.EntityManager;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Shader.ColorShader;
@@ -12,16 +11,12 @@ import static org.lwjgl.opengl.GL11.*;
 public class Game {
 	private Camera cam;
 	private World world;
-	private VBO crosser;
 	private Cube cube;
-	private Shader shader;
 	private EntityManager entityManager;
 
 	public Game(Camera cam, World world) {
 		this.cam = cam;
 		this.world = world;
-		this.shader = new ColorShader();
-		crosser = new VBO();
 		entityManager = new EntityManager();
 		entityManager.add(cam.player);
 		this.cube = new Cube(new Vec3(1, 1, 1));
