@@ -14,7 +14,6 @@ public class Noise {
 		this.seed = seed;
 		this.octave = octave;
 		this.amplitude = amplitude;
-
 		rand = new Random();
 	}
 

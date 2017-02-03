@@ -9,17 +9,16 @@ import fr.ProgFox.Math.Transform;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Shader.ColorShader;
 import fr.ProgFox.Shader.Shader;
+import fr.ProgFox.Utils.VertexBuffer.VBO;
 import fr.ProgFox.World.Chunk;
 import fr.ProgFox.World.World;
 import fr.ProgFox.World.Blocks.Block;
-import fr.ProgFox.World.Buffer.VBO;
-import fr.ProgFox.newMath.Vector3f;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class Player extends Entity {
-	public Vector3f position;
-	public Vector3f rotation;
+	public Vec3 position;
+	public Vec3 rotation;
 	public boolean gravity = true;
 	public boolean grounded = false;
 	public float gravityFactor = 0;
@@ -33,7 +32,7 @@ public class Player extends Entity {
 	public float breakSpeedFactor2 = 0;
 	public Raycast raycast;
 	private Block selectedBlock;
-	public Vector3f selectedPosition;
+	public Vec3 selectedPosition;
 	private boolean teste = true;
 	private VBO select;
 	private Shader shader;
@@ -41,7 +40,7 @@ public class Player extends Entity {
 
 	public Player(World world) {
 		this.world = world;
-		selectedPosition = new Vector3f(0, 0, 0);
+		selectedPosition = new Vec3(0, 0, 0);
 		raycast = new Raycast(this);
 		select = new VBO();
 		shader = new ColorShader();
@@ -53,41 +52,41 @@ public class Player extends Entity {
 		int y2 = (int) 0;
 		int z2 = (int) 0;
 		select.init(24, shader);
-		select.addVertex(x2, y2, z2, new Vector3f(1, 1, 1));
-		select.addVertex(x2 + 1, y2, z2, new Vector3f(1, 1, 1));
+		select.addVertex(x2, y2, z2, new Vec3(1, 1, 1));
+		select.addVertex(x2 + 1, y2, z2, new Vec3(1, 1, 1));
 
-		select.addVertex(x2, y2 + 1, z2, new Vector3f(1, 1, 1));
-		select.addVertex(x2 + 1, y2 + 1, z2, new Vector3f(1, 1, 1));
+		select.addVertex(x2, y2 + 1, z2, new Vec3(1, 1, 1));
+		select.addVertex(x2 + 1, y2 + 1, z2, new Vec3(1, 1, 1));
 
-		select.addVertex(x2, y2, z2 + 1, new Vector3f(1, 1, 1));
-		select.addVertex(x2 + 1, y2, z2 + 1, new Vector3f(1, 1, 1));
+		select.addVertex(x2, y2, z2 + 1, new Vec3(1, 1, 1));
+		select.addVertex(x2 + 1, y2, z2 + 1, new Vec3(1, 1, 1));
 
-		select.addVertex(x2, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
-		select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
+		select.addVertex(x2, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
+		select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
 
-		select.addVertex(x2, y2, z2, new Vector3f(1, 1, 1));
-		select.addVertex(x2, y2, z2 + 1, new Vector3f(1, 1, 1));
+		select.addVertex(x2, y2, z2, new Vec3(1, 1, 1));
+		select.addVertex(x2, y2, z2 + 1, new Vec3(1, 1, 1));
 
-		select.addVertex(x2, y2 + 1, z2, new Vector3f(1, 1, 1));
-		select.addVertex(x2, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
+		select.addVertex(x2, y2 + 1, z2, new Vec3(1, 1, 1));
+		select.addVertex(x2, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
 
-		select.addVertex(x2 + 1, y2, z2, new Vector3f(1, 1, 1));
-		select.addVertex(x2 + 1, y2, z2 + 1, new Vector3f(1, 1, 1));
+		select.addVertex(x2 + 1, y2, z2, new Vec3(1, 1, 1));
+		select.addVertex(x2 + 1, y2, z2 + 1, new Vec3(1, 1, 1));
 
-		select.addVertex(x2 + 1, y2 + 1, z2, new Vector3f(1, 1, 1));
-		select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
+		select.addVertex(x2 + 1, y2 + 1, z2, new Vec3(1, 1, 1));
+		select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
 
-		select.addVertex(x2, y2, z2, new Vector3f(1, 1, 1));
-		select.addVertex(x2, y2 + 1, z2, new Vector3f(1, 1, 1));
+		select.addVertex(x2, y2, z2, new Vec3(1, 1, 1));
+		select.addVertex(x2, y2 + 1, z2, new Vec3(1, 1, 1));
 
-		select.addVertex(x2 + 1, y2, z2, new Vector3f(1, 1, 1));
-		select.addVertex(x2 + 1, y2 + 1, z2, new Vector3f(1, 1, 1));
+		select.addVertex(x2 + 1, y2, z2, new Vec3(1, 1, 1));
+		select.addVertex(x2 + 1, y2 + 1, z2, new Vec3(1, 1, 1));
 
-		select.addVertex(x2, y2, z2 + 1, new Vector3f(1, 1, 1));
-		select.addVertex(x2, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
+		select.addVertex(x2, y2, z2 + 1, new Vec3(1, 1, 1));
+		select.addVertex(x2, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
 
-		select.addVertex(x2 + 1, y2, z2 + 1, new Vector3f(1, 1, 1));
-		select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
+		select.addVertex(x2 + 1, y2, z2 + 1, new Vec3(1, 1, 1));
+		select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
 
 		glLineWidth(2);
 		select.end();
@@ -111,41 +110,41 @@ public class Player extends Entity {
 
 			select.init(24, shader);
 			select.clearBuffer();
-			select.addVertex(x2, y2, z2, new Vector3f(1, 1, 1));
-			select.addVertex(x2 + 1, y2, z2, new Vector3f(1, 1, 1));
+			select.addVertex(x2, y2, z2, new Vec3(1, 1, 1));
+			select.addVertex(x2 + 1, y2, z2, new Vec3(1, 1, 1));
 
-			select.addVertex(x2, y2 + 1, z2, new Vector3f(1, 1, 1));
-			select.addVertex(x2 + 1, y2 + 1, z2, new Vector3f(1, 1, 1));
+			select.addVertex(x2, y2 + 1, z2, new Vec3(1, 1, 1));
+			select.addVertex(x2 + 1, y2 + 1, z2, new Vec3(1, 1, 1));
 
-			select.addVertex(x2, y2, z2 + 1, new Vector3f(1, 1, 1));
-			select.addVertex(x2 + 1, y2, z2 + 1, new Vector3f(1, 1, 1));
+			select.addVertex(x2, y2, z2 + 1, new Vec3(1, 1, 1));
+			select.addVertex(x2 + 1, y2, z2 + 1, new Vec3(1, 1, 1));
 
-			select.addVertex(x2, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
-			select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
+			select.addVertex(x2, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
+			select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
 
-			select.addVertex(x2, y2, z2, new Vector3f(1, 1, 1));
-			select.addVertex(x2, y2, z2 + 1, new Vector3f(1, 1, 1));
+			select.addVertex(x2, y2, z2, new Vec3(1, 1, 1));
+			select.addVertex(x2, y2, z2 + 1, new Vec3(1, 1, 1));
 
-			select.addVertex(x2, y2 + 1, z2, new Vector3f(1, 1, 1));
-			select.addVertex(x2, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
+			select.addVertex(x2, y2 + 1, z2, new Vec3(1, 1, 1));
+			select.addVertex(x2, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
 
-			select.addVertex(x2 + 1, y2, z2, new Vector3f(1, 1, 1));
-			select.addVertex(x2 + 1, y2, z2 + 1, new Vector3f(1, 1, 1));
+			select.addVertex(x2 + 1, y2, z2, new Vec3(1, 1, 1));
+			select.addVertex(x2 + 1, y2, z2 + 1, new Vec3(1, 1, 1));
 
-			select.addVertex(x2 + 1, y2 + 1, z2, new Vector3f(1, 1, 1));
-			select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
+			select.addVertex(x2 + 1, y2 + 1, z2, new Vec3(1, 1, 1));
+			select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
 
-			select.addVertex(x2, y2, z2, new Vector3f(1, 1, 1));
-			select.addVertex(x2, y2 + 1, z2, new Vector3f(1, 1, 1));
+			select.addVertex(x2, y2, z2, new Vec3(1, 1, 1));
+			select.addVertex(x2, y2 + 1, z2, new Vec3(1, 1, 1));
 
-			select.addVertex(x2 + 1, y2, z2, new Vector3f(1, 1, 1));
-			select.addVertex(x2 + 1, y2 + 1, z2, new Vector3f(1, 1, 1));
+			select.addVertex(x2 + 1, y2, z2, new Vec3(1, 1, 1));
+			select.addVertex(x2 + 1, y2 + 1, z2, new Vec3(1, 1, 1));
 
-			select.addVertex(x2, y2, z2 + 1, new Vector3f(1, 1, 1));
-			select.addVertex(x2, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
+			select.addVertex(x2, y2, z2 + 1, new Vec3(1, 1, 1));
+			select.addVertex(x2, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
 
-			select.addVertex(x2 + 1, y2, z2 + 1, new Vector3f(1, 1, 1));
-			select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
+			select.addVertex(x2 + 1, y2, z2 + 1, new Vec3(1, 1, 1));
+			select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
 
 			select.end();
 			teste = false;
@@ -176,27 +175,27 @@ public class Player extends Entity {
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_Z)) {
 
-			xDir = getForward().mul(new Vector3f(-speed, 0, -speed)).getX();
-			zDir = getForward().mul(new Vector3f(-speed, 0, -speed)).getZ();
+			xDir = getForward().mul(new Vec3(-speed, 0, -speed)).getX();
+			zDir = getForward().mul(new Vec3(-speed, 0, -speed)).getZ();
 			move(xDir, yDir, zDir);
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
 
-			xDir = getForward().mul(new Vector3f(speed, 0, speed)).getX();
-			zDir = getForward().mul(new Vector3f(speed, 0, speed)).getZ();
+			xDir = getForward().mul(new Vec3(speed, 0, speed)).getX();
+			zDir = getForward().mul(new Vec3(speed, 0, speed)).getZ();
 			move(xDir, yDir, zDir);
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_Q)) {
 
-			xDir = getRight().mul(new Vector3f(speed, 0, speed)).getX();
-			zDir = getRight().mul(new Vector3f(speed, 0, speed)).getZ();
+			xDir = getRight().mul(new Vec3(speed, 0, speed)).getX();
+			zDir = getRight().mul(new Vec3(speed, 0, speed)).getZ();
 			move(xDir, yDir, zDir);
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
 
-			xDir = getRight().mul(new Vector3f(-speed, 0, -speed)).getX();
-			zDir = getRight().mul(new Vector3f(-speed, 0, -speed)).getZ();
+			xDir = getRight().mul(new Vec3(-speed, 0, -speed)).getX();
+			zDir = getRight().mul(new Vec3(-speed, 0, -speed)).getZ();
 			move(xDir, yDir, zDir);
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && grounded && !flyMode) {
@@ -219,7 +218,7 @@ public class Player extends Entity {
 
 			selectedBlock = world.getBlock(raycast.getBlock(world).x, raycast.getBlock(world).y,
 					raycast.getBlock(world).z);
-			selectedPosition = new Vector3f(raycast.getBlock(world).x, raycast.getBlock(world).y,
+			selectedPosition = new Vec3(raycast.getBlock(world).x, raycast.getBlock(world).y,
 					raycast.getBlock(world).z);
 			// System.out.println("BLOCK = " + selectedBlock);
 
@@ -232,8 +231,8 @@ public class Player extends Entity {
 	}
 
 	Block lastBlock;
-	Vector3f lastPos = new Vector3f();
-	Vector3f nowPos;
+	Vec3 lastPos = new Vec3();
+	Vec3 nowPos;
 
 	public void removeAndAddBlockGestion() {
 		if (Chunk.canBreakBlock) {
@@ -256,7 +255,7 @@ public class Player extends Entity {
 				float vy = y33 - y22;
 				float vz = z33 - z22;
 
-				Vector3f check = new Vector3f(vx, vy, vz).check();
+				Vec3 check = new Vec3(vx, vy, vz).check();
 
 				int xp = (int) check.x;
 				int yp = (int) check.y;
@@ -409,8 +408,8 @@ public class Player extends Entity {
 		return false;
 	}
 
-	public Vector3f getForward() {
-		Vector3f r = new Vector3f();
+	public Vec3 getForward() {
+		Vec3 r = new Vec3();
 		float cosY = (float) Math.cos(Math.toRadians(rotation.getY() + 90));
 		float sinY = (float) Math.sin(Math.toRadians(rotation.getY() + 90));
 		float cosP = (float) Math.cos(Math.toRadians(rotation.getX()));
@@ -422,8 +421,8 @@ public class Player extends Entity {
 		return r;
 	}
 
-	public Vector3f getRight() {
-		Vector3f r = new Vector3f();
+	public Vec3 getRight() {
+		Vec3 r = new Vec3();
 		float cosY = (float) Math.cos(Math.toRadians(rotation.getY()));
 		float sinY = (float) Math.sin(Math.toRadians(rotation.getY()));
 
@@ -433,9 +432,9 @@ public class Player extends Entity {
 		return r;
 	}
 
-	public Vector3f getDirection() {
+	public Vec3 getDirection() {
 
-		Vector3f r = new Vector3f();
+		Vec3 r = new Vec3();
 		float cosY = (float) Math.cos(Math.toRadians(rotation.getY() + 90));
 		float sinY = (float) Math.sin(Math.toRadians(rotation.getY() + 90));
 		float cosP = (float) Math.cos(Math.toRadians(rotation.getX()));

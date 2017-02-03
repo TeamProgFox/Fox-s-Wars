@@ -10,11 +10,11 @@ import java.util.Random;
 import org.lwjgl.BufferUtils;
 
 import fr.ProgFox.Game.Entity.Player;
+import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Math.Vec4;
 import fr.ProgFox.Shader.ColorShader;
 import fr.ProgFox.Shader.Shader;
 import fr.ProgFox.World.Blocks.Block;
-import fr.ProgFox.newMath.Vector3f;
 
 public class Chunk {
 	private int vbo;
@@ -30,7 +30,7 @@ public class Chunk {
 	public static boolean grounded;
 	public static boolean grounded2;
 	private Shader shader;
-	private Vector3f pos;
+	private Vec3 pos;
 	private World world;
 	private Tree tree;
 	private Random random;
@@ -42,7 +42,7 @@ public class Chunk {
 		this.z = z;
 		this.world = world;
 		this.random = seed;
-		tree = new Tree(world, random);
+		tree = new Tree(random);
 		blocks = new Block[SIZE][HEIGHT][SIZE];
 		shader = new ColorShader();
 		generate();

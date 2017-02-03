@@ -6,12 +6,9 @@ import fr.ProgFox.Math.Mathf;
 import fr.ProgFox.World.Blocks.Block;
 
 public class Tree {
-	private World world;
 	private Random random;
 
-	public Tree(World world, Random random) {
-
-		this.world = world;
+	public Tree(Random random) {
 		this.random = random;
 	}
 
@@ -20,11 +17,8 @@ public class Tree {
 			return;
 		if (random.nextFloat() > 0.2f) {
 			SimpleTree(blocks, x, y, z);
-
-			//SimpleTree(blocks, x, y, z);
 		} else {
 			SapinTree(blocks, x, y, z);
-
 		}
 	}
 
@@ -35,7 +29,6 @@ public class Tree {
 			return;
 
 		for (int i = 0; i < 6; i++) {
-			
 			blocks[x][y + i][z] = Block.WOOD;
 		}
 		blocks[x + 1][y + 4][z + 1] = Block.LEAF;
@@ -62,17 +55,14 @@ public class Tree {
 		blocks[x - 1][y + 4][z] = Block.LEAF;
 		blocks[x + 2][y + 4][z] = Block.LEAF;
 		blocks[x - 2][y + 4][z] = Block.LEAF;
-
 		for (int x2 = 0; x2 < 3; x2++) {
 			for (int z2 = 0; z2 < 3; z2++) {
 				blocks[x + x2][y + 5][z + z2] = Block.LEAF;
 				blocks[x - x2][y + 5][z - z2] = Block.LEAF;
 				blocks[x + x2][y + 5][z - z2] = Block.LEAF;
 				blocks[x - x2][y + 5][z + z2] = Block.LEAF;
-
 			}
 		}
-
 		blocks[x + 1][y + 6][z + 1] = Block.LEAF;
 		blocks[x + 2][y + 6][z + 1] = Block.LEAF;
 		blocks[x - 1][y + 6][z + 1] = Block.LEAF;
@@ -134,7 +124,7 @@ public class Tree {
 
 					size -= (float) b / 8f;
 					if (l < 3.5f * size) {
-					blocks[(int) (x + a2)][(int) (y + b2 + 7)][(int) (z + c2)] = Block.SAPINLEAF;
+						blocks[(int) (x + a2)][(int) (y + b2 + 7)][(int) (z + c2)] = Block.SAPINLEAF;
 					}
 				}
 			}

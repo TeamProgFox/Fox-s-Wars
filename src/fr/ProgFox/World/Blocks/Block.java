@@ -8,7 +8,6 @@ public abstract class Block {
 	public static final Block DARKGRASS = new DarkGrassBlock();
 	public static final Block LEAF = new LeafBlock();
 	public static final Block SAPINLEAF = new SapinLeafBlock();
-	public static final Block INFO = new InfoBlock();
 	public static final Block STONE = new StoneBlock();
 
 	public Vec4 color;

@@ -1,6 +1,6 @@
-package fr.ProgFox.World.Buffer;
+package fr.ProgFox.Utils.VertexBuffer;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.*;  
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 
@@ -9,8 +9,8 @@ import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
 
 import fr.ProgFox.Game.Entity.Player;
+import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Shader.Shader;
-import fr.ProgFox.newMath.Vector3f;
 
 public class VBO {
 	private FloatBuffer buffer;
@@ -24,7 +24,7 @@ public class VBO {
 		length = vertexLenght * 6;
 	}
 
-	public void addVertex(float x, float y, float z, Vector3f color) {
+	public void addVertex(float x, float y, float z, Vec3 color) {
 		buffer.put(x).put(y).put(z).put(color.x).put(color.y).put(color.z);
 	}
 	public void clearBuffer(){
@@ -37,7 +37,7 @@ public class VBO {
 		glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
 	}
 
-	public void update(float x, float y, float z, Vector3f color) {
+	public void update(float x, float y, float z, Vec3 color) {
 		buffer.put(x).put(y).put(z).put(color.x).put(color.y).put(color.z);
 		
 	}

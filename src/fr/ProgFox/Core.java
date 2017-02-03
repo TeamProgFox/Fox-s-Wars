@@ -1,6 +1,6 @@
 package fr.ProgFox;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.*; 
 
 import java.util.Random;
 
@@ -10,8 +10,8 @@ import org.lwjgl.opengl.Display;
 
 import fr.ProgFox.Game.Game;
 import fr.ProgFox.Game.Raycast;
+import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.World.World;
-import fr.ProgFox.newMath.Vector3f;
 import fr.ProgFox.renderer.Camera;
 import fr.ProgFox.renderer.DisplayManager;
 
@@ -34,8 +34,7 @@ public class Core {
 		world = new World(-6956537684988609768L);
 		int posX = World.SIZE * 16;
 		int posZ = World.SIZE * 16;
-		cam = new Camera(new Vector3f(-posX / 2, -30, -posZ / 2), world);
-
+		cam = new Camera(new Vec3(-posX / 2, -30, -posZ / 2), world);
 		game = new Game(cam, world);
 	}
 
@@ -47,6 +46,7 @@ public class Core {
 		if (!Mouse.isGrabbed())
 			return;
 		game.update();
+		game.input();
 	}
 
 	public void render() {

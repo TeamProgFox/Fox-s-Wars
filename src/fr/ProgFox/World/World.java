@@ -4,11 +4,7 @@ import java.util.Random;
 
 import fr.ProgFox.Game.Entity.Player;
 import fr.ProgFox.Logs.Logs;
-import fr.ProgFox.Shader.ColorShader;
-import fr.ProgFox.Shader.Shader;
 import fr.ProgFox.World.Blocks.Block;
-import fr.ProgFox.World.Buffer.VBO;
-import fr.ProgFox.newMath.Vector3f;
 
 public class World {
 	public static final int SIZE = 5;

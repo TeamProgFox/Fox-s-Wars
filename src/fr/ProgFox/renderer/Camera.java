@@ -1,34 +1,32 @@
 package fr.ProgFox.renderer;
 
 import fr.ProgFox.Game.Entity.Player;
+import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.World.World;
-import fr.ProgFox.newMath.Vector3f;
 
 public class Camera {
 
 	public Player player;
 	World world;
 
-	public Camera(Vector3f position, World world) {
+	public Camera(Vec3 position, World world) {
 		player = new Player(world);
 		player.position = position;
-		player.rotation = new Vector3f(0, 0, 0);
+		player.rotation = new Vec3(0, 0, 0);
 		this.world = world;
 	}
 
 	public void update() {
-		player.update();
 	}
 
 	public void input() {
-		player.input();
 	}
 
-	public Vector3f getPosition() {
+	public Vec3 getPosition() {
 		return player.position;
 	}
 
-	public void setPosition(Vector3f position) {
+	public void setPosition(Vec3 position) {
 
 		player.position = position;
 	}

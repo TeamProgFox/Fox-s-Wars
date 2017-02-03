@@ -1,12 +1,12 @@
 package fr.ProgFox.Shader;
 
-import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL20.*; 
 import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Matrix4f;
 import fr.ProgFox.Math.Mat4;
+import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Utils.Buffer;
-import fr.ProgFox.newMath.Vector3f;
 
 public abstract class Shader {
 	protected int id;
@@ -45,8 +45,8 @@ public abstract class Shader {
 
 	}
 
-	public void setUniform(String name, Vector3f v) {
-		glUniform3f(getUniform(name), v.getX(), v.getY(), v.getZ());
+	public void setUniform(String name, Vec3 v) {
+		glUniform3f(getUniform(name), v.x, v.y, v.z);
 	}
 
 	public int getId() {
