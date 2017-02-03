@@ -29,108 +29,116 @@ public abstract class Block {
 
 	public float[] BlockDataFront(float x, float y, float z, Vec4 color2) {
 
-		float r, g, b;
+		float r, g, b, a;
 		r = color.x;
 		g = color.y;
 		b = color.z;
-
+		a = color.w;
 		return new float[] {
 
-				x, y, z, r * 0.8f * color2.x, g * 0.8f * color2.x, b * 0.8f * color2.x, //////
-				x + 1, y, z, r * 0.8f * color2.y, g * 0.8f * color2.y, b * 0.8f * color2.y, ///
-				x + 1, y + 1, z, r * 0.8f * color2.z, g * 0.8f * color2.z, b * 0.8f * color2.z, // 5
-				x, y + 1, z, r * 0.8f, g * 0.8f, b * 0.8f,/////
+				x, y, z, 					r * 0.8f * color2.x, g * 0.8f * color2.x, b * 0.8f * color2.x, a * 0.8f * color2.x,//////
+				x + 1, y, z, 				r * 0.8f * color2.y, g * 0.8f * color2.y, b * 0.8f * color2.y, a * 0.8f * color2.y, ///
+				x + 1, y + 1, z, 			r * 0.8f * color2.z, g * 0.8f * color2.z, b * 0.8f * color2.z, a * 0.8f * color2.z, // 5
+				x, y + 1, z, 				r * 0.8f * color2.w, g * 0.8f * color2.w, b * 0.8f * color2.w, a * 0.8f * color2.w,/////
 
 		};
 
 	}
 
 	public float[] BlockDataBack(float x, float y, float z, Vec4 color2) {
-
-		float r, g, b;
+		float r, g, b, a;
 		r = color.x;
 		g = color.y;
 		b = color.z;
+		a = color.w;
 
 		return new float[] {
-
-				x, y, z + 1, r * 0.8f * color2.x, g * 0.8f * color2.x, b * 0.8f * color2.x, //////
-				x + 1, y, z + 1, r * 0.8f * color2.y, g * 0.8f * color2.y, b * 0.8f * color2.y, ///
-				x + 1, y + 1, z + 1, r * 0.8f * color2.z, g * 0.8f * color2.z, b * 0.8f * color2.z, // 5
-				x, y + 1, z + 1, r * 0.8f, g * 0.8f, b * 0.8f,/////
-
+                                                                                                                                   
+				x, y, z + 1,			r * 0.8f * color2.x, g * 0.8f * color2.x, b * 0.8f * color2.x, a * 0.8f * color2.x,/////
+				x + 1, y, z + 1,		r * 0.8f * color2.y, g * 0.8f * color2.y, b * 0.8f * color2.y, a * 0.8f * color2.y, /// 
+				x + 1, y + 1, z + 1,	r * 0.8f * color2.z, g * 0.8f * color2.z, b * 0.8f * color2.z, a * 0.8f * color2.z, // 5
+				x, y + 1, z + 1, 		r * 0.8f * color2.w, g * 0.8f * color2.w, b * 0.8f * color2.w, a * 0.8f * color2.w,/////
+                                                                                                                                   
 		};
 
 	}
 
 	public float[] BlockDataRight(float x, float y, float z, Vec4 color2) {
 
-		float r, g, b;
+		float r, g, b, a;
 		r = color.x;
 		g = color.y;
 		b = color.z;
+		a = color.w;
+
 
 		return new float[] {
-
-				x + 1, y, z, r * 0.75f * color2.x, g * 0.75f * color2.x, b * 0.75f * color2.x, //////
-				x + 1, y + 1, z, r * 0.75f * color2.y, g * 0.75f * color2.y, b * 0.75f * color2.y, ///
-				x + 1, y + 1, z + 1, r * 0.75f * color2.z, g * 0.75f * color2.z, b * 0.75f * color2.z, // 5
-				x + 1, y, z + 1, r * 0.75f, g * 0.75f, b * 0.75f,////
-
+                                                                                                                                            
+				x + 1, y, z, 					 r * 0.75f * color2.x, g * 0.75f * color2.x, b * 0.75f * color2.x, a * 0.75f * color2.x,///////
+				x + 1, y + 1, z,				 r * 0.75f * color2.y, g * 0.75f * color2.y, b * 0.75f * color2.y, a * 0.75f * color2.y, /// 
+				x + 1, y + 1, z + 1,			 r * 0.75f * color2.z, g * 0.75f * color2.z, b * 0.75f * color2.z, a * 0.75f * color2.z, // 5
+				x + 1, y, z + 1, 				 r * 0.75f * color2.w, g * 0.75f * color2.w, b * 0.75f * color2.w, a * 0.75f * color2.w,/////
+                                                                                                                                            
 		};
 
 	}
 
 	public float[] BlockDataLeft(float x, float y, float z, Vec4 color2) {
 
-		float r, g, b;
+		float r, g, b, a;
 		r = color.x;
 		g = color.y;
 		b = color.z;
+		a = color.w;
+
 
 		return new float[] {
-
-				x, y, z, r * 0.75f * color2.x, g * 0.75f * color2.x, b * 0.75f * color2.x, //////
-				x, y + 1, z, r * 0.75f * color2.y, g * 0.75f * color2.y, b * 0.75f * color2.y, ///
-				x, y + 1, z + 1, r * 0.75f * color2.z, g * 0.75f * color2.z, b * 0.75f * color2.z, // 5
-				x, y, z + 1, r * 0.75f, g * 0.75f, b * 0.75f,////
-
+                                                                                                                                    
+				x, y, z,				r * 0.75f * color2.x, g * 0.75f * color2.x, b * 0.75f * color2.x, a * 0.75f * color2.x,/////
+				x, y + 1, z, 			r * 0.75f * color2.y, g * 0.75f * color2.y, b * 0.75f * color2.y, a * 0.75f * color2.y, /// 
+				x, y + 1, z + 1, 		r * 0.75f * color2.z, g * 0.75f * color2.z, b * 0.75f * color2.z, a * 0.75f * color2.z, // 5
+				x, y, z + 1, 			r * 0.75f * color2.w, g * 0.75f * color2.w, b * 0.75f * color2.w, a * 0.75f * color2.w,/////
+                                                                                                                                    
 		};
 
 	}
 
 	public float[] BlockDataUp(float x, float y, float z, Vec4 color2) {
 
-		float r, g, b;
+		float r, g, b, a;
 		r = color.x;
 		g = color.y;
 		b = color.z;
+		a = color.w;
+
 
 		return new float[] {
-
-				x, y + 1, z, r * 0.7f * color2.x, g * 0.7f * color2.x, b * 0.7f * color2.x, //////
-				x + 1, y + 1, z, r * 0.7f * color2.y, g * 0.7f * color2.y, b * 0.7f * color2.y, ///
-				x + 1, y + 1, z + 1, r * 0.7f * color2.z, g * 0.7f * color2.z, b * 0.7f * color2.z, // 5
-				x, y + 1, z + 1, r * 0.7f, g * 0.7f, b * 0.7f,////
-
+                                                                                                                                        
+				x, y + 1, z,				r * 0.7f * color2.x, g * 0.7f * color2.x, b * 0.7f * color2.x, a * 0.7f * color2.x,/////
+				x + 1, y + 1, z,			r * 0.7f * color2.y, g * 0.7f * color2.y, b * 0.7f * color2.y, a * 0.7f * color2.y, /// 
+				x + 1, y + 1, z + 1,		r * 0.7f * color2.z, g * 0.7f * color2.z, b * 0.7f * color2.z, a * 0.7f * color2.z, // 5
+				x, y + 1, z + 1,			r * 0.7f * color2.w, g * 0.7f * color2.w, b * 0.7f * color2.w, a * 0.7f * color2.w,/////
+                                                                                                                                        
 		};
 
 	}
 
 	public float[] BlockDataDown(float x, float y, float z, Vec4 color2) {
 
-		float r, g, b;
+		float r, g, b, a;
 		r = color.x;
 		g = color.y;
 		b = color.z;
+		a = color.w;
+
 
 		return new float[] {
-
-				x, y, z, r * 0.7f * color2.x, g * 0.7f * color2.x, b * 0.7f * color2.x, //////
-				x + 1, y, z, r * 0.7f * color2.y, g * 0.7f * color2.y, b * 0.7f * color2.y, ///
-				x + 1, y, z + 1, r * 0.7f * color2.z, g * 0.7f * color2.z, b * 0.7f * color2.z, // 5
-				x, y, z + 1, r * 0.7f, g * 0.7f, b * 0.7f////
-
+                                                                                                                                       
+				x, y, z, 					r * 0.7f * color2.x, g * 0.7f * color2.x, b * 0.7f * color2.x, a * 0.7f * color2.x,/////
+				x + 1, y, z,				r * 0.7f * color2.y, g * 0.7f * color2.y, b * 0.7f * color2.y, a * 0.7f * color2.y, /// 
+				x + 1, y, z + 1,			r * 0.7f * color2.z, g * 0.7f * color2.z, b * 0.7f * color2.z, a * 0.7f * color2.z, // 5
+				x, y, z + 1,				r * 0.7f * color2.w, g * 0.7f * color2.w, b * 0.7f * color2.w, a * 0.7f * color2.w,/////
+                                                                                                                                       
 		};
 
 	}

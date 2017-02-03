@@ -73,6 +73,8 @@ public class Chunk {
 		}
 	}
 
+	float ao = 0.89f;
+
 	public void createChunk() {
 		buffer = BufferUtils.createFloatBuffer(SIZE * SIZE * SIZE * 6 * 4 * (3 + 4));
 		for (int x = 0; x < SIZE; x++) {
@@ -93,12 +95,42 @@ public class Chunk {
 						continue;
 					Block block = blocks[x][y][z];
 					int size = 0;
+
 					if (up) {
-						buffer.put(block.BlockDataUp(x2, y2, z2, new Vec4(1, 1, 1, 1)));
+						if (world.getBlock(x2 + 1, y2 + 1, z2) != null) {
+							buffer.put(block.BlockDataUp(x2, y2, z2, new Vec4(1, ao, ao, 1)));
+
+						} else if (world.getBlock(x2 - 1, y2 + 1, z2) != null) {
+							buffer.put(block.BlockDataUp(x2, y2, z2, new Vec4(ao, 1, 1, ao)));
+
+						} else if (world.getBlock(x2, y2 + 1, z2 + 1) != null) {
+							buffer.put(block.BlockDataUp(x2, y2, z2, new Vec4(1, 1, ao, ao)));
+
+						} else if (world.getBlock(x2, y2 + 1, z2 - 1) != null) {
+							buffer.put(block.BlockDataUp(x2, y2, z2, new Vec4(ao, ao, 1, 1)));
+
+						} else {
+							buffer.put(block.BlockDataUp(x2, y2, z2, new Vec4(1, 1, 1, 1)));
+
+						}
 						size++;
 					}
 					if (down) {
-						buffer.put(block.BlockDataDown(x2, y2, z2, new Vec4(1, 1, 1, 1)));
+						if (world.getBlock(x2 - 1, y2 - 1, z2) != null) {
+							buffer.put(block.BlockDataDown(x2, y2, z2, new Vec4(ao, 1, 1, ao)));
+						} else if (world.getBlock(x2 + 1, y2 - 1, z2) != null) {
+							buffer.put(block.BlockDataDown(x2, y2, z2, new Vec4(1, ao, ao, 1)));
+
+						} else if (world.getBlock(x2, y2 - 1, z2 + 1) != null) {
+							buffer.put(block.BlockDataDown(x2, y2, z2, new Vec4(1, 1, ao, ao)));
+
+						} else if (world.getBlock(x2, y2 - 1, z2 - 1) != null) {
+							buffer.put(block.BlockDataDown(x2, y2, z2, new Vec4(ao, ao, 1, 1)));
+
+						} else {
+							buffer.put(block.BlockDataDown(x2, y2, z2, new Vec4(1, 1, 1, 1)));
+
+						}
 						size++;
 					}
 					if (back) {
@@ -147,11 +179,40 @@ public class Chunk {
 					Block block = blocks[x][y][z];
 					int size = 0;
 					if (up) {
-						buffer.put(block.BlockDataUp(x2, y2, z2, new Vec4(1, 1, 1, 1)));
+						if (world.getBlock(x2 + 1, y2 + 1, z2) != null) {
+							buffer.put(block.BlockDataUp(x2, y2, z2, new Vec4(1, ao, ao, 1)));
+
+						} else if (world.getBlock(x2 - 1, y2 + 1, z2) != null) {
+							buffer.put(block.BlockDataUp(x2, y2, z2, new Vec4(ao, 1, 1, ao)));
+
+						} else if (world.getBlock(x2, y2 + 1, z2 + 1) != null) {
+							buffer.put(block.BlockDataUp(x2, y2, z2, new Vec4(1, 1, ao, ao)));
+
+						} else if (world.getBlock(x2, y2 + 1, z2 - 1) != null) {
+							buffer.put(block.BlockDataUp(x2, y2, z2, new Vec4(ao, ao, 1, 1)));
+
+						} else {
+							buffer.put(block.BlockDataUp(x2, y2, z2, new Vec4(1, 1, 1, 1)));
+
+						}
 						size++;
 					}
 					if (down) {
-						buffer.put(block.BlockDataDown(x2, y2, z2, new Vec4(1, 1, 1, 1)));
+						if (world.getBlock(x2 - 1, y2 - 1, z2) != null) {
+							buffer.put(block.BlockDataDown(x2, y2, z2, new Vec4(ao, 1, 1, ao)));
+						} else if (world.getBlock(x2 + 1, y2 - 1, z2) != null) {
+							buffer.put(block.BlockDataDown(x2, y2, z2, new Vec4(1, ao, ao, 1)));
+
+						} else if (world.getBlock(x2, y2 - 1, z2 + 1) != null) {
+							buffer.put(block.BlockDataDown(x2, y2, z2, new Vec4(1, 1, ao, ao)));
+
+						} else if (world.getBlock(x2, y2 - 1, z2 - 1) != null) {
+							buffer.put(block.BlockDataDown(x2, y2, z2, new Vec4(ao, ao, 1, 1)));
+
+						} else {
+							buffer.put(block.BlockDataDown(x2, y2, z2, new Vec4(1, 1, 1, 1)));
+
+						}
 						size++;
 					}
 					if (back) {
@@ -201,8 +262,8 @@ public class Chunk {
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * 4, 0);
-		glVertexAttribPointer(1, 3, GL_FLOAT, true, 6 * 4, 12);
+		glVertexAttribPointer(0, 3, GL_FLOAT, false, 7 * 4, 0);
+		glVertexAttribPointer(1, 4, GL_FLOAT, true, 7 * 4, 12);
 		glDrawArrays(GL_QUADS, 0, bufferSize);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(0);
@@ -234,7 +295,5 @@ public class Chunk {
 			updateChunk();
 		}
 	}
-
-
 
 }

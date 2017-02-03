@@ -24,7 +24,6 @@ public class Game {
 	public void update() {
 		cam.input();
 		world.update();
-		System.out.println("lol");
 	}
 
 	public void render() {
@@ -33,16 +32,42 @@ public class Game {
 	}
 
 	public void renderGUI() {
-		
+
 		float x = (float) (-cam.player.position.x + cam.player.getDirection().x);
 		float y = (float) (-cam.player.position.y - cam.player.getDirection().y);
 		float z = (float) (-cam.player.position.z + cam.player.getDirection().z);
-		crosser.init(4, shader);
-		float size = 0.01f;
-		crosser.addVertex(x, y, z, new Vector3f(1, 1, 1));
-		crosser.addVertex(x + size, y, z, new Vector3f(1, 1, 1));
-		crosser.addVertex(x + size, y + size, z, new Vector3f(1, 1, 1));
-		crosser.addVertex(x, y + size, z, new Vector3f(1, 1, 1));
+		crosser.init(24, shader);
+		float size = 0.007f;
+		crosser.addVertex(x - size, y - size, z - size, new Vector3f(1, 1, 1));
+		crosser.addVertex(x + size, y - size, z - size, new Vector3f(1, 1, 1));
+		crosser.addVertex(x + size, y - size, z + size, new Vector3f(1, 1, 1));
+		crosser.addVertex(x - size, y - size, z + size, new Vector3f(1, 1, 1));
+
+		crosser.addVertex(x - size, y + size, z - size, new Vector3f(1, 1, 1));
+		crosser.addVertex(x + size, y + size, z - size, new Vector3f(1, 1, 1));
+		crosser.addVertex(x + size, y + size, z + size, new Vector3f(1, 1, 1));
+		crosser.addVertex(x - size, y + size, z + size, new Vector3f(1, 1, 1));
+
+		crosser.addVertex(x - size, y - size, z - size, new Vector3f(1, 1, 1));
+		crosser.addVertex(x + size, y - size, z - size, new Vector3f(1, 1, 1));
+		crosser.addVertex(x + size, y + size, z - size, new Vector3f(1, 1, 1));
+		crosser.addVertex(x - size, y + size, z - size, new Vector3f(1, 1, 1));
+
+		crosser.addVertex(x - size, y - size, z + size, new Vector3f(1, 1, 1));
+		crosser.addVertex(x + size, y - size, z + size, new Vector3f(1, 1, 1));
+		crosser.addVertex(x + size, y + size, z + size, new Vector3f(1, 1, 1));
+		crosser.addVertex(x - size, y + size, z + size, new Vector3f(1, 1, 1));
+
+		crosser.addVertex(x - size, y - size, z - size, new Vector3f(1, 1, 1));
+		crosser.addVertex(x - size, y - size, z + size, new Vector3f(1, 1, 1));
+		crosser.addVertex(x - size, y + size, z + size, new Vector3f(1, 1, 1));
+		crosser.addVertex(x - size, y + size, z - size, new Vector3f(1, 1, 1));
+
+		crosser.addVertex(x + size, y - size, z - size, new Vector3f(1, 1, 1));
+		crosser.addVertex(x + size, y - size, z + size, new Vector3f(1, 1, 1));
+		crosser.addVertex(x + size, y + size, z + size, new Vector3f(1, 1, 1));
+		crosser.addVertex(x + size, y + size, z - size, new Vector3f(1, 1, 1));
+
 		crosser.end();
 		crosser.render(cam.player, GL_QUADS);
 	}

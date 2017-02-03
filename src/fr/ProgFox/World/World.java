@@ -103,13 +103,17 @@ public class World {
 		chunk.removeBlock(x3, y3, z3);
 
 		if ((int) x3 == 15) {
-			getChunk(xx + 1, zz).updateChunk();
+			if (getChunk(xx + 1, zz) != null) {
+				getChunk(xx + 1, zz).updateChunk();
+			}
 		}
 		if ((int) x3 == 0 && (int) xx > 0) {
 			getChunk(xx - 1, zz).updateChunk();
 		}
 		if ((int) z3 == 15) {
-			getChunk(xx, zz + 1).updateChunk();
+			if (getChunk(xx, zz + 1) != null) {
+				getChunk(xx, zz + 1).updateChunk();
+			}
 		}
 		if ((int) z3 == 0 && (int) zz > 0) {
 			getChunk(xx, zz - 1).updateChunk();

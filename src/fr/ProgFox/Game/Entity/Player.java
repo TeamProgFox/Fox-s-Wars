@@ -89,7 +89,7 @@ public class Player extends Entity {
 		select.addVertex(x2 + 1, y2, z2 + 1, new Vector3f(1, 1, 1));
 		select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
 
-		glLineWidth(5);
+		glLineWidth(2);
 		select.end();
 
 	}
@@ -147,7 +147,6 @@ public class Player extends Entity {
 			select.addVertex(x2 + 1, y2, z2 + 1, new Vector3f(1, 1, 1));
 			select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vector3f(1, 1, 1));
 
-			glLineWidth(2);
 			select.end();
 			teste = false;
 		}
