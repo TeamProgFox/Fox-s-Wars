@@ -73,7 +73,7 @@ public class Chunk {
 		}
 	}
 
-	float ao = 0.89f;
+	float ao = 0.85f;
 
 	public void createChunk() {
 		buffer = BufferUtils.createFloatBuffer(SIZE * SIZE * SIZE * 6 * 4 * (3 + 4));
@@ -250,7 +250,20 @@ public class Chunk {
 		glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
 	}
 
+	float light = 0.2f;
+	boolean teste = true;
+
 	public void update() {
+		if (teste == true) {
+			light += 0.01f;
+			if (light >= 1)
+				teste = false;
+		}
+		if (teste == false) {
+			light -= 0.01f;
+			if (light <= 0.2f)
+				teste = true;
+		}
 
 	}
 
@@ -259,6 +272,7 @@ public class Chunk {
 		shader.bind();
 		shader.setUniform("perspective", player.getPerspectiveProjection());
 		shader.setUniform("perspectivePosition", pos);
+		shader.setUniform("light", light);
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);

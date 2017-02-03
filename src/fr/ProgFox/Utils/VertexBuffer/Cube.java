@@ -1,6 +1,6 @@
 package fr.ProgFox.Utils.VertexBuffer;
 
-import java.nio.FloatBuffer;
+import java.nio.FloatBuffer; 
 
 import fr.ProgFox.Game.Entity.Player;
 import fr.ProgFox.Math.Vec3;

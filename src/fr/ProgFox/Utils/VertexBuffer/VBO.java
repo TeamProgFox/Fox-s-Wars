@@ -52,6 +52,7 @@ public class VBO {
 		shader.bind();
 		shader.setUniform("perspective", player.getPerspectiveProjection());
 		shader.setUniform("perspectivePosition", player.position);
+		shader.setUniform("light", 1);
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
