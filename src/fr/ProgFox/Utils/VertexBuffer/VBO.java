@@ -41,11 +41,12 @@ public class VBO {
 		buffer.put(x).put(y).put(z).put(color.x).put(color.y).put(color.z);
 		
 	}
-
-	public void updateVBO() {
+	public void updateEnd() {
 		buffer.flip();
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
+		for(int i  = 0; i < length; i++){
+		glBufferSubData(GL_ARRAY_BUFFER, i, buffer);
+		}
 	}
 
 	public void render(Player player, int mode) {
@@ -59,6 +60,21 @@ public class VBO {
 		glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * 4, 0);
 		glVertexAttribPointer(1, 3, GL_FLOAT, true, 6 * 4, 12);
 		glDrawArrays(mode, 0, length);
+		glDisableVertexAttribArray(1);
+		glDisableVertexAttribArray(0);
+	}
+
+	public void renderSkyBox(Player player) {
+		shader.bind();
+		shader.setUniform("perspective", player.getPerspectiveProjection());
+		shader.setUniform("perspectivePosition", player.position);
+		shader.setUniform("light", 1);
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * 4, 0);
+		glVertexAttribPointer(1, 3, GL_FLOAT, true, 6 * 4, 12);
+		glDrawArrays(GL_QUADS, 0, length);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(0);
 	}

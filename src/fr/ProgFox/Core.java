@@ -16,7 +16,7 @@ import fr.ProgFox.renderer.Camera;
 import fr.ProgFox.renderer.DisplayManager;
 
 public class Core {
-	public static final int FRAME_CAP = 50000;
+	public static final int FRAME_CAP = 60000;
 	boolean running = false;
 	public static int frames = 0;
 	public static int teste = 1;

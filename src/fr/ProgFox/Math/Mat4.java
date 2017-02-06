@@ -1,9 +1,5 @@
 package fr.ProgFox.Math;
 
-// Referenced classes of package fr.veridiangames.main.maths:
-
-//            Vec3, Vec4
-
 public class Mat4 {
 
 	public static Mat4 cameraView(Vec3 forward, Vec3 up) {

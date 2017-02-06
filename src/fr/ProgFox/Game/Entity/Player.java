@@ -108,45 +108,45 @@ public class Player extends Entity {
 		int z2 = (int) selectedPosition.z;
 		if (teste) {
 
-			select.init(24, shader);
+			
 			select.clearBuffer();
-			select.addVertex(x2, y2, z2, new Vec3(1, 1, 1));
-			select.addVertex(x2 + 1, y2, z2, new Vec3(1, 1, 1));
+			select.update(x2, y2, z2, new Vec3(1, 1, 1));
+			select.update(x2 + 1, y2, z2, new Vec3(1, 1, 1));
 
-			select.addVertex(x2, y2 + 1, z2, new Vec3(1, 1, 1));
-			select.addVertex(x2 + 1, y2 + 1, z2, new Vec3(1, 1, 1));
+			select.update(x2, y2 + 1, z2, new Vec3(1, 1, 1));
+			select.update(x2 + 1, y2 + 1, z2, new Vec3(1, 1, 1));
 
-			select.addVertex(x2, y2, z2 + 1, new Vec3(1, 1, 1));
-			select.addVertex(x2 + 1, y2, z2 + 1, new Vec3(1, 1, 1));
+			select.update(x2, y2, z2 + 1, new Vec3(1, 1, 1));
+			select.update(x2 + 1, y2, z2 + 1, new Vec3(1, 1, 1));
 
-			select.addVertex(x2, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
-			select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
+			select.update(x2, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
+			select.update(x2 + 1, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
 
-			select.addVertex(x2, y2, z2, new Vec3(1, 1, 1));
-			select.addVertex(x2, y2, z2 + 1, new Vec3(1, 1, 1));
+			select.update(x2, y2, z2, new Vec3(1, 1, 1));
+			select.update(x2, y2, z2 + 1, new Vec3(1, 1, 1));
 
-			select.addVertex(x2, y2 + 1, z2, new Vec3(1, 1, 1));
-			select.addVertex(x2, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
+			select.update(x2, y2 + 1, z2, new Vec3(1, 1, 1));
+			select.update(x2, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
 
-			select.addVertex(x2 + 1, y2, z2, new Vec3(1, 1, 1));
-			select.addVertex(x2 + 1, y2, z2 + 1, new Vec3(1, 1, 1));
+			select.update(x2 + 1, y2, z2, new Vec3(1, 1, 1));
+			select.update(x2 + 1, y2, z2 + 1, new Vec3(1, 1, 1));
 
-			select.addVertex(x2 + 1, y2 + 1, z2, new Vec3(1, 1, 1));
-			select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
+			select.update(x2 + 1, y2 + 1, z2, new Vec3(1, 1, 1));
+			select.update(x2 + 1, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
 
-			select.addVertex(x2, y2, z2, new Vec3(1, 1, 1));
-			select.addVertex(x2, y2 + 1, z2, new Vec3(1, 1, 1));
+			select.update(x2, y2, z2, new Vec3(1, 1, 1));
+			select.update(x2, y2 + 1, z2, new Vec3(1, 1, 1));
 
-			select.addVertex(x2 + 1, y2, z2, new Vec3(1, 1, 1));
-			select.addVertex(x2 + 1, y2 + 1, z2, new Vec3(1, 1, 1));
+			select.update(x2 + 1, y2, z2, new Vec3(1, 1, 1));
+			select.update(x2 + 1, y2 + 1, z2, new Vec3(1, 1, 1));
 
-			select.addVertex(x2, y2, z2 + 1, new Vec3(1, 1, 1));
-			select.addVertex(x2, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
+			select.update(x2, y2, z2 + 1, new Vec3(1, 1, 1));
+			select.update(x2, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
 
-			select.addVertex(x2 + 1, y2, z2 + 1, new Vec3(1, 1, 1));
-			select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
+			select.update(x2 + 1, y2, z2 + 1, new Vec3(1, 1, 1));
+			select.update(x2 + 1, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
 
-			select.end();
+			select.updateEnd();
 			teste = false;
 		}
 
@@ -267,10 +267,6 @@ public class Player extends Entity {
 				int posX = (int) Math.abs(position.x);
 				int posY = (int) Math.abs(position.y);
 				int posZ = (int) Math.abs(position.z);
-				System.out.print(rx + " " + posX + " / ");
-				System.out.print(ry + " " + (posY - 1) + " / ");
-				System.out.print(rz + " " + posZ + " / ");
-				System.out.println();
 				if (rx == posX && ry == posY - 1 && rz == posZ)
 					return;
 				if (ry == posY && rx == posX && rz == posZ)
@@ -455,7 +451,7 @@ public class Player extends Entity {
 
 		t2.rotate(new Vec3(0, 1, 0), rotation.getY());
 
-		Mat4 p = new Mat4().perspective(70.0F, (float) Display.getWidth() / (float) Display.getHeight(), 0.1F, 1000.0F);
+		Mat4 p = new Mat4().perspective(70.0F, (float) Display.getWidth() / (float) Display.getHeight(), 0.1F, 1000000.0F);
 		return p.mul(t.toMatrix().mul(t2.toMatrix()));
 
 	}

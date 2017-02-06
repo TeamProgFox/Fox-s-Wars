@@ -3,11 +3,13 @@ package fr.ProgFox.World;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL31.*;
 
 import java.nio.FloatBuffer;
 import java.util.Random;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL31;
 
 import fr.ProgFox.Game.Entity.Player;
 import fr.ProgFox.Math.Vec3;
@@ -251,18 +253,19 @@ public class Chunk {
 	}
 
 	float light = 0.2f;
-	boolean teste = true;
+	float speedTime = 0.0001f;
+	boolean dayTime = true;
 
 	public void update() {
-		if (teste == true) {
-			light += 0.01f;
+		if (dayTime == true) {
+			light += speedTime;
 			if (light >= 1)
-				teste = false;
+				dayTime = false;
 		}
-		if (teste == false) {
-			light -= 0.01f;
+		if (dayTime == false) {
+			light -= speedTime;
 			if (light <= 0.2f)
-				teste = true;
+				dayTime = true;
 		}
 
 	}

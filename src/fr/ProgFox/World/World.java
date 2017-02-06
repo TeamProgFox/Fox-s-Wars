@@ -7,7 +7,7 @@ import fr.ProgFox.Logs.Logs;
 import fr.ProgFox.World.Blocks.Block;
 
 public class World {
-	public static final int SIZE = 8;
+	public static final int SIZE = 16;
 	public Noise noise;
 	public Chunk[][] chunks;
 	private Random random;
@@ -30,7 +30,7 @@ public class World {
 			}
 		}
 	}
-
+	
 	public void update() {
 		for (int x = 0; x < SIZE; x++) {
 			for (int z = 0; z < SIZE; z++) {
@@ -43,7 +43,7 @@ public class World {
 		float xP1 = (float) Math.abs(player.position.x / 16);
 		float zP1 = (float) Math.abs(player.position.z / 16);
 		player.render();
-		int renderDistance = 3;
+		int renderDistance = 2;
 		for (int x = 0; x < SIZE; x++) {
 			for (int z = 0; z < SIZE; z++) {
 
