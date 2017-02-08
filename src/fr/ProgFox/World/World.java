@@ -2,40 +2,62 @@ package fr.ProgFox.World;
 
 import java.util.Random;
 
+import org.lwjgl.opengl.Display;
+
 import fr.ProgFox.Game.Entity.Player;
 import fr.ProgFox.Logs.Logs;
 import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.World.Blocks.Block;
 
 public class World {
-	public static final int SIZE = 1;
+	public static int sizeX = 10;
+	public static int sizeZ = 10;
+	public static int moreSizeX = 0;
+	public static int moreSizeZ = 0;
 	public Noise noise;
 	public Chunk[][] chunks;
 	private Random random;
+	float percentage;
 
 	public World(long seed) {
 
 		random = new Random(seed);
 		noise = new Noise(random.nextLong(), 15, 15);
 		chunks = new Chunk[100][100];
-		for (int x = 0; x < SIZE; x++) {
-			for (int z = 0; z < SIZE; z++) {
+		for (int x = 0; x < sizeX; x++) {
+			for (int z = 0; z < sizeZ; z++) {
 				chunks[x][z] = new Chunk(x, 0, z, noise, random, this);
+				percentage = ((float) (x + 1) / sizeX) * 33;
 			}
+			Display.setTitle("Fox's Wars - WorldGenerate : " + (int) percentage + "%");
+			System.out.println(percentage);
 		}
 		new Logs().Info("FIN DE LA GENERATION DES CHUNKS");
-
-		for (int x = 0; x < SIZE; x++) {
-			for (int z = 0; z < SIZE; z++) {
-				chunks[x][z].createChunk();
+		for (int x = 0; x < sizeX; x++) {
+			for (int z = 0; z < sizeZ; z++) {
+				chunks[x][z].generateVegetation();
+				percentage = (((float) (x + 1) / sizeX) * 33) + 33;
 			}
+			Display.setTitle("Fox's Wars - WorldCreation : " + (int) percentage + "%");
+			System.out.println(percentage);
+		}
+		for (int x = 0; x < sizeX; x++) {
+			for (int z = 0; z < sizeZ; z++) {
+				chunks[x][z].createChunk();
+				percentage = (((float) (x + 1) / sizeX) * 33) + 66;
+			}
+			Display.setTitle("Fox's Wars - WorldCreation : " + (int) percentage + "%");
+			System.out.println(percentage);
 		}
 	}
-	
+
 	public void update() {
-		for (int x = 0; x < SIZE; x++) {
-			for (int z = 0; z < SIZE; z++) {
-				chunks[x][z].update();
+		Chunk.cycleToDay();
+		for (int x = moreSizeX; x < sizeX + moreSizeX; x++) {
+			for (int z = moreSizeZ; z < sizeZ + moreSizeZ; z++) {
+				if (getChunk(x, z) != null) {
+					chunks[x][z].update();
+				}
 			}
 		}
 	}
@@ -43,15 +65,14 @@ public class World {
 	public void render(Player player, Camera cam) {
 		float xP1 = (float) -(player.position.x / 16);
 		float zP1 = (float) -(player.position.z / 16);
-		player.render();
 		int renderDistance = 2;
-		for (int x = 0; x < SIZE; x++) {
-			for (int z = 0; z < SIZE; z++) {
-
-				if (xP1 > x - renderDistance && xP1 < x + renderDistance) {
-					if (zP1 > z - renderDistance && zP1 < z + renderDistance) {
-
-						chunks[x][z].render(player, cam);
+		for (int x = moreSizeX; x < sizeX + moreSizeX; x++) {
+			for (int z = moreSizeZ; z < sizeZ + moreSizeZ; z++) {
+				if (getChunk(x, z) != null) {
+					chunks[x][z].render(player, cam);
+				}
+				if (xP1 > x - renderDistance && xP1 < x + renderDistance + 1) {
+					if (zP1 > z - renderDistance && zP1 < z + renderDistance + 1) {
 					}
 				}
 			}
@@ -76,7 +97,7 @@ public class World {
 		float xx = x / Chunk.SIZE;
 		float zz = z / Chunk.SIZE;
 
-		if (xx < 0 || xx >= SIZE || zz < 0 || zz >= SIZE)
+		if (xx < 0 || xx >= sizeX || zz < 0 || zz >= sizeZ)
 			return;
 		Chunk chunk = chunks[(int) xx][(int) zz];
 		float x3 = x % Chunk.SIZE;
@@ -90,7 +111,7 @@ public class World {
 		float xx = x / Chunk.SIZE;
 		float zz = z / Chunk.SIZE;
 
-		if (xx < 0 || xx >= SIZE || zz < 0 || zz >= SIZE)
+		if (xx < 0 || xx >= sizeX || zz < 0 || zz >= sizeZ)
 			return;
 		Chunk chunk = chunks[(int) xx][(int) zz];
 		float x3 = x % Chunk.SIZE;
@@ -125,5 +146,79 @@ public class World {
 		return c;
 	}
 
+	public void lol() {
+		// if (getChunk(xP3, zP3 - 3) == null) {
+		// if (xP3 > 0 && zP3 - 3 > 0) {
+		// chunks[(int) xP3][(int) zP3 - 3] = new Chunk(xP3, 0, zP3 - 3, noise,
+		// random, this);
+		// chunks[(int) xP3][(int) zP3 - 3].createChunk();
+		//
+		// if (getChunk(xP3, zP3 - 2) == null) {
+		// chunks[(int) xP3][(int) zP3 - 2] = new Chunk(xP3, 0, zP3 - 2, noise,
+		// random, this);
+		// chunks[(int) xP3][(int) zP3 - 2].createChunk();
+		// }
+		// if (getChunk(xP3, zP3 - 1) == null) {
+		// chunks[(int) xP3][(int) zP3 - 1] = new Chunk(xP3, 0, zP3 - 1, noise,
+		// random, this);
+		// chunks[(int) xP3][(int) zP3 - 1].createChunk();
+		// }
+		//
+		// if (getChunk(xP3, zP3 + 2) == null) {
+		// chunks[(int) xP3][(int) zP3 + 2] = new Chunk(xP3, 0, zP3 + 2, noise,
+		// random, this);
+		// chunks[(int) xP3][(int) zP3 + 2].createChunk();
+		// }
+		// if (getChunk(xP3, zP3 + 1) == null) {
+		// chunks[(int) xP3][(int) zP3 + 1] = new Chunk(xP3, 0, zP3 + 1, noise,
+		// random, this);
+		// chunks[(int) xP3][(int) zP3 + 1].createChunk();
+		// }
+		//
+		//
+		// }
+		// }
+		// if (getChunk(xP3 - 3, zP3) == null || getChunk(xP3 - 2, zP3) == null
+		// || getChunk(xP3 - 1, zP3) == null
+		// || getChunk(xP3, zP3) == null) {
+		// if (xP3 - 3 > 0 && zP3 > 0) {
+		// chunks[(int) xP3 - 3][(int) zP3] = new Chunk(xP3 - 3, 0, zP3, noise,
+		// random, this);
+		// chunks[(int) xP3 - 3][(int) zP3].createChunk();
+		// if (getChunk(xP3 - 2, zP3) == null) {
+		// chunks[(int) xP3 - 2][(int) zP3] = new Chunk(xP3 - 2, 0, zP3, noise,
+		// random, this);
+		// chunks[(int) xP3 - 2][(int) zP3].createChunk();
+		// }
+		// if (getChunk(xP3 - 1, zP3) == null) {
+		//
+		// chunks[(int) xP3 - 1][(int) zP3] = new Chunk(xP3 - 1, 0, zP3, noise,
+		// random, this);
+		// chunks[(int) xP3 - 1][(int) zP3].createChunk();
+		// }
+		//
+		// if (getChunk(xP3 + 2, zP3) == null) {
+		// chunks[(int) xP3 + 2][(int) zP3] = new Chunk(xP3 + 2, 0, zP3, noise,
+		// random, this);
+		// chunks[(int) xP3 + 2][(int) zP3].createChunk();
+		// }
+		// if (getChunk(xP3 + 1, zP3) == null) {
+		//
+		// chunks[(int) xP3 + 1][(int) zP3] = new Chunk(xP3 + 1, 0, zP3, noise,
+		// random, this);
+		// chunks[(int) xP3 + 1][(int) zP3].createChunk();
+		// }
+		//
+		// }
+		//
+		// }
+		// if (getChunk(xP3, zP3) == null) {
+		// if (xP3 > 0 && zP3 > 0) {
+		// chunks[(int) xP3][(int) zP3] = new Chunk(xP3, 0, zP3, noise, random,
+		// this);
+		// chunks[(int) xP3][(int) zP3].createChunk();
+		// }
+		// }
+	}
 	// TESTE
 }

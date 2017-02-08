@@ -60,7 +60,7 @@ public class Color4f {
         int R = (rgb & 0xff0000) >> 16;
         int G = (rgb & 0xff00) >> 8;
         int B = (rgb & 0xff);
-
+        
         this.r = (float) R / 255f;
         this.g = (float) G / 255f;
         this.b = (float) B / 255f;

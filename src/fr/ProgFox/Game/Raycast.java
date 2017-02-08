@@ -1,6 +1,6 @@
 package fr.ProgFox.Game;
 
-import java.util.ArrayList;  
+import java.util.ArrayList;
 import java.util.List;
 import fr.ProgFox.Game.Entity.Player;
 import fr.ProgFox.Math.Vec3;
@@ -48,8 +48,6 @@ public class Raycast {
 				teste = 1;
 				return new Vec3(v.x, v.y, v.z);
 			}
-
-			
 
 		}
 

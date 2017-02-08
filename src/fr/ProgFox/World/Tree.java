@@ -3,6 +3,7 @@ package fr.ProgFox.World;
 import java.util.Random;
 
 import fr.ProgFox.Math.Mathf;
+import fr.ProgFox.Math.Vec4;
 import fr.ProgFox.World.Blocks.Block;
 
 public class Tree {
@@ -12,106 +13,99 @@ public class Tree {
 		this.random = random;
 	}
 
-	public void addTRee(Block[][][] blocks, int x, int y, int z) {
-		if (x < 0 || y < 0 || z < 0 || x >= Chunk.SIZE || y >= Chunk.HEIGHT || z >= Chunk.SIZE)
-			return;
-		if (random.nextFloat() > 0.2f) {
-			SimpleTree(blocks, x, y, z);
+	public void addTree(Block[][][] blocks, int x, int y, int z, World world) {
+		if (random.nextFloat() > 0.5f) {
+			SimpleTree(blocks, x, y, z, world);
 		} else {
-			SapinTree(blocks, x, y, z);
+			SapinTree(blocks, x, y, z, world);
 		}
 	}
 
-	public void SimpleTree(Block[][][] blocks, int x, int y, int z) {
-		if (x > Chunk.SIZE - 6 || z > Chunk.SIZE - 6)
-			return;
-		if (x < 6 || z < 6)
-			return;
-
+	public void SimpleTree(Block[][][] blocks, int x, int y, int z, World world) {
+		Block block = Block.LEAF;
 		for (int i = 0; i < 6; i++) {
-			blocks[x][y + i][z] = Block.WOOD;
+			world.addBlock(x, y + i, z, Block.WOOD);
 		}
-		blocks[x + 1][y + 4][z + 1] = Block.LEAF;
-		blocks[x + 2][y + 4][z + 1] = Block.LEAF;
-		blocks[x - 1][y + 4][z + 1] = Block.LEAF;
-		blocks[x - 2][y + 4][z + 1] = Block.LEAF;
-		blocks[x][y + 4][z + 1] = Block.LEAF;
 
-		blocks[x][y + 4][z + 2] = Block.LEAF;
-		blocks[x + 1][y + 4][z + 2] = Block.LEAF;
-		blocks[x - 1][y + 4][z + 2] = Block.LEAF;
+		world.addBlock(x + 1, y + 4, z + 1, block);
+		world.addBlock(x + 2, y + 4, z + 1, block);
+		world.addBlock(x - 1, y + 4, z + 1, block);
+		world.addBlock(x - 2, y + 4, z + 1, block);
+		world.addBlock(x, y + 4, z + 1, block);
 
-		blocks[x][y + 4][z - 1] = Block.LEAF;
-		blocks[x - 1][y + 4][z - 1] = Block.LEAF;
-		blocks[x - 2][y + 4][z - 1] = Block.LEAF;
-		blocks[x + 1][y + 4][z - 1] = Block.LEAF;
-		blocks[x + 2][y + 4][z - 1] = Block.LEAF;
+		world.addBlock(x, y + 4, z + 2, block);
+		world.addBlock(x + 1, y + 4, z + 2, block);
+		world.addBlock(x - 1, y + 4, z + 2, block);
 
-		blocks[x][y + 4][z - 2] = Block.LEAF;
-		blocks[x - 1][y + 4][z - 2] = Block.LEAF;
-		blocks[x + 1][y + 4][z - 2] = Block.LEAF;
+		world.addBlock(x, y + 4, z - 1, block);
+		world.addBlock(x - 1, y + 4, z - 1, block);
+		world.addBlock(x - 2, y + 4, z - 1, block);
+		world.addBlock(x + 1, y + 4, z - 1, block);
+		world.addBlock(x + 2, y + 4, z - 1, block);
 
-		blocks[x + 1][y + 4][z] = Block.LEAF;
-		blocks[x - 1][y + 4][z] = Block.LEAF;
-		blocks[x + 2][y + 4][z] = Block.LEAF;
-		blocks[x - 2][y + 4][z] = Block.LEAF;
+		world.addBlock(x, y + 4, z - 2, block);
+		world.addBlock(x - 1, y + 4, z - 2, block);
+		world.addBlock(x + 1, y + 4, z - 2, block);
+
+		world.addBlock(x + 1, y + 4, z, block);
+		world.addBlock(x - 1, y + 4, z, block);
+		world.addBlock(x + 2, y + 4, z, block);
+		world.addBlock(x - 2, y + 4, z, block);
 		for (int x2 = 0; x2 < 3; x2++) {
 			for (int z2 = 0; z2 < 3; z2++) {
-				blocks[x + x2][y + 5][z + z2] = Block.LEAF;
-				blocks[x - x2][y + 5][z - z2] = Block.LEAF;
-				blocks[x + x2][y + 5][z - z2] = Block.LEAF;
-				blocks[x - x2][y + 5][z + z2] = Block.LEAF;
+				world.addBlock(x + x2, y + 5, z + z2, block);
+				world.addBlock(x - x2, y + 5, z - z2, block);
+				world.addBlock(x + x2, y + 5, z - z2, block);
+				world.addBlock(x - x2, y + 5, z + z2, block);
 			}
 		}
-		blocks[x + 1][y + 6][z + 1] = Block.LEAF;
-		blocks[x + 2][y + 6][z + 1] = Block.LEAF;
-		blocks[x - 1][y + 6][z + 1] = Block.LEAF;
-		blocks[x - 2][y + 6][z + 1] = Block.LEAF;
-		blocks[x][y + 6][z + 1] = Block.LEAF;
+		world.addBlock(x + 1, y + 6, z + 1, block);
+		world.addBlock(x + 2, y + 6, z + 1, block);
+		world.addBlock(x - 1, y + 6, z + 1, block);
+		world.addBlock(x - 2, y + 6, z + 1, block);
+		world.addBlock(x, y + 6, z + 1, block);
 
-		blocks[x][y + 6][z + 2] = Block.LEAF;
-		blocks[x + 1][y + 6][z + 2] = Block.LEAF;
-		blocks[x - 1][y + 6][z + 2] = Block.LEAF;
+		world.addBlock(x, y + 6, z + 2, block);
+		world.addBlock(x + 1, y + 6, z + 2, block);
+		world.addBlock(x - 1, y + 6, z + 2, block);
 
-		blocks[x][y + 6][z - 1] = Block.LEAF;
-		blocks[x - 1][y + 6][z - 1] = Block.LEAF;
-		blocks[x - 2][y + 6][z - 1] = Block.LEAF;
-		blocks[x + 1][y + 6][z - 1] = Block.LEAF;
-		blocks[x + 2][y + 6][z - 1] = Block.LEAF;
+		world.addBlock(x, y + 6, z - 1, block);
+		world.addBlock(x - 1, y + 6, z - 1, block);
+		world.addBlock(x - 2, y + 6, z - 1, block);
+		world.addBlock(x + 1, y + 6, z - 1, block);
+		world.addBlock(x + 2, y + 6, z - 1, block);
 
-		blocks[x][y + 6][z - 2] = Block.LEAF;
-		blocks[x - 1][y + 6][z - 2] = Block.LEAF;
-		blocks[x + 1][y + 6][z - 2] = Block.LEAF;
+		world.addBlock(x, y + 6, z - 2, block);
+		world.addBlock(x - 1, y + 6, z - 2, block);
+		world.addBlock(x + 1, y + 6, z - 2, block);
 
-		blocks[x + 1][y + 6][z] = Block.LEAF;
-		blocks[x - 1][y + 6][z] = Block.LEAF;
-		blocks[x + 2][y + 6][z] = Block.LEAF;
-		blocks[x - 2][y + 6][z] = Block.LEAF;
+		world.addBlock(x + 1, y + 6, z, block);
+		world.addBlock(x - 1, y + 6, z, block);
+		world.addBlock(x + 2, y + 6, z, block);
+		world.addBlock(x - 2, y + 6, z, block);
 
-		blocks[x][y + 7][z] = Block.LEAF;
-		blocks[x][y + 7][z + 1] = Block.LEAF;
-		blocks[x][y + 7][z - 1] = Block.LEAF;
-		blocks[x + 1][y + 7][z] = Block.LEAF;
-		blocks[x - 1][y + 7][z] = Block.LEAF;
+		world.addBlock(x, y + 7, z, block);
+		world.addBlock(x, y + 7, z + 1, block);
+		world.addBlock(x, y + 7, z - 1, block);
+		world.addBlock(x + 1, y + 7, z, block);
+		world.addBlock(x - 1, y + 7, z, block);
 
-		blocks[x + 1][y + 7][z + 1] = Block.LEAF;
-		blocks[x - 1][y + 7][z - 1] = Block.LEAF;
-		blocks[x + 1][y + 7][z - 1] = Block.LEAF;
-		blocks[x - 1][y + 7][z + 1] = Block.LEAF;
+		world.addBlock(x + 1, y + 7, z + 1, block);
+		world.addBlock(x - 1, y + 7, z - 1, block);
+		world.addBlock(x + 1, y + 7, z - 1, block);
+		world.addBlock(x - 1, y + 7, z + 1, block);
 
-		blocks[x][y + 7][z + 2] = Block.LEAF;
-		blocks[x][y + 7][z - 2] = Block.LEAF;
-		blocks[x + 2][y + 7][z] = Block.LEAF;
-		blocks[x - 2][y + 7][z] = Block.LEAF;
+		world.addBlock(x, y + 7, z + 2, block);
+		world.addBlock(x, y + 7, z - 2, block);
+		world.addBlock(x + 2, y + 7, z, block);
+		world.addBlock(x - 2, y + 7, z, block);
 	}
 
-	public void SapinTree(Block[][][] blocks, int x, int y, int z) {
-		if (x > Chunk.SIZE - 6 || z > Chunk.SIZE - 6)
-			return;
-		if (x < 6 || z < 6)
-			return;
+	public void SapinTree(Block[][][] blocks, int x, int y, int z, World world) {
+		Block block = Block.SAPINLEAF;
+		block.setColor(new Vec4(0, 0.55f, 0, 1));
 		for (int i = 0; i < 10; i++) {
-			blocks[x][y + i][z] = Block.WOOD;
+			world.addBlock(x, y + i, z, Block.WOOD);
 		}
 		for (int a = 0; a < 7; a++) {
 			for (int b = 0; b < 8; b++) {
@@ -124,7 +118,7 @@ public class Tree {
 
 					size -= (float) b / 8f;
 					if (l < 3.5f * size) {
-						blocks[(int) (x + a2)][(int) (y + b2 + 7)][(int) (z + c2)] = Block.SAPINLEAF;
+						world.addBlock((int) (x + a2), (int) (y + b2 + 7), (int) (z + c2), block);
 					}
 				}
 			}

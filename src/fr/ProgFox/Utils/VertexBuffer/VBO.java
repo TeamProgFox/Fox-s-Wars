@@ -1,6 +1,6 @@
 package fr.ProgFox.Utils.VertexBuffer;
 
-import static org.lwjgl.opengl.GL11.*;  
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 
@@ -9,6 +9,7 @@ import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
 
 import fr.ProgFox.Game.Entity.Player;
+import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Shader.Shader;
@@ -54,7 +55,7 @@ public class VBO {
 		shader.bind();
 		shader.setUniform("perspective", cam.getPerspectiveProjection());
 		shader.setUniform("perspectivePosition", player.position);
-		shader.setUniform("light", 1);
+		shader.setUniform("light", Var.light);
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -69,7 +70,7 @@ public class VBO {
 		shader.bind();
 		shader.setUniform("perspective", cam.getPerspectiveProjection());
 		shader.setUniform("perspectivePosition", player.position);
-		shader.setUniform("light", 1);
+		shader.setUniform("light", Var.light);
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);

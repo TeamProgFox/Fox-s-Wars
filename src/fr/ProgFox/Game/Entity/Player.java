@@ -213,6 +213,7 @@ public class Player extends Entity {
 			// System.out.println("BLOCK = " + selectedBlock);
 
 		}
+		System.out.println(Var.selectedBlock.getColor().x + " / " + Var.selectedBlock.getColor().y + " / " + Var.selectedBlock.getColor().z);
 		isGrounded(xDir, yDir, zDir);
 		removeAndAddBlockGestion();
 		actionTimeGestion();

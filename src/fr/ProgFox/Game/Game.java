@@ -19,12 +19,12 @@ public class Game {
 	public Game() {
 
 		world = new World(-6956537684988609768L);
-		int pos = World.SIZE * 16;
+		int pos = World.sizeX * 16;
 		cam = new Camera(new Vec3(-pos / 2, -30, -pos / 2), world);
 		entityManager = new EntityManager();
 		cube = new Cube(new Vec3(1, 1, 1));
 
-		cam.setPerspectiveProjection(70.0f, 0.1f, 1000.0f);
+		cam.setPerspectiveProjection(70.0f, 0.01f, 10000.0f);
 		entityManager.add(cam.player);
 		skybox = new SkyBox(new Vec3(1, 1, 1));
 

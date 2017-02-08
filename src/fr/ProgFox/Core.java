@@ -10,21 +10,17 @@ import org.lwjgl.opengl.Display;
 
 import fr.ProgFox.Game.Game;
 import fr.ProgFox.Game.Raycast;
-import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Renderer.DisplayManager;
 import fr.ProgFox.World.World;
 
 public class Core {
-	public static final int FRAME_CAP = 60000;
-	boolean running = false;
+	public static final int FRAME_CAP = 600000;
+	public static boolean running = false;
 	public static int frames = 0;
 	public static int teste = 1;
-	Camera cam;
-	World world;
 	Game game;
 	public static int width = 1200, height = 600;
-	private Random seeds;
 
 	public Core() {
 		DisplayManager.create(width, height, "Fox's Wars");
@@ -42,9 +38,10 @@ public class Core {
 	}
 
 	public void render() {
-		if (Display.wasResized()) {
+		if (Display.wasResized())
 			glViewport(0, 0, Display.getWidth(), Display.getHeight());
-		}
+		if (!Mouse.isGrabbed())
+			return;
 		DisplayManager.clearBuffers();
 		game.render();
 	}
