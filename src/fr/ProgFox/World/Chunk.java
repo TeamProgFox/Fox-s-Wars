@@ -11,10 +11,12 @@ import org.lwjgl.BufferUtils;
 
 import fr.ProgFox.Game.Entity.Player;
 import fr.ProgFox.Game.Variables.Var;
+import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Math.Vec4;
 import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Shader.ColorShader;
 import fr.ProgFox.Shader.Shader;
+import fr.ProgFox.Utils.VertexBuffer.CubeLine;
 import fr.ProgFox.World.Blocks.Block;
 
 public class Chunk {
@@ -33,6 +35,7 @@ public class Chunk {
 	private World world;
 	private Tree tree;
 	private Random random;
+	private CubeLine cl;
 
 	public Chunk(float x, float y, float z, Noise noise, Random seed, World world) {
 		this.noise = noise;
@@ -41,6 +44,11 @@ public class Chunk {
 		this.z = z;
 		this.world = world;
 		this.random = seed;
+		this.cl = new CubeLine(new Vec3(1, 1, 1));
+		int x2 = (int) ((int) this.x * SIZE);
+		int y2 = (int) ((int) this.y * HEIGHT);
+		int z2 = (int) ((int) this.z * SIZE);
+		cl.add(x2, y2, z2, SIZE, HEIGHT, SIZE, false, 2);
 		tree = new Tree(random);
 		blocks = new Block[SIZE][HEIGHT][SIZE];
 		shader = new ColorShader();
@@ -295,6 +303,12 @@ public class Chunk {
 		glDrawArrays(GL_QUADS, 0, bufferSize);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(0);
+		if(Var.flyMode){
+
+			cl.render(player, GL_LINES, cam);
+		}
+		
+		
 	}
 
 	public Block getBlock(float x, float y, float z) {

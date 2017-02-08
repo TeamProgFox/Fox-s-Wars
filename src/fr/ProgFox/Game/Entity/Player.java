@@ -11,6 +11,7 @@ import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Shader.ColorShader;
 import fr.ProgFox.Shader.Shader;
+import fr.ProgFox.Utils.VertexBuffer.CubeLine;
 import fr.ProgFox.Utils.VertexBuffer.VBO;
 import fr.ProgFox.World.Chunk;
 import fr.ProgFox.World.World;
@@ -23,7 +24,7 @@ public class Player extends Entity {
 	public World world;
 	public Raycast raycast;
 	private boolean updateVBO = true;
-	private VBO select;
+	private CubeLine select;
 	private Shader shader;
 	int vbo;
 	private Camera cam;
@@ -33,7 +34,7 @@ public class Player extends Entity {
 		this.cam = cam;
 		Var.selectedPosition = new Vec3(0, 0, 0);
 		raycast = new Raycast(this);
-		select = new VBO();
+		select = new CubeLine(new Vec3(1, 1, 1));
 		shader = new ColorShader();
 		init();
 	}
@@ -42,46 +43,8 @@ public class Player extends Entity {
 		int x2 = (int) 0;
 		int y2 = (int) 0;
 		int z2 = (int) 0;
-		select.init(24, shader);
-		select.addVertex(x2, y2, z2, new Vec3(1, 1, 1));
-		select.addVertex(x2 + 1, y2, z2, new Vec3(1, 1, 1));
 
-		select.addVertex(x2, y2 + 1, z2, new Vec3(1, 1, 1));
-		select.addVertex(x2 + 1, y2 + 1, z2, new Vec3(1, 1, 1));
-
-		select.addVertex(x2, y2, z2 + 1, new Vec3(1, 1, 1));
-		select.addVertex(x2 + 1, y2, z2 + 1, new Vec3(1, 1, 1));
-
-		select.addVertex(x2, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
-		select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
-
-		select.addVertex(x2, y2, z2, new Vec3(1, 1, 1));
-		select.addVertex(x2, y2, z2 + 1, new Vec3(1, 1, 1));
-
-		select.addVertex(x2, y2 + 1, z2, new Vec3(1, 1, 1));
-		select.addVertex(x2, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
-
-		select.addVertex(x2 + 1, y2, z2, new Vec3(1, 1, 1));
-		select.addVertex(x2 + 1, y2, z2 + 1, new Vec3(1, 1, 1));
-
-		select.addVertex(x2 + 1, y2 + 1, z2, new Vec3(1, 1, 1));
-		select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
-
-		select.addVertex(x2, y2, z2, new Vec3(1, 1, 1));
-		select.addVertex(x2, y2 + 1, z2, new Vec3(1, 1, 1));
-
-		select.addVertex(x2 + 1, y2, z2, new Vec3(1, 1, 1));
-		select.addVertex(x2 + 1, y2 + 1, z2, new Vec3(1, 1, 1));
-
-		select.addVertex(x2, y2, z2 + 1, new Vec3(1, 1, 1));
-		select.addVertex(x2, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
-
-		select.addVertex(x2 + 1, y2, z2 + 1, new Vec3(1, 1, 1));
-		select.addVertex(x2 + 1, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
-
-		glLineWidth(2);
-		select.end();
-
+		select.add(x2, y2, z2, 1, 1, 1, false, 2);
 	}
 
 	public void update() {
@@ -99,45 +62,8 @@ public class Player extends Entity {
 		int y2 = (int) Var.selectedPosition.y;
 		int z2 = (int) Var.selectedPosition.z;
 		if (updateVBO) {
+			select.update(x2, y2, z2, 1, 1, 1, false, 2);
 
-			select.clearBuffer();
-			select.update(x2, y2, z2, new Vec3(1, 1, 1));
-			select.update(x2 + 1, y2, z2, new Vec3(1, 1, 1));
-
-			select.update(x2, y2 + 1, z2, new Vec3(1, 1, 1));
-			select.update(x2 + 1, y2 + 1, z2, new Vec3(1, 1, 1));
-
-			select.update(x2, y2, z2 + 1, new Vec3(1, 1, 1));
-			select.update(x2 + 1, y2, z2 + 1, new Vec3(1, 1, 1));
-
-			select.update(x2, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
-			select.update(x2 + 1, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
-
-			select.update(x2, y2, z2, new Vec3(1, 1, 1));
-			select.update(x2, y2, z2 + 1, new Vec3(1, 1, 1));
-
-			select.update(x2, y2 + 1, z2, new Vec3(1, 1, 1));
-			select.update(x2, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
-
-			select.update(x2 + 1, y2, z2, new Vec3(1, 1, 1));
-			select.update(x2 + 1, y2, z2 + 1, new Vec3(1, 1, 1));
-
-			select.update(x2 + 1, y2 + 1, z2, new Vec3(1, 1, 1));
-			select.update(x2 + 1, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
-
-			select.update(x2, y2, z2, new Vec3(1, 1, 1));
-			select.update(x2, y2 + 1, z2, new Vec3(1, 1, 1));
-
-			select.update(x2 + 1, y2, z2, new Vec3(1, 1, 1));
-			select.update(x2 + 1, y2 + 1, z2, new Vec3(1, 1, 1));
-
-			select.update(x2, y2, z2 + 1, new Vec3(1, 1, 1));
-			select.update(x2, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
-
-			select.update(x2 + 1, y2, z2 + 1, new Vec3(1, 1, 1));
-			select.update(x2 + 1, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
-
-			select.updateEnd();
 			updateVBO = false;
 		}
 
@@ -213,7 +139,6 @@ public class Player extends Entity {
 			// System.out.println("BLOCK = " + selectedBlock);
 
 		}
-		System.out.println(Var.selectedBlock.getColor().x + " / " + Var.selectedBlock.getColor().y + " / " + Var.selectedBlock.getColor().z);
 		isGrounded(xDir, yDir, zDir);
 		removeAndAddBlockGestion();
 		actionTimeGestion();

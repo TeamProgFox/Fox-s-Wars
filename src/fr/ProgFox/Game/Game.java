@@ -6,7 +6,9 @@ import fr.ProgFox.Game.Entity.EntityManager;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Utils.VertexBuffer.Cube;
+import fr.ProgFox.Utils.VertexBuffer.CubeLine;
 import fr.ProgFox.Utils.VertexBuffer.SkyBox;
+import fr.ProgFox.Utils.VertexBuffer.VBO;
 import fr.ProgFox.World.World;
 
 public class Game {
@@ -15,7 +17,6 @@ public class Game {
 	private Cube cube;
 	private EntityManager entityManager;
 	private SkyBox skybox;
-
 	public Game() {
 
 		world = new World(-6956537684988609768L);
@@ -23,7 +24,7 @@ public class Game {
 		cam = new Camera(new Vec3(-pos / 2, -30, -pos / 2), world);
 		entityManager = new EntityManager();
 		cube = new Cube(new Vec3(1, 1, 1));
-
+		
 		cam.setPerspectiveProjection(70.0f, 0.01f, 10000.0f);
 		entityManager.add(cam.player);
 		skybox = new SkyBox(new Vec3(1, 1, 1));
@@ -41,7 +42,7 @@ public class Game {
 	public void render() {
 		entityManager.render();
 		world.render(cam.player, cam);
-
+		
 	}
 
 	public void renderGUI() {
