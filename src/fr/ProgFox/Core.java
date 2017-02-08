@@ -1,6 +1,6 @@
 package fr.ProgFox;
 
-import static org.lwjgl.opengl.GL11.*; 
+import static org.lwjgl.opengl.GL11.*;
 
 import java.util.Random;
 
@@ -11,9 +11,9 @@ import org.lwjgl.opengl.Display;
 import fr.ProgFox.Game.Game;
 import fr.ProgFox.Game.Raycast;
 import fr.ProgFox.Math.Vec3;
+import fr.ProgFox.Renderer.Camera;
+import fr.ProgFox.Renderer.DisplayManager;
 import fr.ProgFox.World.World;
-import fr.ProgFox.renderer.Camera;
-import fr.ProgFox.renderer.DisplayManager;
 
 public class Core {
 	public static final int FRAME_CAP = 60000;
@@ -26,16 +26,9 @@ public class Core {
 	public static int width = 1200, height = 600;
 	private Random seeds;
 
-	// ----
 	public Core() {
 		DisplayManager.create(width, height, "Fox's Wars");
-		seeds = new Random();
-		System.out.println(seeds.nextLong());
-		world = new World(-6956537684988609768L);
-		int posX = World.SIZE * 16;
-		int posZ = World.SIZE * 16;
-		cam = new Camera(new Vec3(-posX / 2, -30, -posZ / 2), world);
-		game = new Game(cam, world);
+		game = new Game();
 	}
 
 	public void update() {
@@ -46,7 +39,6 @@ public class Core {
 		if (!Mouse.isGrabbed())
 			return;
 		game.update();
-		game.input();
 	}
 
 	public void render() {
@@ -61,6 +53,7 @@ public class Core {
 		game.renderGUI();
 	}
 
+	// ----
 	public void start() {
 		running = true;
 		loop();
@@ -109,8 +102,7 @@ public class Core {
 			}
 			if (System.currentTimeMillis() - timer > 1000) {
 				timer += 1000;
-				Display.setTitle("Fox's Wars : FPS = " + frames + "/ TPS = " + ticks + " | coords : "
-						+ cam.getPosition().getX() + "/" + cam.getPosition().getY() + "/" + cam.getPosition().getZ());
+				Display.setTitle("Fox's Wars : FPS = " + frames + "/ TPS = " + ticks);
 				ticks = 0;
 				Raycast.teste = 0;
 				frames = 0;

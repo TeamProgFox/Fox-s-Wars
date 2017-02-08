@@ -1,12 +1,14 @@
 package fr.ProgFox.Game.Entity;
 
+import static org.lwjgl.opengl.GL11.*;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
+
 import fr.ProgFox.Game.Raycast;
-import fr.ProgFox.Math.Mat4;
-import fr.ProgFox.Math.Transform;
+import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Math.Vec3;
+import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Shader.ColorShader;
 import fr.ProgFox.Shader.Shader;
 import fr.ProgFox.Utils.VertexBuffer.VBO;
@@ -14,33 +16,22 @@ import fr.ProgFox.World.Chunk;
 import fr.ProgFox.World.World;
 import fr.ProgFox.World.Blocks.Block;
 
-import static org.lwjgl.opengl.GL11.*;
-
 public class Player extends Entity {
 	public Vec3 position;
 	public Vec3 rotation;
 	public boolean gravity = true;
-	public boolean grounded = false;
-	public float gravityFactor = 0;
-	public float jumpFactor = 0;
-	public boolean isJumping = false;
-	public float timeToJump = 0;
 	public World world;
-	public boolean flyMode = false;
-	public float breakSpeedFactor = 0;
-	public float InfoSpeedFactor = 0;
-	public float breakSpeedFactor2 = 0;
 	public Raycast raycast;
-	private Block selectedBlock;
-	public Vec3 selectedPosition;
-	private boolean teste = true;
+	private boolean updateVBO = true;
 	private VBO select;
 	private Shader shader;
 	int vbo;
+	private Camera cam;
 
-	public Player(World world) {
+	public Player(World world, Camera cam) {
 		this.world = world;
-		selectedPosition = new Vec3(0, 0, 0);
+		this.cam = cam;
+		Var.selectedPosition = new Vec3(0, 0, 0);
 		raycast = new Raycast(this);
 		select = new VBO();
 		shader = new ColorShader();
@@ -94,21 +85,21 @@ public class Player extends Entity {
 	}
 
 	public void update() {
+		input();
 		if (Keyboard.next()) {
 			if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
-				flyMode = !flyMode;
+				Var.flyMode = !Var.flyMode;
 			}
 		}
 		raycast.update();
 	}
 
 	public void render() {
-		int x2 = (int) selectedPosition.x;
-		int y2 = (int) selectedPosition.y;
-		int z2 = (int) selectedPosition.z;
-		if (teste) {
+		int x2 = (int) Var.selectedPosition.x;
+		int y2 = (int) Var.selectedPosition.y;
+		int z2 = (int) Var.selectedPosition.z;
+		if (updateVBO) {
 
-			
 			select.clearBuffer();
 			select.update(x2, y2, z2, new Vec3(1, 1, 1));
 			select.update(x2 + 1, y2, z2, new Vec3(1, 1, 1));
@@ -147,10 +138,10 @@ public class Player extends Entity {
 			select.update(x2 + 1, y2 + 1, z2 + 1, new Vec3(1, 1, 1));
 
 			select.updateEnd();
-			teste = false;
+			updateVBO = false;
 		}
 
-		select.render(this, GL_LINES);
+		select.render(this, GL_LINES, cam);
 
 	}
 
@@ -158,7 +149,6 @@ public class Player extends Entity {
 	float sensibilite = 3;
 
 	public void input() {
-		update();
 		float xDir = 0, yDir = 0, zDir = 0;
 		rotation.addX(-Mouse.getDY() / sensibilite);
 		rotation.addY(-Mouse.getDX() / sensibilite);
@@ -198,35 +188,35 @@ public class Player extends Entity {
 			zDir = getRight().mul(new Vec3(-speed, 0, -speed)).getZ();
 			move(xDir, yDir, zDir);
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && grounded && !flyMode) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && Var.grounded && !Var.flyMode) {
 
-			isJumping = true;
+			Var.isJumping = true;
 
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && flyMode) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && Var.flyMode) {
 
 			yDir = -speed;
 			move(0, yDir, 0);
 
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && flyMode) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && Var.flyMode) {
 			yDir = speed;
 			move(0, yDir, 0);
 		}
 
 		if (raycast.getBlock(world) != null) {
 
-			selectedBlock = world.getBlock(raycast.getBlock(world).x, raycast.getBlock(world).y,
+			Var.selectedBlock = world.getBlock(raycast.getBlock(world).x, raycast.getBlock(world).y,
 					raycast.getBlock(world).z);
-			selectedPosition = new Vec3(raycast.getBlock(world).x, raycast.getBlock(world).y,
+			Var.selectedPosition = new Vec3(raycast.getBlock(world).x, raycast.getBlock(world).y,
 					raycast.getBlock(world).z);
 			// System.out.println("BLOCK = " + selectedBlock);
 
 		}
-		teste(xDir, yDir, zDir);
+		isGrounded(xDir, yDir, zDir);
 		removeAndAddBlockGestion();
 		actionTimeGestion();
-		if (!flyMode)
+		if (!Var.flyMode)
 			gravity();
 	}
 
@@ -238,18 +228,18 @@ public class Player extends Entity {
 		if (Chunk.canBreakBlock) {
 			if (Mouse.isButtonDown(0)) {
 
-				world.removeBlock(selectedPosition.x, selectedPosition.y, selectedPosition.z);
+				world.removeBlock(Var.selectedPosition.x, Var.selectedPosition.y, Var.selectedPosition.z);
 				lastBlock = null;
 				Chunk.canBreakBlock = false;
 			}
 			if (Mouse.isButtonDown(1)) {
-				int x22 = (int) selectedPosition.x;
-				int y22 = (int) selectedPosition.y;
-				int z22 = (int) selectedPosition.z;
+				int x22 = (int) Var.selectedPosition.x;
+				int y22 = (int) Var.selectedPosition.y;
+				int z22 = (int) Var.selectedPosition.z;
 
-				float x33 = selectedPosition.x;
-				float y33 = selectedPosition.y;
-				float z33 = selectedPosition.z;
+				float x33 = Var.selectedPosition.x;
+				float y33 = Var.selectedPosition.y;
+				float z33 = Var.selectedPosition.z;
 
 				float vx = x33 - x22;
 				float vy = y33 - y22;
@@ -279,52 +269,44 @@ public class Player extends Entity {
 
 	public void gravity() {
 
-		if (!flyMode)
-			gravityFactor += 0.01f;
+		if (!Var.flyMode)
+			Var.gravityFactor += 0.01f;
 
-		if (isJumping) {
-			jumpFactor += 0.02f;
+		if (Var.isJumping) {
+			Var.jumpFactor += 0.02f;
 
-			move(0, -jumpFactor, 0);
+			move(0, -Var.jumpFactor, 0);
 
 		}
-		if (jumpFactor > 0.27f) {
-			jumpFactor = 0;
-			isJumping = false;
+		if (Var.jumpFactor > 0.27f) {
+			Var.jumpFactor = 0;
+			Var.isJumping = false;
 		}
 		if (gravity) {
-			if (grounded) {
-				gravityFactor = 0;
+			if (Var.grounded) {
+				Var.gravityFactor = 0;
 			}
-			if (!grounded) {
+			if (!Var.grounded) {
 
 			}
 
-			move(0, gravityFactor, 0);
+			move(0, Var.gravityFactor, 0);
 
-		}
-		if (grounded) {
-			timeToJump += 0.1f;
 		}
 	}
 
 	public void actionTimeGestion() {
 
-		breakSpeedFactor += 0.2f;
-		if (breakSpeedFactor > 2) {
-			breakSpeedFactor = 0;
-		}
-
-		InfoSpeedFactor += 0.1f;
-		if (InfoSpeedFactor > 1.5f) {
-			InfoSpeedFactor = 0;
-			teste = true;
+		Var.InfoSpeedFactor += 0.1f;
+		if (Var.InfoSpeedFactor > 1.5f) {
+			Var.InfoSpeedFactor = 0;
+			updateVBO = true;
 		}
 		if (Chunk.canBreakBlock == false) {
-			breakSpeedFactor2 += 0.1f;
-			if (breakSpeedFactor2 > 1.5F) {
+			Var.breakSpeedFactor += 0.1f;
+			if (Var.breakSpeedFactor > 1.5F) {
 				Chunk.canBreakBlock = true;
-				breakSpeedFactor2 = 0;
+				Var.breakSpeedFactor = 0;
 			}
 		}
 	}
@@ -339,18 +321,18 @@ public class Player extends Entity {
 		if (!isColliding(0, 0, zDir)) {
 			position.addZ(zDir);
 		}
-		if (flyMode) {
+		if (Var.flyMode) {
 			position.addX(xDir);
 			position.addY(yDir);
 			position.addZ(zDir);
 		}
 	}
 
-	public void teste(float xDir, float yDir, float zDir) {
+	public void isGrounded(float xDir, float yDir, float zDir) {
 		if (!isColliding(0, yDir + 1, 0)) {
-			grounded = false;
+			Var.grounded = false;
 		} else {
-			grounded = true;
+			Var.grounded = true;
 		}
 	}
 
@@ -426,34 +408,6 @@ public class Player extends Entity {
 		r.setZ(sinY);
 
 		return r;
-	}
-
-	public Vec3 getDirection() {
-
-		Vec3 r = new Vec3();
-		float cosY = (float) Math.cos(Math.toRadians(rotation.getY() + 90));
-		float sinY = (float) Math.sin(Math.toRadians(rotation.getY() + 90));
-		float cosP = (float) Math.cos(Math.toRadians(rotation.getX()));
-		float sinP = (float) Math.sin(Math.toRadians(rotation.getX()));
-
-		r.setX(cosY * cosP);
-		r.setY(sinP);
-		r.setZ(sinY * cosP);
-		return r;
-	}
-
-	public Mat4 getPerspectiveProjection() {
-		Transform t = new Transform();
-
-		Transform t2 = new Transform();
-
-		t.rotate(new Vec3(1, 0, 0), -rotation.getX());
-
-		t2.rotate(new Vec3(0, 1, 0), rotation.getY());
-
-		Mat4 p = new Mat4().perspective(70.0F, (float) Display.getWidth() / (float) Display.getHeight(), 0.1F, 1000000.0F);
-		return p.mul(t.toMatrix().mul(t2.toMatrix()));
-
 	}
 
 }

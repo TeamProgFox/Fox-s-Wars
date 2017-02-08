@@ -10,6 +10,7 @@ import org.lwjgl.BufferUtils;
 
 import fr.ProgFox.Game.Entity.Player;
 import fr.ProgFox.Math.Vec3;
+import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Shader.Shader;
 
 public class VBO {
@@ -31,7 +32,7 @@ public class VBO {
 		buffer.clear();
 	}
 	public void end() {
-		buffer.flip();
+			buffer.flip();
 		vbo = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
@@ -49,9 +50,9 @@ public class VBO {
 		}
 	}
 
-	public void render(Player player, int mode) {
+	public void render(Player player, int mode, Camera cam) {
 		shader.bind();
-		shader.setUniform("perspective", player.getPerspectiveProjection());
+		shader.setUniform("perspective", cam.getPerspectiveProjection());
 		shader.setUniform("perspectivePosition", player.position);
 		shader.setUniform("light", 1);
 		glEnableVertexAttribArray(0);
@@ -64,9 +65,9 @@ public class VBO {
 		glDisableVertexAttribArray(0);
 	}
 
-	public void renderSkyBox(Player player) {
+	public void renderSkyBox(Player player, Camera cam) {
 		shader.bind();
-		shader.setUniform("perspective", player.getPerspectiveProjection());
+		shader.setUniform("perspective", cam.getPerspectiveProjection());
 		shader.setUniform("perspectivePosition", player.position);
 		shader.setUniform("light", 1);
 		glEnableVertexAttribArray(0);

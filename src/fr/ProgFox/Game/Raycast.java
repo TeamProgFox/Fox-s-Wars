@@ -1,6 +1,6 @@
 package fr.ProgFox.Game;
 
-import java.util.ArrayList; 
+import java.util.ArrayList;  
 import java.util.List;
 import fr.ProgFox.Game.Entity.Player;
 import fr.ProgFox.Math.Vec3;
@@ -14,7 +14,7 @@ public class Raycast {
 	public Raycast(Player player) {
 		this.player = player;
 		this.points = new ArrayList<Vec3>();
-		for (int i = 0; i < 2 * 32; i++) {
+		for (int i = 0; i < 3 * 16; i++) {
 			points.add(new Vec3());
 		}
 	}

@@ -4,10 +4,11 @@ import java.util.Random;
 
 import fr.ProgFox.Game.Entity.Player;
 import fr.ProgFox.Logs.Logs;
+import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.World.Blocks.Block;
 
 public class World {
-	public static final int SIZE = 16;
+	public static final int SIZE = 1;
 	public Noise noise;
 	public Chunk[][] chunks;
 	private Random random;
@@ -39,9 +40,9 @@ public class World {
 		}
 	}
 
-	public void render(Player player) {
-		float xP1 = (float) Math.abs(player.position.x / 16);
-		float zP1 = (float) Math.abs(player.position.z / 16);
+	public void render(Player player, Camera cam) {
+		float xP1 = (float) -(player.position.x / 16);
+		float zP1 = (float) -(player.position.z / 16);
 		player.render();
 		int renderDistance = 2;
 		for (int x = 0; x < SIZE; x++) {
@@ -50,7 +51,7 @@ public class World {
 				if (xP1 > x - renderDistance && xP1 < x + renderDistance) {
 					if (zP1 > z - renderDistance && zP1 < z + renderDistance) {
 
-						chunks[x][z].render(player);
+						chunks[x][z].render(player, cam);
 					}
 				}
 			}

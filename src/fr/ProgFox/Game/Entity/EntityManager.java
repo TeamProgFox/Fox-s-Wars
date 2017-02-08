@@ -16,12 +16,6 @@ public class EntityManager extends Entity {
 		}
 	}
 
-	public void input() {
-		for (Entity a : e) {
-			a.input();
-		}
-	}
-
 	public void render() {
 		for (Entity a : e) {
 			a.render();

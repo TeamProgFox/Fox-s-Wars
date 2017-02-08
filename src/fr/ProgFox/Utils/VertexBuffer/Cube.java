@@ -1,10 +1,8 @@
 package fr.ProgFox.Utils.VertexBuffer;
 
-import java.nio.FloatBuffer;
-
 import fr.ProgFox.Game.Entity.Player;
 import fr.ProgFox.Math.Vec3;
-import fr.ProgFox.Math.Vec4;
+import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Shader.ColorShader;
 import fr.ProgFox.Shader.Shader;
 
@@ -158,7 +156,7 @@ public class Cube {
 	}
 
 
-	public void render(Player player, int mode) {
-		cube.render(player, mode);
+	public void render(Player player, int mode, Camera cam) {
+		cube.render(player, mode, cam);
 	}
 }

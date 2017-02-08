@@ -1,19 +1,18 @@
 package fr.ProgFox.World;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.*; 
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL31.*;
 
 import java.nio.FloatBuffer;
 import java.util.Random;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL31;
 
 import fr.ProgFox.Game.Entity.Player;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Math.Vec4;
+import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Shader.ColorShader;
 import fr.ProgFox.Shader.Shader;
 import fr.ProgFox.World.Blocks.Block;
@@ -30,13 +29,10 @@ public class Chunk {
 	public Block[][][] blocks;
 	public static boolean canBreakBlock = true;
 	public static boolean grounded;
-	public static boolean grounded2;
 	private Shader shader;
-	private Vec3 pos;
 	private World world;
 	private Tree tree;
 	private Random random;
-
 	public Chunk(float x, float y, float z, Noise noise, Random seed, World world) {
 		this.noise = noise;
 		this.x = x;
@@ -270,11 +266,10 @@ public class Chunk {
 
 	}
 
-	public void render(Player player) {
-		pos = player.position;
+	public void render(Player player, Camera cam) {
 		shader.bind();
-		shader.setUniform("perspective", player.getPerspectiveProjection());
-		shader.setUniform("perspectivePosition", pos);
+		shader.setUniform("perspective", cam.getPerspectiveProjection());
+		shader.setUniform("perspectivePosition", player.position);
 		shader.setUniform("light", light);
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
