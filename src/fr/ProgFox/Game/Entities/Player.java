@@ -1,4 +1,4 @@
-package fr.ProgFox.Game.Entity;
+package fr.ProgFox.Game.Entities;
 
 import static org.lwjgl.opengl.GL11.*;
 

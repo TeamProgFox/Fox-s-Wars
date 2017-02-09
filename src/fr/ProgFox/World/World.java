@@ -4,7 +4,7 @@ import java.util.Random;
 
 import org.lwjgl.opengl.Display;
 
-import fr.ProgFox.Game.Entity.Player;
+import fr.ProgFox.Game.Entities.Player;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Logs.Logs;
 import fr.ProgFox.Renderer.Camera;
@@ -12,8 +12,8 @@ import fr.ProgFox.Renderer.DisplayManager;
 import fr.ProgFox.World.Blocks.Block;
 
 public class World {
-	public static int sizeX = 10;
-	public static int sizeZ = 10;
+	public static int sizeX = 16;
+	public static int sizeZ = 16;
 	public static int moreSizeX = 0;
 	public static int moreSizeZ = 0;
 	public Noise noise;

@@ -9,7 +9,7 @@ import java.util.Random;
 
 import org.lwjgl.BufferUtils;
 
-import fr.ProgFox.Game.Entity.Player;
+import fr.ProgFox.Game.Entities.Player;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Math.Vec4;

@@ -1,6 +1,6 @@
 package fr.ProgFox.Utils.VertexBuffer;
 
-import fr.ProgFox.Game.Entity.Player;
+import fr.ProgFox.Game.Entities.Player;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Shader.ColorShader;

@@ -1,4 +1,4 @@
-package fr.ProgFox.Game.Entity;
+package fr.ProgFox.Game.Entities;
 
 import java.util.ArrayList;
 import java.util.List;
