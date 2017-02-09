@@ -10,8 +10,10 @@ import org.lwjgl.opengl.Display;
 
 import fr.ProgFox.Game.Game;
 import fr.ProgFox.Game.Raycast;
+import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Renderer.DisplayManager;
+import fr.ProgFox.Utils.Loader;
 import fr.ProgFox.World.World;
 
 public class Core {
@@ -28,20 +30,28 @@ public class Core {
 	}
 
 	public void update() {
-		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
+		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
 			Mouse.setGrabbed(false);
-		if (Mouse.isButtonDown(0) && !Mouse.isGrabbed())
+			Var.isInMenu = true;
+			Var.isInGame = false;
+		}
+		if (Mouse.isButtonDown(0) && !Var.isInGame) {
+			Var.isInGame = true;
+			Var.isInMenu = false;
 			Mouse.setGrabbed(true);
-		if (!Mouse.isGrabbed())
+		}
+		if (!Mouse.isGrabbed()) {
+			Var.isInGame = false;
+			game.save();
 			return;
+		}
 		game.update();
+
 	}
 
 	public void render() {
 		if (Display.wasResized())
 			glViewport(0, 0, Display.getWidth(), Display.getHeight());
-		if (!Mouse.isGrabbed())
-			return;
 		DisplayManager.clearBuffers();
 		game.render();
 	}

@@ -12,8 +12,8 @@ import fr.ProgFox.Renderer.DisplayManager;
 import fr.ProgFox.World.Blocks.Block;
 
 public class World {
-	public static int sizeX = 16;
-	public static int sizeZ = 16;
+	public static int sizeX = 4;
+	public static int sizeZ = 4;
 	public static int moreSizeX = 0;
 	public static int moreSizeZ = 0;
 	public Noise noise;
@@ -22,15 +22,17 @@ public class World {
 	float percentage;
 
 	public World(long seed) {
-
+		
 		random = new Random(seed);
 		noise = new Noise(random.nextLong(), 15, 15);
 		chunks = new Chunk[100][100];
+		
 		for (int x = 0; x < sizeX; x++) {
 			for (int z = 0; z < sizeZ; z++) {
 				chunks[x][z] = new Chunk(x, 0, z, noise, random, this);
 				percentage = ((float) (x + 1) / sizeX) * 33;
 				DisplayManager.update();
+				
 			}
 			Display.setTitle("Fox's Wars - WorldGenerate : " + (int) percentage + "%");
 			System.out.println(percentage);
@@ -42,7 +44,7 @@ public class World {
 				percentage = (((float) (x + 1) / sizeX) * 33) + 33;
 				DisplayManager.update();
 			}
-			Display.setTitle("Fox's Wars - WorldCreationVegetation : " + (int) percentage + "%");
+			Display.setTitle("Fox's Wars - WorldVegetationGeneration: " + (int) percentage + "%");
 			System.out.println(percentage);
 		}
 		for (int x = 0; x < sizeX; x++) {
@@ -83,6 +85,7 @@ public class World {
 			}
 		}
 	}
+
 	public static void cycleToDay() {
 		if (Var.isInDay) {
 			Var.light += Var.speedTime;
@@ -96,6 +99,7 @@ public class World {
 		}
 
 	}
+
 	public Block getBlock(float x, float y, float z) {
 		float xx = x / Chunk.SIZE;
 		float zz = z / Chunk.SIZE;

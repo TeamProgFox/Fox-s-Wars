@@ -8,10 +8,9 @@ import fr.ProgFox.Game.Entities.EntityManager;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Renderer.Camera;
+import fr.ProgFox.Utils.Loader;
 import fr.ProgFox.Utils.VertexBuffer.Cube;
-import fr.ProgFox.Utils.VertexBuffer.CubeLine;
 import fr.ProgFox.Utils.VertexBuffer.SkyBox;
-import fr.ProgFox.Utils.VertexBuffer.VBO;
 import fr.ProgFox.World.World;
 
 public class Game {
@@ -20,12 +19,18 @@ public class Game {
 	private Cube cube;
 	private EntityManager entityManager;
 	private SkyBox skybox;
-
+	public float posX, posY, posZ;
+	public float rotX, rotY;
+	public SavePlayersConfiguration spc;
 	public Game() {
-
-		world = new World(-6956537684988609768L);
+		spc = new SavePlayersConfiguration(this);
 		int pos = World.sizeX * 16;
-		cam = new Camera(new Vec3(pos / 2, 30, pos / 2), world);
+		
+		Loader.read("saves/Player/Player.tpf", this);
+		System.out.println(posX + " / " + posY + " / " + posZ);
+		
+		world = new World(-6956537684988609768L);
+		cam = new Camera(new Vec3(posX, posY, posZ), new Vec3(rotX, rotY, 0), world);
 		entityManager = new EntityManager();
 		cube = new Cube(new Vec3(1, 1, 1));
 
@@ -37,11 +42,19 @@ public class Game {
 		skybox.add(0, 0, 0, 100);
 
 	}
-
+	public void save(){
+		if(Var.isInMenu){
+			spc.save();
+		}
+	}
 	public void update() {
 		entityManager.update();
 		world.update();
 		cam.update();
+		keyboardGestion();
+		
+	}
+	public void keyboardGestion(){
 		if (Keyboard.next()) {
 			if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
 				Var.flyMode = !Var.flyMode;
@@ -59,8 +72,9 @@ public class Game {
 				}
 			}
 		}
+		
+		
 	}
-
 	public void render() {
 		entityManager.render();
 		world.render(cam);
@@ -69,12 +83,12 @@ public class Game {
 
 	public void renderGUI() {
 
-		float x = (float) (-cam.position.x + cam.getForward().x);
-		float y = (float) (-cam.position.y - cam.getForward().y);
-		float z = (float) (-cam.position.z + cam.getForward().z);
+		float x = (float) (cam.position.x + cam.getForward().x);
+		float y = (float) (cam.position.y - cam.getForward().y);
+		float z = (float) (cam.position.z + cam.getForward().z);
 
 		cube.update(x, y, z, 0.002f, true);
-		skybox.update(x, y, z, 100);
+		skybox.update(cam.position.x, cam.position.y, cam.position.z, 100);
 
 		skybox.render(GL_QUADS, cam);
 		cube.render(GL_QUADS, cam);

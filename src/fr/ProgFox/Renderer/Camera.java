@@ -16,31 +16,31 @@ public class Camera {
 	public Vec3 position, rotation;
 	private float fov, zNear, zFar;
 
-	public Camera(Vec3 position, World world) {
+	public Camera(Vec3 position, Vec3 rotation, World world) {
 		player = new Player(world, this);
 		player.position = position;
-		player.rotation = new Vec3(0, 0, 0);
-
-		this.position = new Vec3();
-		this.rotation = new Vec3();
+		player.rotation = rotation;
+		
+		this.position = position;
+		this.rotation = rotation;
 		this.world = world;
 	}
-
 	public void update() {
 		if (Var.isInFirstPersonne) {
-			position.x = -player.position.x;
-			position.y = -player.position.y;
-			position.z = -player.position.z;
-		} else {
-			float x = (float) (-player.position.x + player.getForward().x);
-			float y = (float) (-player.position.y - player.getForward().y);
-			float z = (float) (-player.position.z + player.getForward().z);
+			position.x = player.position.x;
+			position.y = player.position.y;
+			position.z = player.position.z;
 			
-			float xx = player.getForward().x * 1.5f;
-			float zz = player.getForward().z * 1.5f;
-			x += xx;
-			y -= 1;
-			z += zz;
+		} else {
+			float x = (float) (player.position.x + player.getForward().x);
+			float y = (float) (player.position.y - player.getForward().y);
+			float z = (float) (player.position.z + player.getForward().z);
+			
+			float xx = player.getForward().x * 4f;
+			float zz = player.getForward().z * 4f;
+			x -= xx;
+			y += 2;
+			z -= zz;
 			
 			position = new Vec3(x, y, z);
 			

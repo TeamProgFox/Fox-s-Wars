@@ -26,7 +26,6 @@ public class Player extends Entity {
 	private boolean updateVBO = true;
 	private CubeLine select;
 	private CubeLine perso;
-	private Shader shader;
 	int vbo;
 	private Camera cam;
 
@@ -38,7 +37,6 @@ public class Player extends Entity {
 		raycast = new Raycast(this);
 		select = new CubeLine(new Vec3(1, 1, 1));
 		perso = new CubeLine(new Vec3(0, 0, 0));
-		shader = new ColorShader();
 		init();
 	}
 
@@ -49,10 +47,12 @@ public class Player extends Entity {
 		select.add(x2, y2, z2, 1, 1, 1, false);
 		perso.add(position.x, position.y, position.z, 0.5f, 2, 0.5f, true);
 	}
+
 	public void update() {
 		input();
 		raycast.update();
-		perso.update(position.x, position.y, position.z, 0.5f, 1.25f, 0.5f, true);
+		if (Var.isInThirdPersonne)
+			perso.update(position.x, position.y, position.z, 0.5f, 1.25f, 0.5f, true);
 	}
 
 	public void render() {
@@ -64,7 +64,8 @@ public class Player extends Entity {
 
 			updateVBO = false;
 		}
-		perso.render(GL_LINES, cam, 2);
+		if (Var.isInThirdPersonne)
+			perso.render(GL_LINES, cam, 2);
 		select.render(GL_LINES, cam, 2);
 
 	}

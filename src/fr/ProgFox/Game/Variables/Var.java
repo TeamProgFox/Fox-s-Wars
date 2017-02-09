@@ -19,4 +19,6 @@ public class Var {
 	public static boolean isInDay = true;
 	public static boolean isInFirstPersonne = true;
 	public static boolean isInThirdPersonne = !isInFirstPersonne;
+	public static boolean isInMenu = false;
+	public static boolean isInGame = false;
 }
