@@ -25,6 +25,7 @@ public class Player extends Entity {
 	public Raycast raycast;
 	private boolean updateVBO = true;
 	private CubeLine select;
+	private CubeLine perso;
 	private Shader shader;
 	int vbo;
 	private Camera cam;
@@ -32,9 +33,11 @@ public class Player extends Entity {
 	public Player(World world, Camera cam) {
 		this.world = world;
 		this.cam = cam;
+		position = new Vec3();
 		Var.selectedPosition = new Vec3(0, 0, 0);
 		raycast = new Raycast(this);
 		select = new CubeLine(new Vec3(1, 1, 1));
+		perso = new CubeLine(new Vec3(0, 0, 0));
 		shader = new ColorShader();
 		init();
 	}
@@ -43,18 +46,13 @@ public class Player extends Entity {
 		int x2 = (int) 0;
 		int y2 = (int) 0;
 		int z2 = (int) 0;
-
-		select.add(x2, y2, z2, 1, 1, 1, false, 2);
+		select.add(x2, y2, z2, 1, 1, 1, false);
+		perso.add(position.x, position.y, position.z, 0.5f, 2, 0.5f, true);
 	}
-
 	public void update() {
 		input();
-		if (Keyboard.next()) {
-			if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
-				Var.flyMode = !Var.flyMode;
-			}
-		}
 		raycast.update();
+		perso.update(position.x, position.y, position.z, 0.5f, 1.25f, 0.5f, true);
 	}
 
 	public void render() {
@@ -62,12 +60,12 @@ public class Player extends Entity {
 		int y2 = (int) Var.selectedPosition.y;
 		int z2 = (int) Var.selectedPosition.z;
 		if (updateVBO) {
-			select.update(x2, y2, z2, 1, 1, 1, false, 2);
+			select.update(x2, y2, z2, 1, 1, 1, false);
 
 			updateVBO = false;
 		}
-
-		select.render(this, GL_LINES, cam);
+		perso.render(GL_LINES, cam, 2);
+		select.render(GL_LINES, cam, 2);
 
 	}
 
@@ -91,27 +89,27 @@ public class Player extends Entity {
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_Z)) {
 
-			xDir = getForward().mul(new Vec3(-speed, 0, -speed)).getX();
-			zDir = getForward().mul(new Vec3(-speed, 0, -speed)).getZ();
+			xDir = getForward().mul(new Vec3(speed, 0, speed)).getX();
+			zDir = getForward().mul(new Vec3(speed, 0, speed)).getZ();
 			move(xDir, yDir, zDir);
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
 
-			xDir = getForward().mul(new Vec3(speed, 0, speed)).getX();
-			zDir = getForward().mul(new Vec3(speed, 0, speed)).getZ();
+			xDir = getForward().mul(new Vec3(-speed, 0, -speed)).getX();
+			zDir = getForward().mul(new Vec3(-speed, 0, -speed)).getZ();
 			move(xDir, yDir, zDir);
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_Q)) {
 
-			xDir = getRight().mul(new Vec3(speed, 0, speed)).getX();
-			zDir = getRight().mul(new Vec3(speed, 0, speed)).getZ();
+			xDir = getRight().mul(new Vec3(-speed, 0, -speed)).getX();
+			zDir = getRight().mul(new Vec3(-speed, 0, -speed)).getZ();
 			move(xDir, yDir, zDir);
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
 
-			xDir = getRight().mul(new Vec3(-speed, 0, -speed)).getX();
-			zDir = getRight().mul(new Vec3(-speed, 0, -speed)).getZ();
+			xDir = getRight().mul(new Vec3(speed, 0, speed)).getX();
+			zDir = getRight().mul(new Vec3(speed, 0, speed)).getZ();
 			move(xDir, yDir, zDir);
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && Var.grounded && !Var.flyMode) {
@@ -121,12 +119,12 @@ public class Player extends Entity {
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && Var.flyMode) {
 
-			yDir = -speed;
+			yDir = speed;
 			move(0, yDir, 0);
 
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && Var.flyMode) {
-			yDir = speed;
+			yDir = -speed;
 			move(0, yDir, 0);
 		}
 
@@ -201,7 +199,7 @@ public class Player extends Entity {
 		if (Var.isJumping) {
 			Var.jumpFactor += 0.02f;
 
-			move(0, -Var.jumpFactor, 0);
+			move(0, Var.jumpFactor, 0);
 
 		}
 		if (Var.jumpFactor > 0.27f) {
@@ -216,7 +214,7 @@ public class Player extends Entity {
 
 			}
 
-			move(0, Var.gravityFactor, 0);
+			move(0, -Var.gravityFactor, 0);
 
 		}
 	}
@@ -255,7 +253,7 @@ public class Player extends Entity {
 	}
 
 	public void isGrounded(float xDir, float yDir, float zDir) {
-		if (!isColliding(0, yDir + 1, 0)) {
+		if (!isColliding(0, yDir - 1, 0)) {
 			Var.grounded = false;
 		} else {
 			Var.grounded = true;
@@ -266,14 +264,14 @@ public class Player extends Entity {
 
 		float rayon = 0.3f;
 
-		float x0 = -(position.getX() + xDir) - rayon;
-		float x1 = -(position.getX() + xDir) + rayon;
+		float x0 = (position.getX() + xDir) - rayon;
+		float x1 = (position.getX() + xDir) + rayon;
 
-		float y0 = -(position.getY() + yDir) - rayon - 0.40f;
-		float y1 = -(position.getY() + yDir) + rayon;
+		float y0 = (position.getY() + yDir) - rayon - 0.40f;
+		float y1 = (position.getY() + yDir) + rayon;
 
-		float z0 = -(position.getZ() + zDir) - rayon;
-		float z1 = -(position.getZ() + zDir) + rayon;
+		float z0 = (position.getZ() + zDir) - rayon;
+		float z1 = (position.getZ() + zDir) + rayon;
 
 		if (world.getBlock(x0, y0, z0) != null) {
 			// System.out.println("1");

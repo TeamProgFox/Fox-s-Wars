@@ -8,6 +8,7 @@ public class Var {
 	public static float jumpFactor;
 	public static boolean isJumping;
 	public static boolean flyMode;
+	public static boolean debugMode;
 	public static Block selectedBlock;
 	public static Vec3 selectedPosition;
 	public static float InfoSpeedFactor = 0;

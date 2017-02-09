@@ -48,7 +48,7 @@ public class Chunk {
 		int x2 = (int) ((int) this.x * SIZE);
 		int y2 = (int) ((int) this.y * HEIGHT);
 		int z2 = (int) ((int) this.z * SIZE);
-		cl.add(x2, y2, z2, SIZE, HEIGHT, SIZE, false, 2);
+		cl.add(x2, y2, z2, SIZE, HEIGHT, SIZE, false);
 		tree = new Tree(random);
 		blocks = new Block[SIZE][HEIGHT][SIZE];
 		shader = new ColorShader();
@@ -276,24 +276,10 @@ public class Chunk {
 
 	}
 
-	public static void cycleToDay() {
-		if (Var.isInDay) {
-			Var.light += Var.speedTime;
-			if (Var.light >= 1)
-				Var.isInDay = false;
-		}
-		if (!Var.isInDay) {
-			Var.light -= Var.speedTime;
-			if (Var.light <= 0.2f)
-				Var.isInDay = true;
-		}
-
-	}
-
-	public void render(Player player, Camera cam) {
+	public void render(Camera cam) {
 		shader.bind();
 		shader.setUniform("perspective", cam.getPerspectiveProjection());
-		shader.setUniform("perspectivePosition", player.position);
+		shader.setUniform("perspectivePosition", cam.position);
 		shader.setUniform("light", Var.light);
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
@@ -303,9 +289,8 @@ public class Chunk {
 		glDrawArrays(GL_QUADS, 0, bufferSize);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(0);
-		if(Var.flyMode){
-
-			cl.render(player, GL_LINES, cam);
+		if(Var.debugMode){
+			cl.render(GL_LINES, cam, 2);
 		}
 		
 		

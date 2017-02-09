@@ -3,6 +3,7 @@ package fr.ProgFox.Game;
 import java.util.ArrayList;
 import java.util.List;
 import fr.ProgFox.Game.Entity.Player;
+import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.World.World;
 
@@ -21,9 +22,9 @@ public class Raycast {
 
 	public void update() {
 		Vec3 pos2 = new Vec3();
-		pos2.x = Math.abs(player.position.x);
-		pos2.y = Math.abs(player.position.y);
-		pos2.z = Math.abs(player.position.z);
+		pos2.x = (player.position.x);
+		pos2.y = (player.position.y);
+		pos2.z = (player.position.z);
 
 		Vec3 dir2 = new Vec3();
 		dir2.x = player.getForward().x;
@@ -48,6 +49,7 @@ public class Raycast {
 				teste = 1;
 				return new Vec3(v.x, v.y, v.z);
 			}
+			Var.selectedPosition = new Vec3();
 
 		}
 

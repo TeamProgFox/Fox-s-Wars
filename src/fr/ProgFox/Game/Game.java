@@ -2,7 +2,10 @@ package fr.ProgFox.Game;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import org.lwjgl.input.Keyboard;
+
 import fr.ProgFox.Game.Entity.EntityManager;
+import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Utils.VertexBuffer.Cube;
@@ -21,7 +24,7 @@ public class Game {
 
 		world = new World(-6956537684988609768L);
 		int pos = World.sizeX * 16;
-		cam = new Camera(new Vec3(-pos / 2, -30, -pos / 2), world);
+		cam = new Camera(new Vec3(pos / 2, 30, pos / 2), world);
 		entityManager = new EntityManager();
 		cube = new Cube(new Vec3(1, 1, 1));
 		
@@ -37,24 +40,33 @@ public class Game {
 	public void update() {
 		entityManager.update();
 		world.update();
+		cam.update();
+		if (Keyboard.next()) {
+			if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
+				Var.flyMode = !Var.flyMode;
+			}
+			if (Keyboard.isKeyDown(Keyboard.KEY_F3)) {
+				Var.debugMode = !Var.debugMode;
+			}
+		}
 	}
 
 	public void render() {
 		entityManager.render();
-		world.render(cam.player, cam);
+		world.render(cam);
 		
 	}
 
 	public void renderGUI() {
 
-		float x = (float) (-cam.player.position.x + cam.player.getForward().x);
-		float y = (float) (-cam.player.position.y - cam.player.getForward().y);
-		float z = (float) (-cam.player.position.z + cam.player.getForward().z);
+		float x = (float) (-cam.position.x + cam.player.getForward().x);
+		float y = (float) (-cam.position.y - cam.player.getForward().y);
+		float z = (float) (-cam.position.z + cam.player.getForward().z);
 
 		cube.update(x, y, z, 0.002f, true);
 		skybox.update(x, y, z, 100);
 		
-		skybox.render(cam.player, GL_QUADS, cam);
-		cube.render(cam.player, GL_QUADS, cam);
+		skybox.render(GL_QUADS, cam);
+		cube.render(GL_QUADS, cam);
 	}
 }

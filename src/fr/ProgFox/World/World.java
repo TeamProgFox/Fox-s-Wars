@@ -5,8 +5,10 @@ import java.util.Random;
 import org.lwjgl.opengl.Display;
 
 import fr.ProgFox.Game.Entity.Player;
+import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Logs.Logs;
 import fr.ProgFox.Renderer.Camera;
+import fr.ProgFox.Renderer.DisplayManager;
 import fr.ProgFox.World.Blocks.Block;
 
 public class World {
@@ -28,6 +30,7 @@ public class World {
 			for (int z = 0; z < sizeZ; z++) {
 				chunks[x][z] = new Chunk(x, 0, z, noise, random, this);
 				percentage = ((float) (x + 1) / sizeX) * 33;
+				DisplayManager.update();
 			}
 			Display.setTitle("Fox's Wars - WorldGenerate : " + (int) percentage + "%");
 			System.out.println(percentage);
@@ -37,14 +40,16 @@ public class World {
 			for (int z = 0; z < sizeZ; z++) {
 				chunks[x][z].generateVegetation();
 				percentage = (((float) (x + 1) / sizeX) * 33) + 33;
+				DisplayManager.update();
 			}
-			Display.setTitle("Fox's Wars - WorldCreation : " + (int) percentage + "%");
+			Display.setTitle("Fox's Wars - WorldCreationVegetation : " + (int) percentage + "%");
 			System.out.println(percentage);
 		}
 		for (int x = 0; x < sizeX; x++) {
 			for (int z = 0; z < sizeZ; z++) {
 				chunks[x][z].createChunk();
 				percentage = (((float) (x + 1) / sizeX) * 33) + 66;
+				DisplayManager.update();
 			}
 			Display.setTitle("Fox's Wars - WorldCreation : " + (int) percentage + "%");
 			System.out.println(percentage);
@@ -52,7 +57,7 @@ public class World {
 	}
 
 	public void update() {
-		Chunk.cycleToDay();
+		cycleToDay();
 		for (int x = moreSizeX; x < sizeX + moreSizeX; x++) {
 			for (int z = moreSizeZ; z < sizeZ + moreSizeZ; z++) {
 				if (getChunk(x, z) != null) {
@@ -62,14 +67,14 @@ public class World {
 		}
 	}
 
-	public void render(Player player, Camera cam) {
-		float xP1 = (float) -(player.position.x / 16);
-		float zP1 = (float) -(player.position.z / 16);
+	public void render(Camera cam) {
+		float xP1 = (float) (cam.position.x / 16);
+		float zP1 = (float) (cam.position.z / 16);
 		int renderDistance = 2;
 		for (int x = moreSizeX; x < sizeX + moreSizeX; x++) {
 			for (int z = moreSizeZ; z < sizeZ + moreSizeZ; z++) {
 				if (getChunk(x, z) != null) {
-					chunks[x][z].render(player, cam);
+					chunks[x][z].render(cam);
 				}
 				if (xP1 > x - renderDistance && xP1 < x + renderDistance + 1) {
 					if (zP1 > z - renderDistance && zP1 < z + renderDistance + 1) {
@@ -78,7 +83,19 @@ public class World {
 			}
 		}
 	}
+	public static void cycleToDay() {
+		if (Var.isInDay) {
+			Var.light += Var.speedTime;
+			if (Var.light >= 1)
+				Var.isInDay = false;
+		}
+		if (!Var.isInDay) {
+			Var.light -= Var.speedTime;
+			if (Var.light <= 0.2f)
+				Var.isInDay = true;
+		}
 
+	}
 	public Block getBlock(float x, float y, float z) {
 		float xx = x / Chunk.SIZE;
 		float zz = z / Chunk.SIZE;

@@ -12,23 +12,32 @@ public class Camera {
 
 	public Player player;
 	World world;
+	public Vec3 position, rotation;
 	private float fov, zNear, zFar;
 
 	public Camera(Vec3 position, World world) {
 		player = new Player(world, this);
 		player.position = position;
 		player.rotation = new Vec3(0, 0, 0);
+		
+		this.position = new Vec3();
+		this.rotation = new Vec3();
 		this.world = world;
 	}
 
 	public void update() {
-	}
-
-	public void input() {
+		position.x = -player.position.x;
+		position.y = -player.position.y;
+		position.z = -player.position.z;
+		
+		rotation = player.rotation;
 	}
 
 	public Vec3 getPosition() {
-		return player.position;
+		return position;
+	}
+	public Vec3 getRotation() {
+		return rotation;
 	}
 
 	public void setPosition(Vec3 position) {

@@ -135,7 +135,7 @@ public class SkyBox {
 
 	}
 
-	public void render(Player player, int mode, Camera cam) {
-		skybox.render(player, mode, cam);
+	public void render(int mode, Camera cam) {
+		skybox.render(mode, cam);
 	}
 }

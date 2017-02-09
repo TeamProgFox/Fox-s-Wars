@@ -21,10 +21,10 @@ public class Cube {
 		cube.init(24, shader);
 		if (!isInCenter) {
 
-			cube.addVertex(x, y, z, new Vec3(color.x, color.y, color.z));
 			cube.addVertex(x + size, y, z, new Vec3(color.x, color.y, color.z));
-			cube.addVertex(x + size, y + size, z, new Vec3(color.x, color.y, color.z));
+			cube.addVertex(x, y, z, new Vec3(color.x, color.y, color.z));
 			cube.addVertex(x, y + size, z, new Vec3(color.x, color.y, color.z));
+			cube.addVertex(x + size, y + size, z, new Vec3(color.x, color.y, color.z));
 
 			cube.addVertex(x, y, z + size, new Vec3(color.x, color.y, color.z));
 			cube.addVertex(x + size, y, z + size, new Vec3(color.x, color.y, color.z));
@@ -36,26 +36,26 @@ public class Cube {
 			cube.addVertex(x + size, y, z + size, new Vec3(color.x, color.y, color.z));
 			cube.addVertex(x, y, z + size, new Vec3(color.x, color.y, color.z));
 
-			cube.addVertex(x, y + size, z, new Vec3(color.x, color.y, color.z));
 			cube.addVertex(x + size, y + size, z, new Vec3(color.x, color.y, color.z));
-			cube.addVertex(x + size, y + size, z + size, new Vec3(color.x, color.y, color.z));
+			cube.addVertex(x, y + size, z, new Vec3(color.x, color.y, color.z));
 			cube.addVertex(x, y + size, z + size, new Vec3(color.x, color.y, color.z));
+			cube.addVertex(x + size, y + size, z + size, new Vec3(color.x, color.y, color.z));
 
+			cube.addVertex(x, y + size, z, new Vec3(color.x, color.y, color.z));
 			cube.addVertex(x, y, z, new Vec3(color.x, color.y, color.z));
 			cube.addVertex(x, y, z + size, new Vec3(color.x, color.y, color.z));
 			cube.addVertex(x, y + size, z + size, new Vec3(color.x, color.y, color.z));
-			cube.addVertex(x, y + size, z, new Vec3(color.x, color.y, color.z));
 
 			cube.addVertex(x + size, y, z, new Vec3(color.x, color.y, color.z));
-			cube.addVertex(x + size, y, z + size, new Vec3(color.x, color.y, color.z));
-			cube.addVertex(x + size, y + size, z + size, new Vec3(color.x, color.y, color.z));
 			cube.addVertex(x + size, y + size, z, new Vec3(color.x, color.y, color.z));
+			cube.addVertex(x + size, y + size, z + size, new Vec3(color.x, color.y, color.z));
+			cube.addVertex(x + size, y, z + size, new Vec3(color.x, color.y, color.z));
 
 		} else {
-			cube.addVertex(x - size, y - size, z - size, new Vec3(color.x, color.y, color.z));
 			cube.addVertex(x + size, y - size, z - size, new Vec3(color.x, color.y, color.z));
-			cube.addVertex(x + size, y + size, z - size, new Vec3(color.x, color.y, color.z));
+			cube.addVertex(x - size, y - size, z - size, new Vec3(color.x, color.y, color.z));
 			cube.addVertex(x - size, y + size, z - size, new Vec3(color.x, color.y, color.z));
+			cube.addVertex(x + size, y + size, z - size, new Vec3(color.x, color.y, color.z));
 
 			cube.addVertex(x - size, y - size, z + size, new Vec3(color.x, color.y, color.z));
 			cube.addVertex(x + size, y - size, z + size, new Vec3(color.x, color.y, color.z));
@@ -67,33 +67,34 @@ public class Cube {
 			cube.addVertex(x + size, y - size, z + size, new Vec3(color.x, color.y, color.z));
 			cube.addVertex(x - size, y - size, z + size, new Vec3(color.x, color.y, color.z));
 
-			cube.addVertex(x - size, y + size, z - size, new Vec3(color.x, color.y, color.z));
 			cube.addVertex(x + size, y + size, z - size, new Vec3(color.x, color.y, color.z));
-			cube.addVertex(x + size, y + size, z + size, new Vec3(color.x, color.y, color.z));
+			cube.addVertex(x - size, y + size, z - size, new Vec3(color.x, color.y, color.z));
 			cube.addVertex(x - size, y + size, z + size, new Vec3(color.x, color.y, color.z));
+			cube.addVertex(x + size, y + size, z + size, new Vec3(color.x, color.y, color.z));
 
+			cube.addVertex(x - size, y + size, z - size, new Vec3(color.x, color.y, color.z));
 			cube.addVertex(x - size, y - size, z - size, new Vec3(color.x, color.y, color.z));
 			cube.addVertex(x - size, y - size, z + size, new Vec3(color.x, color.y, color.z));
 			cube.addVertex(x - size, y + size, z + size, new Vec3(color.x, color.y, color.z));
-			cube.addVertex(x - size, y + size, z - size, new Vec3(color.x, color.y, color.z));
 
 			cube.addVertex(x + size, y - size, z - size, new Vec3(color.x, color.y, color.z));
-			cube.addVertex(x + size, y - size, z + size, new Vec3(color.x, color.y, color.z));
-			cube.addVertex(x + size, y + size, z + size, new Vec3(color.x, color.y, color.z));
 			cube.addVertex(x + size, y + size, z - size, new Vec3(color.x, color.y, color.z));
+			cube.addVertex(x + size, y + size, z + size, new Vec3(color.x, color.y, color.z));
+			cube.addVertex(x + size, y - size, z + size, new Vec3(color.x, color.y, color.z));
 		}
 		cube.end();
 
 	}
+
 	public void update(float x, float y, float z, float size, boolean isInCenter) {
 		cube.init(24, shader);
 		cube.clearBuffer();
 		if (!isInCenter) {
-			
-			cube.update(x, y, z, new Vec3(color.x, color.y, color.z));
+
 			cube.update(x + size, y, z, new Vec3(color.x, color.y, color.z));
-			cube.update(x + size, y + size, z, new Vec3(color.x, color.y, color.z));
+			cube.update(x, y, z, new Vec3(color.x, color.y, color.z));
 			cube.update(x, y + size, z, new Vec3(color.x, color.y, color.z));
+			cube.update(x + size, y + size, z, new Vec3(color.x, color.y, color.z));
 
 			cube.update(x, y, z + size, new Vec3(color.x, color.y, color.z));
 			cube.update(x + size, y, z + size, new Vec3(color.x, color.y, color.z));
@@ -105,26 +106,26 @@ public class Cube {
 			cube.update(x + size, y, z + size, new Vec3(color.x, color.y, color.z));
 			cube.update(x, y, z + size, new Vec3(color.x, color.y, color.z));
 
-			cube.update(x, y + size, z, new Vec3(color.x, color.y, color.z));
 			cube.update(x + size, y + size, z, new Vec3(color.x, color.y, color.z));
-			cube.update(x + size, y + size, z + size, new Vec3(color.x, color.y, color.z));
+			cube.update(x, y + size, z, new Vec3(color.x, color.y, color.z));
 			cube.update(x, y + size, z + size, new Vec3(color.x, color.y, color.z));
+			cube.update(x + size, y + size, z + size, new Vec3(color.x, color.y, color.z));
 
+			cube.update(x, y + size, z, new Vec3(color.x, color.y, color.z));
 			cube.update(x, y, z, new Vec3(color.x, color.y, color.z));
 			cube.update(x, y, z + size, new Vec3(color.x, color.y, color.z));
 			cube.update(x, y + size, z + size, new Vec3(color.x, color.y, color.z));
-			cube.update(x, y + size, z, new Vec3(color.x, color.y, color.z));
 
 			cube.update(x + size, y, z, new Vec3(color.x, color.y, color.z));
-			cube.update(x + size, y, z + size, new Vec3(color.x, color.y, color.z));
-			cube.update(x + size, y + size, z + size, new Vec3(color.x, color.y, color.z));
 			cube.update(x + size, y + size, z, new Vec3(color.x, color.y, color.z));
+			cube.update(x + size, y + size, z + size, new Vec3(color.x, color.y, color.z));
+			cube.update(x + size, y, z + size, new Vec3(color.x, color.y, color.z));
 
 		} else {
-			cube.update(x - size, y - size, z - size, new Vec3(color.x, color.y, color.z));
 			cube.update(x + size, y - size, z - size, new Vec3(color.x, color.y, color.z));
-			cube.update(x + size, y + size, z - size, new Vec3(color.x, color.y, color.z));
+			cube.update(x - size, y - size, z - size, new Vec3(color.x, color.y, color.z));
 			cube.update(x - size, y + size, z - size, new Vec3(color.x, color.y, color.z));
+			cube.update(x + size, y + size, z - size, new Vec3(color.x, color.y, color.z));
 
 			cube.update(x - size, y - size, z + size, new Vec3(color.x, color.y, color.z));
 			cube.update(x + size, y - size, z + size, new Vec3(color.x, color.y, color.z));
@@ -136,27 +137,26 @@ public class Cube {
 			cube.update(x + size, y - size, z + size, new Vec3(color.x, color.y, color.z));
 			cube.update(x - size, y - size, z + size, new Vec3(color.x, color.y, color.z));
 
-			cube.update(x - size, y + size, z - size, new Vec3(color.x, color.y, color.z));
 			cube.update(x + size, y + size, z - size, new Vec3(color.x, color.y, color.z));
-			cube.update(x + size, y + size, z + size, new Vec3(color.x, color.y, color.z));
+			cube.update(x - size, y + size, z - size, new Vec3(color.x, color.y, color.z));
 			cube.update(x - size, y + size, z + size, new Vec3(color.x, color.y, color.z));
+			cube.update(x + size, y + size, z + size, new Vec3(color.x, color.y, color.z));
 
+			cube.update(x - size, y + size, z - size, new Vec3(color.x, color.y, color.z));
 			cube.update(x - size, y - size, z - size, new Vec3(color.x, color.y, color.z));
 			cube.update(x - size, y - size, z + size, new Vec3(color.x, color.y, color.z));
 			cube.update(x - size, y + size, z + size, new Vec3(color.x, color.y, color.z));
-			cube.update(x - size, y + size, z - size, new Vec3(color.x, color.y, color.z));
 
 			cube.update(x + size, y - size, z - size, new Vec3(color.x, color.y, color.z));
-			cube.update(x + size, y - size, z + size, new Vec3(color.x, color.y, color.z));
-			cube.update(x + size, y + size, z + size, new Vec3(color.x, color.y, color.z));
 			cube.update(x + size, y + size, z - size, new Vec3(color.x, color.y, color.z));
+			cube.update(x + size, y + size, z + size, new Vec3(color.x, color.y, color.z));
+			cube.update(x + size, y - size, z + size, new Vec3(color.x, color.y, color.z));
 		}
 		cube.updateEnd();
 
 	}
 
-
-	public void render(Player player, int mode, Camera cam) {
-		cube.render(player, mode, cam);
+	public void render(int mode, Camera cam) {
+		cube.render(mode, cam);
 	}
 }

@@ -35,10 +35,10 @@ public abstract class Block {
 		a = color.w;
 		return new float[] {
 
-				x, y, z, 					r * 0.8f * color2.x, g * 0.8f * color2.x, b * 0.8f * color2.x, a * 0.8f * color2.x,//////
 				x + 1, y, z, 				r * 0.8f * color2.y, g * 0.8f * color2.y, b * 0.8f * color2.y, a * 0.8f * color2.y, ///
-				x + 1, y + 1, z, 			r * 0.8f * color2.z, g * 0.8f * color2.z, b * 0.8f * color2.z, a * 0.8f * color2.z, // 5
+				x, y, z, 					r * 0.8f * color2.x, g * 0.8f * color2.x, b * 0.8f * color2.x, a * 0.8f * color2.x,//////
 				x, y + 1, z, 				r * 0.8f * color2.w, g * 0.8f * color2.w, b * 0.8f * color2.w, a * 0.8f * color2.w,/////
+				x + 1, y + 1, z, 			r * 0.8f * color2.z, g * 0.8f * color2.z, b * 0.8f * color2.z, a * 0.8f * color2.z, // 5
 
 		};
 
@@ -93,10 +93,10 @@ public abstract class Block {
 
 		return new float[] {
                                                                                                                                     
-				x, y, z,				r * 0.75f * color2.x, g * 0.75f * color2.x, b * 0.75f * color2.x, a * 0.75f * color2.x,/////
 				x, y + 1, z, 			r * 0.75f * color2.y, g * 0.75f * color2.y, b * 0.75f * color2.y, a * 0.75f * color2.y, /// 
-				x, y + 1, z + 1, 		r * 0.75f * color2.z, g * 0.75f * color2.z, b * 0.75f * color2.z, a * 0.75f * color2.z, // 5
+				x, y, z,				r * 0.75f * color2.x, g * 0.75f * color2.x, b * 0.75f * color2.x, a * 0.75f * color2.x,/////
 				x, y, z + 1, 			r * 0.75f * color2.w, g * 0.75f * color2.w, b * 0.75f * color2.w, a * 0.75f * color2.w,/////
+				x, y + 1, z + 1, 		r * 0.75f * color2.z, g * 0.75f * color2.z, b * 0.75f * color2.z, a * 0.75f * color2.z, // 5
                                                                                                                                     
 		};
 
@@ -113,10 +113,10 @@ public abstract class Block {
 
 		return new float[] {
                                                                                                                                         
-				x, y + 1, z,				r * 0.7f * color2.x, g * 0.7f * color2.x, b * 0.7f * color2.x, a * 0.7f * color2.x,/////
 				x + 1, y + 1, z,			r * 0.7f * color2.y, g * 0.7f * color2.y, b * 0.7f * color2.y, a * 0.7f * color2.y, /// 
-				x + 1, y + 1, z + 1,		r * 0.7f * color2.z, g * 0.7f * color2.z, b * 0.7f * color2.z, a * 0.7f * color2.z, // 5
+				x, y + 1, z,				r * 0.7f * color2.x, g * 0.7f * color2.x, b * 0.7f * color2.x, a * 0.7f * color2.x,/////
 				x, y + 1, z + 1,			r * 0.7f * color2.w, g * 0.7f * color2.w, b * 0.7f * color2.w, a * 0.7f * color2.w,/////
+				x + 1, y + 1, z + 1,		r * 0.7f * color2.z, g * 0.7f * color2.z, b * 0.7f * color2.z, a * 0.7f * color2.z, // 5
                                                                                                                                         
 		};
 

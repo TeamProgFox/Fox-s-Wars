@@ -19,7 +19,7 @@ public class CubeLine {
 
 	}
 
-	public void add(float x, float y, float z, float sizeX, float sizeY, float sizeZ, boolean isInCenter, int wl) {
+	public void add(float x, float y, float z, float sizeX, float sizeY, float sizeZ, boolean isInCenter) {
 		if (!isInCenter) {
 
 			cube.init(24, shader);
@@ -59,7 +59,6 @@ public class CubeLine {
 			cube.addVertex(x + sizeX, y, z + sizeZ, new Vec3(1, 1, 1));
 			cube.addVertex(x + sizeX, y + sizeY, z + sizeZ, new Vec3(1, 1, 1));
 
-			glLineWidth(wl);
 			cube.end();
 		} else {
 			cube.init(24, shader);
@@ -99,12 +98,11 @@ public class CubeLine {
 			cube.addVertex(x + sizeX, y - sizeY, z + sizeZ, new Vec3(1, 1, 1));
 			cube.addVertex(x + sizeX, y + sizeY, z + sizeZ, new Vec3(1, 1, 1));
 
-			glLineWidth(wl);
 			cube.end();
 		}
 	}
 
-	public void update(float x, float y, float z, float sizeX, float sizeY, float sizeZ, boolean isInCenter, int wl) {
+	public void update(float x, float y, float z, float sizeX, float sizeY, float sizeZ, boolean isInCenter) {
 		if (!isInCenter) {
 
 			cube.init(24, shader);
@@ -145,7 +143,6 @@ public class CubeLine {
 			cube.update(x + sizeX, y, z + sizeZ, new Vec3(1, 1, 1));
 			cube.update(x + sizeX, y + sizeY, z + sizeZ, new Vec3(1, 1, 1));
 
-			glLineWidth(wl);
 			cube.updateEnd();
 		} else {
 			cube.init(24, shader);
@@ -185,12 +182,13 @@ public class CubeLine {
 			cube.update(x + sizeX, y - sizeY, z + sizeZ, new Vec3(1, 1, 1));
 			cube.update(x + sizeX, y + sizeY, z + sizeZ, new Vec3(1, 1, 1));
 
-			glLineWidth(wl);
 			cube.updateEnd();
 		}
 	}
 
-	public void render(Player player, int mode, Camera cam) {
-		cube.render(player, mode, cam);
+	public void render(int mode, Camera cam, int wl) {
+		glLineWidth(wl);
+		cube.render(mode, cam);
+		
 	}
 }
