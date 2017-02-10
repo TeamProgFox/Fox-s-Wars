@@ -1,4 +1,4 @@
-package fr.ProgFox.Shader;
+package fr.ProgFox.Renderer.Shader;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;

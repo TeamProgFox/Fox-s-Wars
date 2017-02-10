@@ -5,8 +5,8 @@ import static org.lwjgl.opengl.GL11.*;
 import fr.ProgFox.Game.Entities.Player;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Renderer.Camera;
-import fr.ProgFox.Shader.ColorShader;
-import fr.ProgFox.Shader.Shader;
+import fr.ProgFox.Renderer.Shader.ColorShader;
+import fr.ProgFox.Renderer.Shader.Shader;
 
 public class CubeLine {
 	public Vec3 color;

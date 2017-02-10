@@ -1,10 +1,10 @@
-package fr.ProgFox.World;
+package fr.ProgFox.Game.World;
 
 import java.util.Random;
 
+import fr.ProgFox.Game.World.Blocks.Block;
 import fr.ProgFox.Math.Mathf;
 import fr.ProgFox.Math.Vec4;
-import fr.ProgFox.World.Blocks.Block;
 
 public class Tree {
 	private Random random;

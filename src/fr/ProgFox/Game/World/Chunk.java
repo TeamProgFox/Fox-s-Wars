@@ -1,4 +1,4 @@
-package fr.ProgFox.World;
+package fr.ProgFox.Game.World;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
@@ -9,15 +9,14 @@ import java.util.Random;
 
 import org.lwjgl.BufferUtils;
 
-import fr.ProgFox.Game.Entities.Player;
 import fr.ProgFox.Game.Variables.Var;
+import fr.ProgFox.Game.World.Blocks.Block;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Math.Vec4;
 import fr.ProgFox.Renderer.Camera;
-import fr.ProgFox.Shader.ColorShader;
-import fr.ProgFox.Shader.Shader;
+import fr.ProgFox.Renderer.Shader.ColorShader;
+import fr.ProgFox.Renderer.Shader.Shader;
 import fr.ProgFox.Utils.VertexBuffer.CubeLine;
-import fr.ProgFox.World.Blocks.Block;
 
 public class Chunk {
 	private int vbo;

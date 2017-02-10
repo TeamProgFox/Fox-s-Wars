@@ -4,10 +4,10 @@ import org.lwjgl.opengl.Display;
 
 import fr.ProgFox.Game.Entities.Player;
 import fr.ProgFox.Game.Variables.Var;
+import fr.ProgFox.Game.World.World;
 import fr.ProgFox.Math.Mat4;
 import fr.ProgFox.Math.Transform;
 import fr.ProgFox.Math.Vec3;
-import fr.ProgFox.World.World;
 
 public class Camera {
 
@@ -26,7 +26,7 @@ public class Camera {
 		this.world = world;
 	}
 	public void update() {
-		if (Var.isInFirstPersonne) {
+		if (Var.isInFirstPerson) {
 			position.x = player.position.x;
 			position.y = player.position.y;
 			position.z = player.position.z;

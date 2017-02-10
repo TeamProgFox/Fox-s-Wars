@@ -12,7 +12,7 @@ import fr.ProgFox.Game.Entities.Player;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Renderer.Camera;
-import fr.ProgFox.Shader.Shader;
+import fr.ProgFox.Renderer.Shader.Shader;
 
 public class VBO {
 	private FloatBuffer buffer;

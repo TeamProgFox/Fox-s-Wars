@@ -6,12 +6,12 @@ import org.lwjgl.input.Keyboard;
 
 import fr.ProgFox.Game.Entities.EntityManager;
 import fr.ProgFox.Game.Variables.Var;
+import fr.ProgFox.Game.World.World;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Utils.Loader;
 import fr.ProgFox.Utils.VertexBuffer.Cube;
 import fr.ProgFox.Utils.VertexBuffer.SkyBox;
-import fr.ProgFox.World.World;
 
 public class Game {
 	public Camera cam;
@@ -22,13 +22,15 @@ public class Game {
 	public float posX, posY, posZ;
 	public float rotX, rotY;
 	public SavePlayersConfiguration spc;
+
 	public Game() {
 		spc = new SavePlayersConfiguration(this);
 		int pos = World.sizeX * 16;
-		
+
 		Loader.read("saves/Player/Player.tpf", this);
-		System.out.println(posX + " / " + posY + " / " + posZ);
-		
+
+		if (Var.isInThirdPerson == false)
+			Var.isInFirstPerson = true;
 		world = new World(-6956537684988609768L);
 		cam = new Camera(new Vec3(posX, posY, posZ), new Vec3(rotX, rotY, 0), world);
 		entityManager = new EntityManager();
@@ -42,19 +44,22 @@ public class Game {
 		skybox.add(0, 0, 0, 100);
 
 	}
-	public void save(){
-		if(Var.isInMenu){
+
+	public void save() {
+		if (Var.isInMenu) {
 			spc.save();
 		}
 	}
+
 	public void update() {
 		entityManager.update();
 		world.update();
 		cam.update();
 		keyboardGestion();
-		
+
 	}
-	public void keyboardGestion(){
+
+	public void keyboardGestion() {
 		if (Keyboard.next()) {
 			if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
 				Var.flyMode = !Var.flyMode;
@@ -63,18 +68,18 @@ public class Game {
 				Var.debugMode = !Var.debugMode;
 			}
 			if (Keyboard.isKeyDown(Keyboard.KEY_F5)) {
-				if (Var.isInFirstPersonne) {
-					Var.isInFirstPersonne = false;
-					Var.isInThirdPersonne = true;
-				} else if (Var.isInThirdPersonne) {
-					Var.isInFirstPersonne = true;
-					Var.isInThirdPersonne = false;
+				if (Var.isInFirstPerson) {
+					Var.isInFirstPerson = false;
+					Var.isInThirdPerson = true;
+				} else if (Var.isInThirdPerson) {
+					Var.isInFirstPerson = true;
+					Var.isInThirdPerson = false;
 				}
 			}
 		}
-		
-		
+
 	}
+
 	public void render() {
 		entityManager.render();
 		world.render(cam);

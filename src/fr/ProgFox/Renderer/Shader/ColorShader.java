@@ -1,6 +1,6 @@
-package fr.ProgFox.Shader;
+package fr.ProgFox.Renderer.Shader;
 
-import static fr.ProgFox.Shader.ShaderLoader.*;
+import static fr.ProgFox.Renderer.Shader.ShaderLoader.*;
 
 public class ColorShader extends Shader {
 

@@ -1,4 +1,4 @@
-package fr.ProgFox.World.Blocks;
+package fr.ProgFox.Game.World.Blocks;
 
 import fr.ProgFox.Math.Vec4;
 

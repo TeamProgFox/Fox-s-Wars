@@ -2,8 +2,6 @@ package fr.ProgFox;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import java.util.Random;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -11,10 +9,7 @@ import org.lwjgl.opengl.Display;
 import fr.ProgFox.Game.Game;
 import fr.ProgFox.Game.Raycast;
 import fr.ProgFox.Game.Variables.Var;
-import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Renderer.DisplayManager;
-import fr.ProgFox.Utils.Loader;
-import fr.ProgFox.World.World;
 
 public class Core {
 	public static final int FRAME_CAP = 600000;

@@ -12,5 +12,5 @@ void main(void) {
 	v_light = light;
 	v_colors = colors;
 	
-	gl_Position = perspective * vec4(position + perspectivePosition, 1.0) ;
+	gl_Position = perspective * vec4(position - perspectivePosition, 1.0) ;
 }

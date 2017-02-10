@@ -1,4 +1,4 @@
-package fr.ProgFox.World;
+package fr.ProgFox.Game.World;
 
 import java.util.Random;
 

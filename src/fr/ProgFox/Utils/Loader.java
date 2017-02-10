@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import fr.ProgFox.Game.Game;
+import fr.ProgFox.Game.Variables.Var;
 
 public class Loader {
 	public static String loadFile(String path) {
@@ -36,7 +37,10 @@ public class Loader {
 			game.posZ = Float.parseFloat(br.readLine());
 			game.rotX = Float.parseFloat(br.readLine());
 			game.rotY = Float.parseFloat(br.readLine());
-			
+			Var.flyMode = Boolean.parseBoolean(br.readLine());
+			Var.debugMode = Boolean.parseBoolean(br.readLine());
+			Var.isInFirstPerson = Boolean.parseBoolean(br.readLine());
+			Var.isInThirdPerson = Boolean.parseBoolean(br.readLine());
 			br.close();
 		} catch (FileNotFoundException e) {
 

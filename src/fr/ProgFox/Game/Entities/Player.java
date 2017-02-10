@@ -7,15 +7,12 @@ import org.lwjgl.input.Mouse;
 
 import fr.ProgFox.Game.Raycast;
 import fr.ProgFox.Game.Variables.Var;
+import fr.ProgFox.Game.World.Chunk;
+import fr.ProgFox.Game.World.World;
+import fr.ProgFox.Game.World.Blocks.Block;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Renderer.Camera;
-import fr.ProgFox.Shader.ColorShader;
-import fr.ProgFox.Shader.Shader;
 import fr.ProgFox.Utils.VertexBuffer.CubeLine;
-import fr.ProgFox.Utils.VertexBuffer.VBO;
-import fr.ProgFox.World.Chunk;
-import fr.ProgFox.World.World;
-import fr.ProgFox.World.Blocks.Block;
 
 public class Player extends Entity {
 	public Vec3 position;
@@ -51,7 +48,7 @@ public class Player extends Entity {
 	public void update() {
 		input();
 		raycast.update();
-		if (Var.isInThirdPersonne)
+		if (Var.isInThirdPerson)
 			perso.update(position.x, position.y, position.z, 0.5f, 1.25f, 0.5f, true);
 	}
 
@@ -64,7 +61,7 @@ public class Player extends Entity {
 
 			updateVBO = false;
 		}
-		if (Var.isInThirdPersonne)
+		if (Var.isInThirdPerson)
 			perso.render(GL_LINES, cam, 2);
 		select.render(GL_LINES, cam, 2);
 

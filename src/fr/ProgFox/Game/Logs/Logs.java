@@ -1,4 +1,4 @@
-package fr.ProgFox.Logs;
+package fr.ProgFox.Game.Logs;
 
 public class Logs {
 	public void Info(String line) {
