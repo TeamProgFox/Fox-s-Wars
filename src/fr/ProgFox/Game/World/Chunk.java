@@ -289,10 +289,8 @@ public class Chunk {
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(0);
 		if(Var.debugMode){
-			cl.render(GL_LINES, cam, 2);
+			cl.render(GL_LINES, 2, cam.getPerspectiveProjection(), cam.position, shader);
 		}
-		
-		
 	}
 
 	public Block getBlock(float x, float y, float z) {

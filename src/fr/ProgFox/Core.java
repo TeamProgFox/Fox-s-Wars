@@ -7,7 +7,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
 import fr.ProgFox.Game.Game;
-import fr.ProgFox.Game.Raycast;
+import fr.ProgFox.Game.Entities.Raycast;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Renderer.DisplayManager;
 
@@ -35,11 +35,11 @@ public class Core {
 			Var.isInMenu = false;
 			Mouse.setGrabbed(true);
 		}
-		if (!Mouse.isGrabbed()) {
-			Var.isInGame = false;
-			game.save();
-			return;
-		}
+//		if (!Mouse.isGrabbed()) {
+//			Var.isInGame = false;
+//			game.save();
+//			return;
+//		}
 		game.update();
 
 	}

@@ -1,26 +1,31 @@
 package fr.ProgFox.Renderer;
 
+import javax.swing.JOptionPane;
+
 import org.lwjgl.opengl.Display;
 
-import fr.ProgFox.Game.Entities.Player;
+import fr.ProgFox.Game.Entities.LocalPlayer;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.World;
 import fr.ProgFox.Math.Mat4;
 import fr.ProgFox.Math.Transform;
 import fr.ProgFox.Math.Vec3;
+import fr.ProgFox.Renderer.Shader.ColorShader;
+import fr.ProgFox.Renderer.Shader.Shader;
+import fr.ProgFox.Utils.UniqueID;
 
 public class Camera {
 
-	public Player player;
+	public LocalPlayer player;
 	World world;
 	public Vec3 position, rotation;
 	private float fov, zNear, zFar;
-
+	public Shader shader;
 	public Camera(Vec3 position, Vec3 rotation, World world) {
-		player = new Player(world, this);
+		player = new LocalPlayer(world, this, UniqueID.getUniqueID(), JOptionPane.showInputDialog("Pseudo : "));
 		player.position = position;
 		player.rotation = rotation;
-		
+		this.shader = new ColorShader();
 		this.position = position;
 		this.rotation = rotation;
 		this.world = world;

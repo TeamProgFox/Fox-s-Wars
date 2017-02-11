@@ -5,36 +5,50 @@ import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import fr.ProgFox.Game.Raycast;
+import fr.ProgFox.Game.Game;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.Chunk;
 import fr.ProgFox.Game.World.World;
 import fr.ProgFox.Game.World.Blocks.Block;
 import fr.ProgFox.Math.Vec3;
+import fr.ProgFox.Network.NetworkClient;
 import fr.ProgFox.Renderer.Camera;
+import fr.ProgFox.Renderer.Shader.ColorShader;
+import fr.ProgFox.Renderer.Shader.Shader;
 import fr.ProgFox.Utils.VertexBuffer.CubeLine;
 
-public class Player extends Entity {
-	public Vec3 position;
-	public Vec3 rotation;
+public class LocalPlayer extends Entity {
 	public boolean gravity = true;
 	public World world;
 	public Raycast raycast;
 	private boolean updateVBO = true;
+	public Vec3 position, rotation;
 	private CubeLine select;
 	private CubeLine perso;
 	int vbo;
 	private Camera cam;
+	private Shader shader;
+	public NetworkClient net;
 
-	public Player(World world, Camera cam) {
+	public LocalPlayer(World world, Camera cam, int id, String name) {
 		this.world = world;
 		this.cam = cam;
+		this.id = id;
+		this.name = name;
+		this.shader = new ColorShader();
 		position = new Vec3();
 		Var.selectedPosition = new Vec3(0, 0, 0);
 		raycast = new Raycast(this);
 		select = new CubeLine(new Vec3(1, 1, 1));
 		perso = new CubeLine(new Vec3(0, 0, 0));
 		init();
+	}
+
+	public void connect(Game game, String address, int port) {
+	}
+
+	public NetworkClient getNetwork() {
+		return net;
 	}
 
 	public void init() {
@@ -62,8 +76,8 @@ public class Player extends Entity {
 			updateVBO = false;
 		}
 		if (Var.isInThirdPerson)
-			perso.render(GL_LINES, cam, 2);
-		select.render(GL_LINES, cam, 2);
+			perso.render(GL_LINES, 2, cam.getPerspectiveProjection(), cam.position, shader);
+		select.render(GL_LINES, 2, cam.getPerspectiveProjection(), cam.position, shader);
 
 	}
 

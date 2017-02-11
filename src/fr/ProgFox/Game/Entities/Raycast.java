@@ -1,19 +1,18 @@
-package fr.ProgFox.Game;
+package fr.ProgFox.Game.Entities;
 
-import java.util.ArrayList;
+import java.util.ArrayList; 
 import java.util.List;
 
-import fr.ProgFox.Game.Entities.Player;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.World;
 import fr.ProgFox.Math.Vec3;
 
 public class Raycast {
 	private List<Vec3> points;
-	private Player player;
+	private LocalPlayer player;
 	public static int teste = 0;
 
-	public Raycast(Player player) {
+	public Raycast(LocalPlayer player) {
 		this.player = player;
 		this.points = new ArrayList<Vec3>();
 		for (int i = 0; i < 3 * 16; i++) {

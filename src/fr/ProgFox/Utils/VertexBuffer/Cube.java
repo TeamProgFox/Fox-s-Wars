@@ -1,6 +1,7 @@
 package fr.ProgFox.Utils.VertexBuffer;
 
-import fr.ProgFox.Game.Entities.Player;
+import fr.ProgFox.Game.Entities.LocalPlayer;
+import fr.ProgFox.Math.Mat4;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Renderer.Shader.ColorShader;
@@ -18,7 +19,7 @@ public class Cube {
 	}
 
 	public void add(float x, float y, float z, float size, boolean isInCenter) {
-		cube.init(24, shader);
+		cube.init(24);
 		if (!isInCenter) {
 
 			cube.addVertex(x + size, y, z, new Vec3(color.x, color.y, color.z));
@@ -87,7 +88,7 @@ public class Cube {
 	}
 
 	public void update(float x, float y, float z, float size, boolean isInCenter) {
-		cube.init(24, shader);
+		cube.init(24);
 		cube.clearBuffer();
 		if (!isInCenter) {
 
@@ -156,7 +157,7 @@ public class Cube {
 
 	}
 
-	public void render(int mode, Camera cam) {
-		cube.render(mode, cam);
+	public void render(int mode, Mat4 perspective, Vec3 pos) {
+		cube.render(mode, perspective, pos, shader);
 	}
 }

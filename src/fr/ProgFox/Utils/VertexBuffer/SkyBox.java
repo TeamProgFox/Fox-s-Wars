@@ -1,8 +1,7 @@
 package fr.ProgFox.Utils.VertexBuffer;
 
-import fr.ProgFox.Game.Entities.Player;
+import fr.ProgFox.Math.Mat4;
 import fr.ProgFox.Math.Vec3;
-import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Renderer.Shader.ColorShader;
 import fr.ProgFox.Renderer.Shader.Shader;
 
@@ -18,7 +17,7 @@ public class SkyBox {
 	}
 
 	public void add(float x, float y, float z, float size) {
-		skybox.init(48, shader);
+		skybox.init(48);
 		float blanc = 0.7f, bleu = 0.3f, bleu2 = 0.3f;
 
 		skybox.addVertex(x - size, y - size, z + size, new Vec3(bleu, bleu, blanc));
@@ -78,7 +77,7 @@ public class SkyBox {
 
 	public void update(float x, float y, float z, float size) {
 		skybox.clearBuffer();
-		skybox.init(48, shader);
+		skybox.init(48);
 		float blanc = 0.7f, bleu = 0.3f, bleu2 = 0.3f;
 
 		skybox.update(x - size, y - size, z + size, new Vec3(bleu, bleu, blanc));
@@ -135,7 +134,7 @@ public class SkyBox {
 
 	}
 
-	public void render(int mode, Camera cam) {
-		skybox.render(mode, cam);
+	public void render(int mode, Mat4 perspective, Vec3 pos) {
+		skybox.render(mode, perspective, pos, shader);
 	}
 }

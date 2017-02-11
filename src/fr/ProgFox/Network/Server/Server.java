@@ -5,45 +5,42 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
-
-import fr.ProgFox.Network.Server.Entities.NetworkPlayer;
 
 public class Server implements Runnable {
 
-	private DatagramSocket socket;
 	private int port;
+	private boolean isRunning = false;
 
-	private List<NetworkPlayer> players = new ArrayList<NetworkPlayer>();
-
-	private Scanner sc;
-	private boolean running = false;
+	private DatagramSocket socket;
+	private Scanner scanner;
 
 	public Server(int port, Scanner scanner) {
 		try {
+
 			socket = new DatagramSocket(port);
-			this.sc = scanner;
+			this.scanner = scanner;
 			this.port = port;
 		} catch (SocketException e) {
 			System.err.println("Server already listening on port: " + port);
-			System.err.println("Terminating....");
+			System.err.println("Terminating...");
 			System.exit(1);
 		}
-		running = true;
+
+		isRunning = true;
 		new Thread(this, "Server").start();
 	}
 
 	public void run() {
-		System.out.println("Serter started on port " + port);
-		receive();
+		System.out.println("Server started on port: " + port);
 
-		while (running) {
-			String msg = sc.nextLine();
+		receive();
+		while (isRunning) {
+			String msg = scanner.nextLine();
 			if (msg.equals("stop")) {
 				socket.close();
 				System.exit(0);
+
 			}
 		}
 	}
@@ -52,7 +49,7 @@ public class Server implements Runnable {
 		new Thread("Receive") {
 			public void run() {
 				try {
-					while (running) {
+					while (isRunning) {
 						byte[] data = new byte[1024];
 						DatagramPacket packet = new DatagramPacket(data, data.length);
 						socket.receive(packet);
@@ -68,8 +65,10 @@ public class Server implements Runnable {
 
 	public void parsePacket(byte[] data, InetAddress address, int port) {
 		String msg = new String(data);
-		System.out.println("[CLIENT]" + msg);
+		// System.out.println(msg);
 
+		String send = msg;
+		send(send.getBytes(), address, port);
 	}
 
 	public void send(byte[] data, InetAddress address, int port) {
@@ -77,6 +76,7 @@ public class Server implements Runnable {
 			public void run() {
 				try {
 					DatagramPacket packet = new DatagramPacket(data, data.length, address, port);
+
 					socket.send(packet);
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -85,23 +85,12 @@ public class Server implements Runnable {
 		}.start();
 	}
 
-	public void add(NetworkPlayer player) {
-		players.add(player);
-	}
-	public void remove(NetworkPlayer player) {
-		players.remove(player);
-	}
-	public void log(){
-		
-	}
-
 	public static void main(String[] args) {
-		Scanner scanner = new Scanner(System.in);
-
+		Scanner sc = new Scanner(System.in);
 		System.out.print("Port: ");
-		int port = scanner.nextInt();
+		int port = sc.nextInt();
 
-		new Server(port, scanner);
+		new Server(port, sc);
+
 	}
-
 }

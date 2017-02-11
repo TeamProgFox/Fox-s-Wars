@@ -8,20 +8,17 @@ import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
 
-import fr.ProgFox.Game.Entities.Player;
 import fr.ProgFox.Game.Variables.Var;
+import fr.ProgFox.Math.Mat4;
 import fr.ProgFox.Math.Vec3;
-import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Renderer.Shader.Shader;
 
 public class VBO {
 	private FloatBuffer buffer;
 	private int vbo;
 	private int length = 0;
-	private Shader shader;
 
-	public void init(int vertexLenght, Shader shader) {
-		this.shader = shader;
+	public void init(int vertexLenght) {
 		buffer = BufferUtils.createFloatBuffer(vertexLenght * 6);
 		length = vertexLenght * 6;
 	}
@@ -51,10 +48,10 @@ public class VBO {
 		}
 	}
 
-	public void render(int mode, Camera cam) {
+	public void render(int mode, Mat4 perspective, Vec3 pos, Shader shader) {
 		shader.bind();
-		shader.setUniform("perspective", cam.getPerspectiveProjection());
-		shader.setUniform("perspectivePosition", cam.position);
+		shader.setUniform("perspective", perspective);
+		shader.setUniform("perspectivePosition", pos);
 		shader.setUniform("light", Var.light);
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);

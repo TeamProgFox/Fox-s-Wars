@@ -21,7 +21,37 @@ public class EntityManager extends Entity {
 			a.render();
 		}
 	}
-	public void add(Entity e){
+
+	public void add(Entity e) {
 		this.e.add(e);
 	}
+
+	public Entity getEntity(int id) {
+		for (Entity a : e) {
+			if (a.id == id)
+				return a;
+		}
+		return null;
+	}
+
+	public Entity getEntity(String name) {
+		for (Entity a : e) {
+			if (a.name.equals(name))
+				return a;
+		}
+		return null;
+	}
+
+	public ClientPlayer getPlayer(String name) {
+		for (Entity a : e) {
+			if (a.name.equals(name))
+				return (ClientPlayer) a;
+		}
+
+		return null;
+
+	}
+	
+	
+
 }
