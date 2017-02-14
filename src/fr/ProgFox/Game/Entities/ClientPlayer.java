@@ -17,8 +17,8 @@ import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Utils.VertexBuffer.CubeLine;
 
 public class ClientPlayer extends Entity {
-	public Vec3 position;
-	public Vec3 rotation;
+	public Vec3 position = new Vec3();
+	public Vec3 rotation = new Vec3();
 	public boolean gravity = true;
 	public World world;
 	public Raycast raycast;

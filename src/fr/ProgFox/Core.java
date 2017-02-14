@@ -2,9 +2,12 @@ package fr.ProgFox;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.Drawable;
+import org.lwjgl.opengl.SharedDrawable;
 
 import fr.ProgFox.Game.Game;
 import fr.ProgFox.Game.Entities.Raycast;
@@ -17,6 +20,7 @@ public class Core {
 	public static int frames = 0;
 	public static int teste = 1;
 	Game game;
+	public static Drawable sd;
 	public static int width = 1200, height = 600;
 
 	public Core() {
@@ -40,6 +44,8 @@ public class Core {
 //			game.save();
 //			return;
 //		}
+		
+
 		game.update();
 
 	}

@@ -1,9 +1,6 @@
 package fr.ProgFox.Renderer.Shader;
 
-import static org.lwjgl.opengl.GL20.*; 
-import java.nio.FloatBuffer;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.util.vector.Matrix4f;
+import static org.lwjgl.opengl.GL20.*;  
 import fr.ProgFox.Math.Mat4;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Utils.Buffer;
@@ -29,14 +26,6 @@ public abstract class Shader {
 
 	public void setUniform(String name, Mat4 value) {
 		glUniformMatrix4(getUniform(name), true, Buffer.createBuffer(value));
-
-	}
-
-	public void setUniform(String name, Matrix4f value) {
-		FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
-		value.store(buffer);
-
-		glUniformMatrix4(getUniform(name), true, buffer);
 
 	}
 

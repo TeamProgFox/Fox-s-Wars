@@ -1,5 +1,7 @@
 package fr.ProgFox.Game.World;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.lwjgl.opengl.Display;
@@ -7,6 +9,7 @@ import org.lwjgl.opengl.Display;
 import fr.ProgFox.Game.Logs.Logs;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.Blocks.Block;
+import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Renderer.DisplayManager;
 
@@ -18,20 +21,21 @@ public class World {
 	public Noise noise;
 	public Chunk[][] chunks;
 	private Random random;
+	private createChunk cC;
 	float percentage;
 
 	public World(long seed) {
-		
+
 		random = new Random(seed);
 		noise = new Noise(random.nextLong(), 15, 15);
 		chunks = new Chunk[100][100];
-		
+		cC = new createChunk(this);
 		for (int x = 0; x < sizeX; x++) {
 			for (int z = 0; z < sizeZ; z++) {
 				chunks[x][z] = new Chunk(x, 0, z, noise, random, this);
 				percentage = ((float) (x + 1) / sizeX) * 33;
 				DisplayManager.update();
-				
+
 			}
 			Display.setTitle("Fox's Wars - WorldGenerate : " + (int) percentage + "%");
 			System.out.println(percentage);
@@ -57,32 +61,43 @@ public class World {
 		}
 	}
 
-	public void update() {
+	public void update(Camera cam) {
 		cycleToDay();
-		for (int x = moreSizeX; x < sizeX + moreSizeX; x++) {
-			for (int z = moreSizeZ; z < sizeZ + moreSizeZ; z++) {
+		float xP = (float) (cam.position.x / 16);
+		float zP = (float) (cam.position.z / 16);
+		if (getChunk(xP, zP) == null && xP > 0 && zP > 0) {
+			new Logs().Info("debut de la génération");
+			chunks[(int) xP][(int) zP] = new Chunk(xP, 0, zP, noise, random, this);
+			new Logs().Info("debut de la vegetation");
+			chunks[(int) xP][(int) zP].generateVegetation();
+			new Logs().Info("debut de la création");
+			chunks[(int) xP][(int) zP].createChunk();
+
+		}
+
+		for (int x = 0; x < sizeX; x++) {
+			for (int z = 0; z < sizeZ; z++) {
 				if (getChunk(x, z) != null) {
 					chunks[x][z].update();
 				}
 			}
 		}
+
 	}
 
 	public void render(Camera cam) {
-		float xP1 = (float) (cam.position.x / 16);
-		float zP1 = (float) (cam.position.z / 16);
-		int renderDistance = 2;
-		for (int x = moreSizeX; x < sizeX + moreSizeX; x++) {
-			for (int z = moreSizeZ; z < sizeZ + moreSizeZ; z++) {
+		// float xP = (float) (cam.position.x / 16);
+		// float zP = (float) (cam.position.z / 16);
+		// int renderDistance = 2;
+
+		for (int x = 0; x < sizeX + 1; x++) {
+			for (int z = 0; z < sizeZ + 1; z++) {
 				if (getChunk(x, z) != null) {
 					chunks[x][z].render(cam);
 				}
-				if (xP1 > x - renderDistance && xP1 < x + renderDistance + 1) {
-					if (zP1 > z - renderDistance && zP1 < z + renderDistance + 1) {
-					}
-				}
 			}
 		}
+
 	}
 
 	public static void cycleToDay() {
@@ -117,13 +132,12 @@ public class World {
 		float xx = x / Chunk.SIZE;
 		float zz = z / Chunk.SIZE;
 
-		if (xx < 0 || xx >= sizeX || zz < 0 || zz >= sizeZ)
+		if (xx < 0 || xx >= sizeX + moreSizeX || zz < 0 || zz >= sizeZ + moreSizeZ)
 			return;
 		Chunk chunk = chunks[(int) xx][(int) zz];
 		float x3 = x % Chunk.SIZE;
 		float y3 = y % Chunk.HEIGHT;
 		float z3 = z % Chunk.SIZE;
-
 		chunk.addBlock(x3, y3, z3, block);
 	}
 
@@ -131,7 +145,7 @@ public class World {
 		float xx = x / Chunk.SIZE;
 		float zz = z / Chunk.SIZE;
 
-		if (xx < 0 || xx >= sizeX || zz < 0 || zz >= sizeZ)
+		if (xx < 0 || xx >= sizeX + moreSizeX || zz < 0 || zz >= sizeZ + moreSizeZ)
 			return;
 		Chunk chunk = chunks[(int) xx][(int) zz];
 		float x3 = x % Chunk.SIZE;
@@ -166,79 +180,5 @@ public class World {
 		return c;
 	}
 
-	public void lol() {
-		// if (getChunk(xP3, zP3 - 3) == null) {
-		// if (xP3 > 0 && zP3 - 3 > 0) {
-		// chunks[(int) xP3][(int) zP3 - 3] = new Chunk(xP3, 0, zP3 - 3, noise,
-		// random, this);
-		// chunks[(int) xP3][(int) zP3 - 3].createChunk();
-		//
-		// if (getChunk(xP3, zP3 - 2) == null) {
-		// chunks[(int) xP3][(int) zP3 - 2] = new Chunk(xP3, 0, zP3 - 2, noise,
-		// random, this);
-		// chunks[(int) xP3][(int) zP3 - 2].createChunk();
-		// }
-		// if (getChunk(xP3, zP3 - 1) == null) {
-		// chunks[(int) xP3][(int) zP3 - 1] = new Chunk(xP3, 0, zP3 - 1, noise,
-		// random, this);
-		// chunks[(int) xP3][(int) zP3 - 1].createChunk();
-		// }
-		//
-		// if (getChunk(xP3, zP3 + 2) == null) {
-		// chunks[(int) xP3][(int) zP3 + 2] = new Chunk(xP3, 0, zP3 + 2, noise,
-		// random, this);
-		// chunks[(int) xP3][(int) zP3 + 2].createChunk();
-		// }
-		// if (getChunk(xP3, zP3 + 1) == null) {
-		// chunks[(int) xP3][(int) zP3 + 1] = new Chunk(xP3, 0, zP3 + 1, noise,
-		// random, this);
-		// chunks[(int) xP3][(int) zP3 + 1].createChunk();
-		// }
-		//
-		//
-		// }
-		// }
-		// if (getChunk(xP3 - 3, zP3) == null || getChunk(xP3 - 2, zP3) == null
-		// || getChunk(xP3 - 1, zP3) == null
-		// || getChunk(xP3, zP3) == null) {
-		// if (xP3 - 3 > 0 && zP3 > 0) {
-		// chunks[(int) xP3 - 3][(int) zP3] = new Chunk(xP3 - 3, 0, zP3, noise,
-		// random, this);
-		// chunks[(int) xP3 - 3][(int) zP3].createChunk();
-		// if (getChunk(xP3 - 2, zP3) == null) {
-		// chunks[(int) xP3 - 2][(int) zP3] = new Chunk(xP3 - 2, 0, zP3, noise,
-		// random, this);
-		// chunks[(int) xP3 - 2][(int) zP3].createChunk();
-		// }
-		// if (getChunk(xP3 - 1, zP3) == null) {
-		//
-		// chunks[(int) xP3 - 1][(int) zP3] = new Chunk(xP3 - 1, 0, zP3, noise,
-		// random, this);
-		// chunks[(int) xP3 - 1][(int) zP3].createChunk();
-		// }
-		//
-		// if (getChunk(xP3 + 2, zP3) == null) {
-		// chunks[(int) xP3 + 2][(int) zP3] = new Chunk(xP3 + 2, 0, zP3, noise,
-		// random, this);
-		// chunks[(int) xP3 + 2][(int) zP3].createChunk();
-		// }
-		// if (getChunk(xP3 + 1, zP3) == null) {
-		//
-		// chunks[(int) xP3 + 1][(int) zP3] = new Chunk(xP3 + 1, 0, zP3, noise,
-		// random, this);
-		// chunks[(int) xP3 + 1][(int) zP3].createChunk();
-		// }
-		//
-		// }
-		//
-		// }
-		// if (getChunk(xP3, zP3) == null) {
-		// if (xP3 > 0 && zP3 > 0) {
-		// chunks[(int) xP3][(int) zP3] = new Chunk(xP3, 0, zP3, noise, random,
-		// this);
-		// chunks[(int) xP3][(int) zP3].createChunk();
-		// }
-		// }
-	}
 	// TESTE
 }

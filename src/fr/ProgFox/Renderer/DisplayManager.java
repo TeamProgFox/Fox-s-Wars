@@ -3,6 +3,10 @@ package fr.ProgFox.Renderer;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.SharedDrawable;
+
+import fr.ProgFox.Core;
+
 import static org.lwjgl.opengl.GL11.*;
 
 public class DisplayManager {
@@ -12,9 +16,27 @@ public class DisplayManager {
 			Display.setTitle(title);
 			Display.setResizable(true);
 			Display.create();
+			
+			try {
+				Core.sd = new SharedDrawable(Display.getDrawable());
+				
+			} catch (LWJGLException e1) {
+				e1.printStackTrace();
+			}
+			
+			
 			glEnable(GL_DEPTH_TEST);
 			glEnable(GL_CULL_FACE);
 			glCullFace(GL_FRONT);
+		} catch (LWJGLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void recreate() {
+		try {
+			Display.setDisplayMode(new DisplayMode(Display.getWidth(), Display.getHeight()));
+			Display.create();
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}

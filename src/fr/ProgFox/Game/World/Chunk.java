@@ -9,6 +9,7 @@ import java.util.Random;
 
 import org.lwjgl.BufferUtils;
 
+import fr.ProgFox.Game.Logs.Logs;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.Blocks.Block;
 import fr.ProgFox.Math.Vec3;
@@ -171,7 +172,7 @@ public class Chunk {
 					grounded = noise.getNoise(x2, z2) > y2 && noise.getNoise(x2, z2) < y2 + 1;
 					if (random.nextFloat() > 0.997f && grounded) {
 						tree.addTree(blocks, x2, y2, z2, world);
-					
+
 					}
 				}
 			}
@@ -288,7 +289,7 @@ public class Chunk {
 		glDrawArrays(GL_QUADS, 0, bufferSize);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(0);
-		if(Var.debugMode){
+		if (Var.debugMode) {
 			cl.render(GL_LINES, 2, cam.getPerspectiveProjection(), cam.position, shader);
 		}
 	}

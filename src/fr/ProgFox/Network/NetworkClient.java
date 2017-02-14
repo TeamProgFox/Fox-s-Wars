@@ -36,29 +36,28 @@ public class NetworkClient implements Runnable {
 	public void run() {
 		System.out.println("Client running: " + address.getHostAddress() + ":" + port);
 		while (isRunning) {
-			byte[] data = new byte[1024];
-			DatagramPacket packet = new DatagramPacket(data, data.length);
-
 			try {
+				byte[] data = new byte[1024];
+				DatagramPacket packet = new DatagramPacket(data, data.length, address, port);
+
 				socket.receive(packet);
+				parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
-			parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
 		}
 	}
 
 	public void parsePacket(byte[] data, InetAddress address, int port) {
 		String msg = new String(data);
-		System.out.println(msg);
+
 		int indexOfTab = 0;
 		String[] controle = new String[4];
 		controle[0] = "";
 		controle[1] = "";
 		controle[2] = "";
 		controle[3] = "";
-		
+
 		for (int i = 0; i < msg.length(); i++) {
 			if (msg.charAt(i) != ';') {
 				controle[indexOfTab] += msg.charAt(i);
@@ -70,13 +69,14 @@ public class NetworkClient implements Runnable {
 		float x = Float.parseFloat(controle[1]);
 		float y = Float.parseFloat(controle[2]);
 		float z = Float.parseFloat(controle[3]);
-		
-		System.out.println(name);
-		System.out.println(x);
-		System.out.println(y);
-		System.out.println(z);
+
+		// System.out.println(name);
+		// System.out.println(x);
+		// System.out.println(y);
+		// System.out.println(z);
+		game.addClientPlayer(name, x, y, z);
 		game.controleEntity(name, x, y, z);
-		
+
 	}
 
 	public void send(byte[] data) {

@@ -85,6 +85,9 @@ public class LocalPlayer extends Entity {
 	float sensibilite = 3;
 
 	public void input() {
+		if (Var.isInMenu)
+			return;
+
 		float xDir = 0, yDir = 0, zDir = 0;
 		rotation.addX(-Mouse.getDY() / sensibilite);
 		rotation.addY(-Mouse.getDX() / sensibilite);
@@ -105,17 +108,16 @@ public class LocalPlayer extends Entity {
 			zDir = getForward().mul(new Vec3(speed, 0, speed)).getZ();
 			move(xDir, yDir, zDir);
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-
-			xDir = getForward().mul(new Vec3(-speed, 0, -speed)).getX();
-			zDir = getForward().mul(new Vec3(-speed, 0, -speed)).getZ();
-			move(xDir, yDir, zDir);
-		}
-
 		if (Keyboard.isKeyDown(Keyboard.KEY_Q)) {
 
 			xDir = getRight().mul(new Vec3(-speed, 0, -speed)).getX();
 			zDir = getRight().mul(new Vec3(-speed, 0, -speed)).getZ();
+			move(xDir, yDir, zDir);
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
+
+			xDir = getForward().mul(new Vec3(-speed, 0, -speed)).getX();
+			zDir = getForward().mul(new Vec3(-speed, 0, -speed)).getZ();
 			move(xDir, yDir, zDir);
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {

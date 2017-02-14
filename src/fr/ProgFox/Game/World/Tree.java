@@ -26,7 +26,6 @@ public class Tree {
 		for (int i = 0; i < 6; i++) {
 			world.addBlock(x, y + i, z, Block.WOOD);
 		}
-
 		world.addBlock(x + 1, y + 4, z + 1, block);
 		world.addBlock(x + 2, y + 4, z + 1, block);
 		world.addBlock(x - 1, y + 4, z + 1, block);

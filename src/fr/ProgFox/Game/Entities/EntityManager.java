@@ -23,7 +23,11 @@ public class EntityManager extends Entity {
 	}
 
 	public void add(Entity e) {
-		this.e.add(e);
+		this.e.add((Entity) e);
+	}
+
+	public void add(ClientPlayer e) {
+		this.e.add((ClientPlayer) e);
 	}
 
 	public Entity getEntity(int id) {
@@ -51,7 +55,5 @@ public class EntityManager extends Entity {
 		return null;
 
 	}
-	
-	
 
 }
