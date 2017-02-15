@@ -14,6 +14,7 @@ import org.lwjgl.opengl.Drawable;
 import fr.ProgFox.Core;
 import fr.ProgFox.Game.Entities.ClientPlayer;
 import fr.ProgFox.Game.Entities.EntityManager;
+import fr.ProgFox.Game.Entities.SavePlayersConfiguration;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.World;
 import fr.ProgFox.Math.Vec3;
@@ -68,8 +69,8 @@ public class Game implements Runnable {
 		cube.add(0, 0, 0, 0.002f, true);
 		perso.add(0, 0, 0, 1, 1, 1, false);
 		skybox.add(0, 0, 0, 100);
-		// net = new NetworkClient(this, "localhost", 2009);
-
+		//net = new NetworkClient(this, "localhost", 2009);
+		
 		new Thread(this).start();
 	}
 
@@ -103,10 +104,12 @@ public class Game implements Runnable {
 		for (ClientPlayer a : players) {
 			perso.update(a.position.x, a.position.y, a.position.z, 0.5f, 1.25f, 0.5f, true);
 		}
-
+		
 		// net.send(("Enzo;0;0;0").getBytes());
 
 		entityManager.update();
+		
+		World.cycleToDay();
 
 		cam.update();
 
@@ -165,7 +168,6 @@ public class Game implements Runnable {
 	public void render() {
 		entityManager.render();
 		world.render(cam);
-
 		for (ClientPlayer a : players) {
 			perso.render(GL_LINES, 2, cam.getPerspectiveProjection(), cam.position, cam.shader);
 		}
@@ -178,7 +180,7 @@ public class Game implements Runnable {
 		float z = (float) (cam.position.z + cam.getForward().z);
 
 		cube.update(x, y, z, 0.002f, true);
-		skybox.update(cam.position.x, cam.position.y, cam.position.z, 100);
+		skybox.update(cam.position.x, cam.position.y, cam.position.z, 2000);
 
 		skybox.render(GL_QUADS, cam.getPerspectiveProjection(), cam.position);
 		cube.render(GL_QUADS, cam.getPerspectiveProjection(), cam.position);

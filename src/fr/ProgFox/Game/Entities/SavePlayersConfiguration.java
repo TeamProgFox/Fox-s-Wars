@@ -1,9 +1,10 @@
-package fr.ProgFox.Game;
+package fr.ProgFox.Game.Entities;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import fr.ProgFox.Game.Game;
 import fr.ProgFox.Game.Variables.Var;
 
 public class SavePlayersConfiguration {

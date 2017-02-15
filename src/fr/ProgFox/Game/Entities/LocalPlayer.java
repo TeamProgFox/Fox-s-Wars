@@ -6,6 +6,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import fr.ProgFox.Game.Game;
+import fr.ProgFox.Game.Raycast;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.Chunk;
 import fr.ProgFox.Game.World.World;
@@ -64,6 +65,14 @@ public class LocalPlayer extends Entity {
 		raycast.update();
 		if (Var.isInThirdPerson)
 			perso.update(position.x, position.y, position.z, 0.5f, 1.25f, 0.5f, true);
+		if (raycast.getBlock(world) != null) {
+
+			Var.selectedBlock = world.getBlock(raycast.getBlock(world).x, raycast.getBlock(world).y,
+					raycast.getBlock(world).z);
+			Var.selectedPosition = new Vec3(raycast.getBlock(world).x, raycast.getBlock(world).y,
+					raycast.getBlock(world).z);
+
+		}
 	}
 
 	public void render() {
@@ -142,15 +151,7 @@ public class LocalPlayer extends Entity {
 			move(0, yDir, 0);
 		}
 
-		if (raycast.getBlock(world) != null) {
 
-			Var.selectedBlock = world.getBlock(raycast.getBlock(world).x, raycast.getBlock(world).y,
-					raycast.getBlock(world).z);
-			Var.selectedPosition = new Vec3(raycast.getBlock(world).x, raycast.getBlock(world).y,
-					raycast.getBlock(world).z);
-			// System.out.println("BLOCK = " + selectedBlock);
-
-		}
 		isGrounded(xDir, yDir, zDir);
 		removeAndAddBlockGestion();
 		actionTimeGestion();

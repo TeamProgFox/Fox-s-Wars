@@ -10,12 +10,12 @@ import org.lwjgl.opengl.Drawable;
 import org.lwjgl.opengl.SharedDrawable;
 
 import fr.ProgFox.Game.Game;
-import fr.ProgFox.Game.Entities.Raycast;
+import fr.ProgFox.Game.Raycast;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Renderer.DisplayManager;
 
 public class Core {
-	public static final int FRAME_CAP = 600000;
+	public static final int FRAME_CAP = 6000000;
 	public static boolean running = false;
 	public static int frames = 0;
 	public static int teste = 1;
@@ -39,13 +39,7 @@ public class Core {
 			Var.isInMenu = false;
 			Mouse.setGrabbed(true);
 		}
-//		if (!Mouse.isGrabbed()) {
-//			Var.isInGame = false;
-//			game.save();
-//			return;
-//		}
 		
-
 		game.update();
 
 	}
@@ -112,7 +106,6 @@ public class Core {
 				timer += 1000;
 				Display.setTitle("Fox's Wars : FPS = " + frames + "/ TPS = " + ticks);
 				ticks = 0;
-				Raycast.teste = 0;
 				frames = 0;
 			}
 		}

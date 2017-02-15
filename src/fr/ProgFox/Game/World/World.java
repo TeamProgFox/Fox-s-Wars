@@ -20,8 +20,9 @@ public class World {
 	public static int moreSizeZ = 0;
 	public Noise noise;
 	public Chunk[][] chunks;
+	public Chunk[][] newChunks;
 	private Random random;
-	private createChunk cC;
+
 	float percentage;
 
 	public World(long seed) {
@@ -29,7 +30,7 @@ public class World {
 		random = new Random(seed);
 		noise = new Noise(random.nextLong(), 15, 15);
 		chunks = new Chunk[100][100];
-		cC = new createChunk(this);
+		newChunks = new Chunk[100][100];
 		for (int x = 0; x < sizeX; x++) {
 			for (int z = 0; z < sizeZ; z++) {
 				chunks[x][z] = new Chunk(x, 0, z, noise, random, this);
@@ -59,13 +60,20 @@ public class World {
 			Display.setTitle("Fox's Wars - WorldCreation : " + (int) percentage + "%");
 			System.out.println(percentage);
 		}
+
 	}
 
 	public void update(Camera cam) {
-		cycleToDay();
+
 		float xP = (float) (cam.position.x / 16);
 		float zP = (float) (cam.position.z / 16);
-		if (getChunk(xP, zP) == null && xP > 0 && zP > 0) {
+
+		if (xP < 0)
+			xP = 0;
+		if (zP < 0)
+			zP = 0;
+
+		if (chunks[(int) xP][(int) zP] == null) {
 			new Logs().Info("debut de la génération");
 			chunks[(int) xP][(int) zP] = new Chunk(xP, 0, zP, noise, random, this);
 			new Logs().Info("debut de la vegetation");
@@ -82,21 +90,22 @@ public class World {
 				}
 			}
 		}
-
 	}
 
 	public void render(Camera cam) {
-		// float xP = (float) (cam.position.x / 16);
-		// float zP = (float) (cam.position.z / 16);
+		float xP = (float) (cam.position.x / 16);
+		float zP = (float) (cam.position.z / 16);
 		// int renderDistance = 2;
-
-		for (int x = 0; x < sizeX + 1; x++) {
-			for (int z = 0; z < sizeZ + 1; z++) {
-				if (getChunk(x, z) != null) {
+		for (int x = 0; x < sizeX; x++) {
+			for (int z = 0; z < sizeZ; z++) {
+				if (getChunk(x, z) != null && getChunk(x, z).canRender) {
 					chunks[x][z].render(cam);
 				}
 			}
 		}
+	}
+
+	public void newRender(Camera cam) {
 
 	}
 
@@ -129,12 +138,16 @@ public class World {
 	}
 
 	public void addBlock(float x, float y, float z, Block block) {
-		float xx = x / Chunk.SIZE;
-		float zz = z / Chunk.SIZE;
+		int xx = (int) (x / Chunk.SIZE);
+		int zz = (int) (z / Chunk.SIZE);
 
-		if (xx < 0 || xx >= sizeX + moreSizeX || zz < 0 || zz >= sizeZ + moreSizeZ)
+		if (xx < 0 || xx >= 100 || zz < 0 || zz >= 100)
 			return;
+
 		Chunk chunk = chunks[(int) xx][(int) zz];
+		if (chunk == null)
+			return;
+
 		float x3 = x % Chunk.SIZE;
 		float y3 = y % Chunk.HEIGHT;
 		float z3 = z % Chunk.SIZE;
@@ -145,9 +158,12 @@ public class World {
 		float xx = x / Chunk.SIZE;
 		float zz = z / Chunk.SIZE;
 
-		if (xx < 0 || xx >= sizeX + moreSizeX || zz < 0 || zz >= sizeZ + moreSizeZ)
+		if (xx < 0 || xx >= 100 || zz < 0 || zz >= 100)
 			return;
 		Chunk chunk = chunks[(int) xx][(int) zz];
+		if (chunk == null)
+			return;
+
 		float x3 = x % Chunk.SIZE;
 		float y3 = y % Chunk.HEIGHT;
 		float z3 = z % Chunk.SIZE;
@@ -160,7 +176,9 @@ public class World {
 			}
 		}
 		if ((int) x3 == 0 && (int) xx > 0) {
-			getChunk(xx - 1, zz).updateChunk();
+			if (getChunk(xx - 1, zz) != null) {
+				getChunk(xx - 1, zz).updateChunk();
+			}
 		}
 		if ((int) z3 == 15) {
 			if (getChunk(xx, zz + 1) != null) {
@@ -168,9 +186,10 @@ public class World {
 			}
 		}
 		if ((int) z3 == 0 && (int) zz > 0) {
-			getChunk(xx, zz - 1).updateChunk();
+			if (getChunk(xx, zz - -1) != null) {
+				getChunk(xx, zz - 1).updateChunk();
+			}
 		}
-
 	}
 
 	public Chunk getChunk(float x, float z) {

@@ -8,6 +8,9 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
+import org.lwjgl.LWJGLException;
+
+import fr.ProgFox.Core;
 import fr.ProgFox.Game.Game;
 import fr.ProgFox.Game.Entities.Entity;
 import fr.ProgFox.Math.Vec3;
@@ -35,6 +38,8 @@ public class NetworkClient implements Runnable {
 
 	public void run() {
 		System.out.println("Client running: " + address.getHostAddress() + ":" + port);
+		
+		
 		while (isRunning) {
 			try {
 				byte[] data = new byte[1024];
@@ -93,7 +98,4 @@ public class NetworkClient implements Runnable {
 		}.start();
 	}
 
-	public static void main(String[] args) {
-		new NetworkClient(null, "localhost", 2009);
-	}
 }

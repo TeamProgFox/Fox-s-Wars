@@ -1,8 +1,9 @@
-package fr.ProgFox.Game.Entities;
+package fr.ProgFox.Game;
 
-import java.util.ArrayList; 
+import java.util.ArrayList;
 import java.util.List;
 
+import fr.ProgFox.Game.Entities.LocalPlayer;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.World;
 import fr.ProgFox.Math.Vec3;
@@ -10,7 +11,6 @@ import fr.ProgFox.Math.Vec3;
 public class Raycast {
 	private List<Vec3> points;
 	private LocalPlayer player;
-	public static int teste = 0;
 
 	public Raycast(LocalPlayer player) {
 		this.player = player;
@@ -46,9 +46,15 @@ public class Raycast {
 
 			if (block) {
 				// AMETTRE ICI
-				teste = 1;
+
+				if (Var.isInMenu) {
+					return new Vec3();
+				}
+
 				return new Vec3(v.x, v.y, v.z);
+
 			}
+
 			Var.selectedPosition = new Vec3();
 
 		}

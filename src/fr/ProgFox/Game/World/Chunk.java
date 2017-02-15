@@ -35,6 +35,7 @@ public class Chunk {
 	private World world;
 	private Tree tree;
 	private Random random;
+	public boolean canRender = false;
 	private CubeLine cl;
 
 	public Chunk(float x, float y, float z, Noise noise, Random seed, World world) {
@@ -81,7 +82,7 @@ public class Chunk {
 	float ao = 0.8f;
 
 	public void createChunk() {
-		buffer = BufferUtils.createFloatBuffer(SIZE * SIZE * SIZE * 6 * 4 * (3 + 4));
+		buffer = BufferUtils.createFloatBuffer(SIZE * HEIGHT * SIZE * 6 * 4 * (3 + 4));
 		for (int x = 0; x < SIZE; x++) {
 			for (int y = 0; y < HEIGHT; y++) {
 				for (int z = 0; z < SIZE; z++) {
@@ -160,6 +161,7 @@ public class Chunk {
 		}
 		buffer.flip();
 		createBuffer();
+		canRender = true;
 	}
 
 	public void generateVegetation() {
