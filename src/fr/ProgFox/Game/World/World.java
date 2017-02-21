@@ -14,15 +14,15 @@ import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Renderer.DisplayManager;
 
 public class World {
-	public static int sizeX = 4;
-	public static int sizeZ = 4;
+	public static int sizeX = 8;
+	public static int sizeZ = 8;
 	public static int moreSizeX = 0;
 	public static int moreSizeZ = 0;
 	public Noise noise;
 	public Chunk[][] chunks;
 	public Chunk[][] newChunks;
 	private Random random;
-
+	int i = 0;
 	float percentage;
 
 	public World(long seed) {
@@ -36,7 +36,6 @@ public class World {
 				chunks[x][z] = new Chunk(x, 0, z, noise, random, this);
 				percentage = ((float) (x + 1) / sizeX) * 33;
 				DisplayManager.update();
-
 			}
 			Display.setTitle("Fox's Wars - WorldGenerate : " + (int) percentage + "%");
 			System.out.println(percentage);
@@ -63,42 +62,44 @@ public class World {
 
 	}
 
-	public void update(Camera cam) {
+	int sleepTime = 120;
 
+	public void newUpdate(Camera cam) {
 		float xP = (float) (cam.position.x / 16);
 		float zP = (float) (cam.position.z / 16);
 
-		if (xP < 0)
-			xP = 0;
-		if (zP < 0)
-			zP = 0;
+		int x = (int) xP;
+		int z = (int) zP;
+		if (x < 0)
+			x = 0;
+		if (z < 0)
+			z = 0;
 
-		if (chunks[(int) xP][(int) zP] == null) {
+		if (chunks[x][z] == null) {
 			new Logs().Info("debut de la génération");
-			chunks[(int) xP][(int) zP] = new Chunk(xP, 0, zP, noise, random, this);
+			chunks[(int) x][(int) z] = new Chunk(x, 0, z, noise, random, this);
 			new Logs().Info("debut de la vegetation");
-			chunks[(int) xP][(int) zP].generateVegetation();
+			chunks[(int) x][(int) z].generateVegetation();
 			new Logs().Info("debut de la création");
-			chunks[(int) xP][(int) zP].createChunk();
-
+			chunks[(int) x][(int) z].createChunk();
 		}
 
-		for (int x = 0; x < sizeX; x++) {
-			for (int z = 0; z < sizeZ; z++) {
-				if (getChunk(x, z) != null) {
-					chunks[x][z].update();
+	}
+
+	public void update() {
+		for (int a = 0; a < 100; a++) {
+			for (int b = 0; b < 100; b++) {
+				if (getChunk(a, b) != null && getChunk(a, b).canRender && !getChunk(a, b).canRealyRender) {
+					chunks[a][b].update();
 				}
 			}
 		}
 	}
 
 	public void render(Camera cam) {
-		float xP = (float) (cam.position.x / 16);
-		float zP = (float) (cam.position.z / 16);
-		// int renderDistance = 2;
-		for (int x = 0; x < sizeX; x++) {
-			for (int z = 0; z < sizeZ; z++) {
-				if (getChunk(x, z) != null && getChunk(x, z).canRender) {
+		for (int x = 0; x < 100; x++) {
+			for (int z = 0; z < 100; z++) {
+				if (chunks[x][z] != null && chunks[x][z].canRender) {
 					chunks[x][z].render(cam);
 				}
 			}

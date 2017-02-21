@@ -21,8 +21,10 @@ public class Camera {
 	public Vec3 position, rotation;
 	private float fov, zNear, zFar;
 	public Shader shader;
+
 	public Camera(Vec3 position, Vec3 rotation, World world) {
-		player = new LocalPlayer(world, this, UniqueID.getUniqueID(), JOptionPane.showInputDialog("Pseudo : "));
+		player = new LocalPlayer(world, this, UniqueID.getUniqueID(), JOptionPane.showInputDialog("Pseudo : "),
+				new Vec3(), new Vec3());
 		player.position = position;
 		player.rotation = rotation;
 		this.shader = new ColorShader();
@@ -30,25 +32,26 @@ public class Camera {
 		this.rotation = rotation;
 		this.world = world;
 	}
+
 	public void update() {
 		if (Var.isInFirstPerson) {
 			position.x = player.position.x;
 			position.y = player.position.y;
 			position.z = player.position.z;
-			
+
 		} else {
 			float x = (float) (player.position.x + player.getForward().x);
 			float y = (float) (player.position.y - player.getForward().y);
 			float z = (float) (player.position.z + player.getForward().z);
-			
+
 			float xx = player.getForward().x * 4f;
 			float zz = player.getForward().z * 4f;
 			x -= xx;
 			y += 2;
 			z -= zz;
-			
+
 			position = new Vec3(x, y, z);
-			
+
 		}
 		rotation = player.rotation;
 	}

@@ -69,7 +69,9 @@ public class Game implements Runnable {
 		cube.add(0, 0, 0, 0.002f, true);
 		perso.add(0, 0, 0, 1, 1, 1, false);
 		skybox.add(0, 0, 0, 100);
-		//net = new NetworkClient(this, "localhost", 2009);
+		net = new NetworkClient(this, "localhost", 2009);
+		
+		cam.player.setWorld(world);
 		
 		new Thread(this).start();
 	}
@@ -93,7 +95,7 @@ public class Game implements Runnable {
 		if (cp != null)
 			return;
 
-		ClientPlayer CPlayer = new ClientPlayer(UniqueID.getUniqueID(), name, new Vec3(x, y, z), new Vec3(), cam);
+		ClientPlayer CPlayer = new ClientPlayer(UniqueID.getUniqueID(), name, new Vec3(x, y, z), new Vec3());
 
 		players.add(CPlayer);
 		entityManager.add(CPlayer);
@@ -104,13 +106,11 @@ public class Game implements Runnable {
 		for (ClientPlayer a : players) {
 			perso.update(a.position.x, a.position.y, a.position.z, 0.5f, 1.25f, 0.5f, true);
 		}
-		
+
 		// net.send(("Enzo;0;0;0").getBytes());
 
 		entityManager.update();
-		
 		World.cycleToDay();
-
 		cam.update();
 
 		keyboardGestion();
@@ -127,9 +127,10 @@ public class Game implements Runnable {
 					e.printStackTrace();
 				}
 				while (true) {
-					world.update(cam);
+					world.newUpdate(cam);
+
 					try {
-						Thread.sleep(100);
+						Thread.sleep(1);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -159,15 +160,13 @@ public class Game implements Runnable {
 				net.send((new Random().toString() + ";0;0;0").getBytes());
 			}
 
-			if (Keyboard.isKeyDown(Keyboard.KEY_P)) {
-				net.send("c;o;u;cou".getBytes());
-			}
 		}
 	}
 
 	public void render() {
 		entityManager.render();
 		world.render(cam);
+
 		for (ClientPlayer a : players) {
 			perso.render(GL_LINES, 2, cam.getPerspectiveProjection(), cam.position, cam.shader);
 		}

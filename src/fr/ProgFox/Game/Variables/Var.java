@@ -22,4 +22,5 @@ public class Var {
 	public static boolean isInMenu = false;
 	public static boolean isInGame = false;
 	public static boolean generateChunk = false;
+	public static int teste = 0;
 }

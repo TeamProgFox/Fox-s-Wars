@@ -1,15 +1,9 @@
 package fr.ProgFox.Game.World.Blocks;
 
+import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Math.Vec4;
 
 public abstract class Block {
-	public static final Block GRASS = new GrassBlock();
-	public static final Block WOOD = new Wood();
-	public static final Block DARKGRASS = new DarkGrassBlock();
-	public static final Block LEAF = new LeafBlock();
-	public static final Block SAPINLEAF = new SapinLeafBlock();
-	public static final Block STONE = new StoneBlock();
-
 	public Vec4 color;
 	public static float sizeX = 1, sizeY = 1, sizeZ = 1;
 

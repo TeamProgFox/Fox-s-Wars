@@ -9,9 +9,9 @@ import java.util.Random;
 
 import org.lwjgl.BufferUtils;
 
-import fr.ProgFox.Game.Logs.Logs;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.Blocks.Block;
+import fr.ProgFox.Game.World.Blocks.GrassBlock;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Math.Vec4;
 import fr.ProgFox.Renderer.Camera;
@@ -37,6 +37,7 @@ public class Chunk {
 	private Random random;
 	public boolean canRender = false;
 	private CubeLine cl;
+	public boolean canRealyRender = false;
 
 	public Chunk(float x, float y, float z, Noise noise, Random seed, World world) {
 		this.noise = noise;
@@ -57,8 +58,6 @@ public class Chunk {
 	}
 
 	public void generate() {
-		Block block = Block.GRASS;
-		Block block2 = Block.DARKGRASS;
 		for (int x = 0; x < SIZE; x++) {
 			for (int y = 0; y < HEIGHT; y++) {
 				for (int z = 0; z < SIZE; z++) {
@@ -68,9 +67,10 @@ public class Chunk {
 					if (noise.getNoise(x2, z2) > y2) {
 						grounded = noise.getNoise(x2, z2) > y2 && noise.getNoise(x2, z2) < y2 + 1;
 						if (random.nextFloat() < 0.5f) {
-							blocks[x][y][z] = block;
+							blocks[x][y][z] = new GrassBlock();
 						} else {
-							blocks[x][y][z] = block2;
+							blocks[x][y][z] = new GrassBlock();
+							blocks[x][y][z].setColor(new Vec4(0, 0.97f, 0, 1));
 						}
 
 					}
@@ -306,20 +306,22 @@ public class Chunk {
 		if (x < 0 || y < 0 || z < 0 || x >= SIZE || y >= HEIGHT || z >= SIZE)
 			return;
 
-		blocks[(int) x][(int) y][(int) z] = block;
-
-		if (buffer != null) {
-			updateChunk();
+		if (blocks[(int) x][(int) y][(int) z] != block) {
+			blocks[(int) x][(int) y][(int) z] = block;
+			if (buffer != null) {
+				updateChunk();
+			}
 		}
 	}
 
 	public void removeBlock(float x, float y, float z) {
 		if (x < 0 || y < 0 || z < 0 || x >= SIZE || y >= HEIGHT || z >= SIZE)
 			return;
-
-		blocks[(int) x][(int) y][(int) z] = null;
-		if (buffer != null) {
-			updateChunk();
+		if (blocks[(int) x][(int) y][(int) z] != null) {
+			blocks[(int) x][(int) y][(int) z] = null;
+			if (buffer != null) {
+				updateChunk();
+			}
 		}
 	}
 

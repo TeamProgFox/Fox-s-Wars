@@ -15,7 +15,7 @@ import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Renderer.DisplayManager;
 
 public class Core {
-	public static final int FRAME_CAP = 6000000;
+	public static final int FRAME_CAP = 600000000;
 	public static boolean running = false;
 	public static int frames = 0;
 	public static int teste = 1;
@@ -41,7 +41,7 @@ public class Core {
 		}
 		
 		game.update();
-
+		
 	}
 
 	public void render() {

@@ -3,6 +3,8 @@ package fr.ProgFox.Game.World;
 import java.util.Random;
 
 import fr.ProgFox.Game.World.Blocks.Block;
+import fr.ProgFox.Game.World.Blocks.LeafBlock;
+import fr.ProgFox.Game.World.Blocks.WoodBlock;
 import fr.ProgFox.Math.Mathf;
 import fr.ProgFox.Math.Vec4;
 
@@ -22,10 +24,8 @@ public class Tree {
 	}
 
 	public void SimpleTree(Block[][][] blocks, int x, int y, int z, World world) {
-		Block block = Block.LEAF;
-		for (int i = 0; i < 6; i++) {
-			world.addBlock(x, y + i, z, Block.WOOD);
-		}
+		Block block = new LeafBlock();
+
 		world.addBlock(x + 1, y + 4, z + 1, block);
 		world.addBlock(x + 2, y + 4, z + 1, block);
 		world.addBlock(x - 1, y + 4, z + 1, block);
@@ -98,14 +98,15 @@ public class Tree {
 		world.addBlock(x, y + 7, z - 2, block);
 		world.addBlock(x + 2, y + 7, z, block);
 		world.addBlock(x - 2, y + 7, z, block);
+		for (int i = 0; i < 6; i++) {
+			world.addBlock(x, y + i, z, new WoodBlock());
+		}
 	}
 
 	public void SapinTree(Block[][][] blocks, int x, int y, int z, World world) {
-		Block block = Block.SAPINLEAF;
+		Block block = new LeafBlock();
 		block.setColor(new Vec4(0, 0.55f, 0, 1));
-		for (int i = 0; i < 10; i++) {
-			world.addBlock(x, y + i, z, Block.WOOD);
-		}
+
 		for (int a = 0; a < 7; a++) {
 			for (int b = 0; b < 8; b++) {
 				for (int c = 0; c < 7; c++) {
@@ -121,6 +122,9 @@ public class Tree {
 					}
 				}
 			}
+		}
+		for (int i = 0; i < 10; i++) {
+			world.addBlock(x, y + i, z, new WoodBlock());
 		}
 	}
 }

@@ -3,7 +3,7 @@ package fr.ProgFox.Game.Entities;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntityManager extends Entity {
+public class EntityManager{
 	private List<Entity> e;
 
 	public EntityManager() {

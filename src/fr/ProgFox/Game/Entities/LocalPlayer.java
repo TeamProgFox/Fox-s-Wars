@@ -11,6 +11,8 @@ import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.Chunk;
 import fr.ProgFox.Game.World.World;
 import fr.ProgFox.Game.World.Blocks.Block;
+import fr.ProgFox.Game.World.Blocks.LeafBlock;
+import fr.ProgFox.Math.Mathf;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Network.NetworkClient;
 import fr.ProgFox.Renderer.Camera;
@@ -23,7 +25,6 @@ public class LocalPlayer extends Entity {
 	public World world;
 	public Raycast raycast;
 	private boolean updateVBO = true;
-	public Vec3 position, rotation;
 	private CubeLine select;
 	private CubeLine perso;
 	int vbo;
@@ -31,17 +32,22 @@ public class LocalPlayer extends Entity {
 	private Shader shader;
 	public NetworkClient net;
 
-	public LocalPlayer(World world, Camera cam, int id, String name) {
+	public LocalPlayer(World world, Camera cam, int id, String name, Vec3 position, Vec3 rotation) {
+		
+		super(position, rotation);
+		
+		
 		this.world = world;
 		this.cam = cam;
 		this.id = id;
 		this.name = name;
 		this.shader = new ColorShader();
-		position = new Vec3();
 		Var.selectedPosition = new Vec3(0, 0, 0);
 		raycast = new Raycast(this);
 		select = new CubeLine(new Vec3(1, 1, 1));
 		perso = new CubeLine(new Vec3(0, 0, 0));
+	
+		
 		init();
 	}
 
@@ -73,6 +79,7 @@ public class LocalPlayer extends Entity {
 					raycast.getBlock(world).z);
 
 		}
+
 	}
 
 	public void render() {
@@ -98,6 +105,7 @@ public class LocalPlayer extends Entity {
 			return;
 
 		float xDir = 0, yDir = 0, zDir = 0;
+		 
 		rotation.addX(-Mouse.getDY() / sensibilite);
 		rotation.addY(-Mouse.getDX() / sensibilite);
 		if (rotation.getX() > 90)
@@ -113,27 +121,19 @@ public class LocalPlayer extends Entity {
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_Z)) {
 
-			xDir = getForward().mul(new Vec3(speed, 0, speed)).getX();
-			zDir = getForward().mul(new Vec3(speed, 0, speed)).getZ();
-			move(xDir, yDir, zDir);
+			zDir = speed;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_Q)) {
 
-			xDir = getRight().mul(new Vec3(-speed, 0, -speed)).getX();
-			zDir = getRight().mul(new Vec3(-speed, 0, -speed)).getZ();
-			move(xDir, yDir, zDir);
+			xDir = -speed;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
 
-			xDir = getForward().mul(new Vec3(-speed, 0, -speed)).getX();
-			zDir = getForward().mul(new Vec3(-speed, 0, -speed)).getZ();
-			move(xDir, yDir, zDir);
+			zDir = -speed;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
 
-			xDir = getRight().mul(new Vec3(speed, 0, speed)).getX();
-			zDir = getRight().mul(new Vec3(speed, 0, speed)).getZ();
-			move(xDir, yDir, zDir);
+			xDir = speed;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && Var.grounded && !Var.flyMode) {
 
@@ -143,16 +143,21 @@ public class LocalPlayer extends Entity {
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && Var.flyMode) {
 
 			yDir = speed;
-			move(0, yDir, 0);
 
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && Var.flyMode) {
 			yDir = -speed;
-			move(0, yDir, 0);
 		}
 
+		float xa = xDir * Mathf.cos(Mathf.toRadians(rotation.y)) - zDir * Mathf.sin(Mathf.toRadians(rotation.y));
+		float za = zDir * Mathf.cos(Mathf.toRadians(rotation.y)) + xDir * Mathf.sin(Mathf.toRadians(rotation.y));
+
+		move(xa, yDir, za);
 
 		isGrounded(xDir, yDir, zDir);
+
+		xa *= 0.9f;
+		za *= 0.9f;
 		removeAndAddBlockGestion();
 		actionTimeGestion();
 		if (!Var.flyMode)
@@ -200,7 +205,7 @@ public class LocalPlayer extends Entity {
 					return;
 				if (ry == posY && rx == posX && rz == posZ)
 					return;
-				world.addBlock(rx, ry, rz, Block.LEAF);
+				world.addBlock(rx, ry, rz, new LeafBlock());
 				Chunk.canBreakBlock = false;
 			}
 		}
@@ -250,22 +255,7 @@ public class LocalPlayer extends Entity {
 		}
 	}
 
-	public void move(float xDir, float yDir, float zDir) {
-		if (!isColliding(xDir, 0, 0)) {
-			position.addX(xDir);
-		}
-		if (!isColliding(0, yDir, 0)) {
-			position.addY(yDir);
-		}
-		if (!isColliding(0, 0, zDir)) {
-			position.addZ(zDir);
-		}
-		if (Var.flyMode) {
-			position.addX(xDir);
-			position.addY(yDir);
-			position.addZ(zDir);
-		}
-	}
+
 
 	public void isGrounded(float xDir, float yDir, float zDir) {
 		if (!isColliding(0, yDir - 1, 0)) {
@@ -275,55 +265,6 @@ public class LocalPlayer extends Entity {
 		}
 	}
 
-	public boolean isColliding(float xDir, float yDir, float zDir) {
-
-		float rayon = 0.3f;
-
-		float x0 = (position.getX() + xDir) - rayon;
-		float x1 = (position.getX() + xDir) + rayon;
-
-		float y0 = (position.getY() + yDir) - rayon - 0.40f;
-		float y1 = (position.getY() + yDir) + rayon;
-
-		float z0 = (position.getZ() + zDir) - rayon;
-		float z1 = (position.getZ() + zDir) + rayon;
-
-		if (world.getBlock(x0, y0, z0) != null) {
-			// System.out.println("1");
-			return true;
-		}
-		if (world.getBlock(x1, y0, z0) != null) {
-			// System.out.println("2");
-			return true;
-		}
-		if (world.getBlock(x1, y1, z0) != null) {
-			// System.out.println("3");
-			return true;
-		}
-		if (world.getBlock(x0, y1, z0) != null) {
-			// System.out.println("4");
-			return true;
-		}
-
-		if (world.getBlock(x0, y0, z1) != null) {
-			// System.out.println("5");
-			return true;
-		}
-		if (world.getBlock(x1, y0, z1) != null) {
-			// System.out.println("6");
-			return true;
-		}
-		if (world.getBlock(x1, y1, z1) != null) {
-			// System.out.println("7");
-			return true;
-		}
-		if (world.getBlock(x0, y1, z1) != null) {
-			// System.out.println("8");
-			return true;
-		}
-
-		return false;
-	}
 
 	public Vec3 getForward() {
 		Vec3 r = new Vec3();
