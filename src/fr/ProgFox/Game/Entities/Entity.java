@@ -6,25 +6,25 @@ import fr.ProgFox.Math.Vec3;
 
 public abstract class Entity {
 	public int id;
-	
+
 	public Vec3 position;
 	public Vec3 rotation;
-	
+
 	public World world;
-	
-	public Entity(Vec3 pos, Vec3 rot){
+
+	public Entity(Vec3 pos, Vec3 rot) {
 		this.position = pos;
 		this.rotation = rot;
 	}
-	
+
 	public String name;
+
 	public abstract void update();
 
 	public abstract void render();
-	
-	
+
 	public void move(float xDir, float yDir, float zDir) {
-		
+
 		if (!isColliding(xDir, 0, 0)) {
 			position.addX(xDir);
 		}
@@ -40,7 +40,7 @@ public abstract class Entity {
 			position.addZ(zDir);
 		}
 	}
-	
+
 	public boolean isColliding(float xDir, float yDir, float zDir) {
 
 		float rayon = 0.3f;
@@ -91,8 +91,8 @@ public abstract class Entity {
 		return false;
 	}
 
-	public void setWorld(World world){
+	public void setWorld(World world) {
 		this.world = world;
 	}
-	
+
 }
