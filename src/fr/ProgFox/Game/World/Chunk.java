@@ -12,6 +12,7 @@ import org.lwjgl.BufferUtils;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.Blocks.Block;
 import fr.ProgFox.Game.World.Blocks.GrassBlock;
+import fr.ProgFox.Math.Color4f;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Math.Vec4;
 import fr.ProgFox.Renderer.Camera;
@@ -38,12 +39,14 @@ public class Chunk {
 	public boolean canRender = false;
 	private CubeLine cl;
 	public boolean canRealyRender = false;
+	public Noise colorNoise;
 
-	public Chunk(float x, float y, float z, Noise noise, Random seed, World world) {
+	public Chunk(float x, float y, float z, Noise noise, Noise colorNoise, Random seed, World world) {
 		this.noise = noise;
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		this.colorNoise = colorNoise;
 		this.world = world;
 		this.random = seed;
 		this.cl = new CubeLine(new Vec3(1, 1, 1));
@@ -65,14 +68,28 @@ public class Chunk {
 					int y2 = (int) this.y * HEIGHT + y;
 					int z2 = (int) this.z * SIZE + z;
 					if (noise.getNoise(x2, z2) > y2) {
-						grounded = noise.getNoise(x2, z2) > y2 && noise.getNoise(x2, z2) < y2 + 1;
-						if (random.nextFloat() < 0.5f) {
-							blocks[x][y][z] = new GrassBlock();
-						} else {
-							blocks[x][y][z] = new GrassBlock();
-							blocks[x][y][z].setColor(new Vec4(0, 0.97f, 0, 1));
-						}
+						float v = colorNoise.getNoise(x2, z2);
 
+						Color4f fC = Color4f.lerp(new Color4f(0f, 0.9f, 0f), new Color4f(0f, 1f, 0f), v);
+
+						blocks[x][y][z] = new GrassBlock();
+						blocks[x][y][z].setColor(new Vec4(fC.r, fC.g, fC.b, fC.a));
+					}
+				}
+			}
+		}
+	}
+
+	public void generateVegetation() {
+		for (int x = 0; x < SIZE; x++) {
+			for (int y = 0; y < HEIGHT; y++) {
+				for (int z = 0; z < SIZE; z++) {
+					int x2 = (int) this.x * SIZE + x;
+					int y2 = (int) this.y * HEIGHT + y;
+					int z2 = (int) this.z * SIZE + z;
+					grounded = noise.getNoise(x2, z2) > y2 && noise.getNoise(x2, z2) < y2 + 1;
+					if (random.nextFloat() > 0.997f && grounded) {
+						tree.addTree(blocks, x2, y2, z2, world);
 					}
 				}
 			}
@@ -103,40 +120,35 @@ public class Chunk {
 					int size = 0;
 
 					if (up) {
+						Vec4 shadow = new Vec4();
 						if (world.getBlock(x2 + 1, y2 + 1, z2) != null) {
-							buffer.put(block.BlockDataUp(x2, y2, z2, new Vec4(1, ao, ao, 1)));
-
+							shadow = new Vec4(1, ao, ao, 1);
 						} else if (world.getBlock(x2 - 1, y2 + 1, z2) != null) {
-							buffer.put(block.BlockDataUp(x2, y2, z2, new Vec4(ao, 1, 1, ao)));
-
+							shadow = new Vec4(ao, 1, 1, ao);
 						} else if (world.getBlock(x2, y2 + 1, z2 + 1) != null) {
-							buffer.put(block.BlockDataUp(x2, y2, z2, new Vec4(1, 1, ao, ao)));
-
+							shadow = new Vec4(1, 1, ao, ao);
 						} else if (world.getBlock(x2, y2 + 1, z2 - 1) != null) {
-							buffer.put(block.BlockDataUp(x2, y2, z2, new Vec4(ao, ao, 1, 1)));
-
+							shadow = new Vec4(ao, ao, 1, 1);
 						} else {
-							buffer.put(block.BlockDataUp(x2, y2, z2, new Vec4(1, 1, 1, 1)));
-
+							shadow = new Vec4(1, 1, 1, 1);
 						}
+						buffer.put(block.BlockDataUp(x2, y2, z2, shadow));
 						size++;
 					}
 					if (down) {
+						Vec4 shadow = new Vec4();
 						if (world.getBlock(x2 - 1, y2 - 1, z2) != null) {
-							buffer.put(block.BlockDataDown(x2, y2, z2, new Vec4(ao, 1, 1, ao)));
+							shadow = new Vec4(ao, 1, 1, ao);
 						} else if (world.getBlock(x2 + 1, y2 - 1, z2) != null) {
-							buffer.put(block.BlockDataDown(x2, y2, z2, new Vec4(1, ao, ao, 1)));
-
+							shadow = new Vec4(1, ao, ao, 1);
 						} else if (world.getBlock(x2, y2 - 1, z2 + 1) != null) {
-							buffer.put(block.BlockDataDown(x2, y2, z2, new Vec4(1, 1, ao, ao)));
-
+							shadow = new Vec4(1, 1, ao, ao);
 						} else if (world.getBlock(x2, y2 - 1, z2 - 1) != null) {
-							buffer.put(block.BlockDataDown(x2, y2, z2, new Vec4(ao, ao, 1, 1)));
-
+							shadow = new Vec4(ao, ao, 1, 1);
 						} else {
-							buffer.put(block.BlockDataDown(x2, y2, z2, new Vec4(1, 1, 1, 1)));
-
+							shadow = new Vec4(1, 1, 1, 1);
 						}
+						buffer.put(block.BlockDataDown(x2, y2, z2, shadow));
 						size++;
 					}
 					if (back) {
@@ -164,23 +176,6 @@ public class Chunk {
 		canRender = true;
 	}
 
-	public void generateVegetation() {
-		for (int x = 0; x < SIZE; x++) {
-			for (int y = 0; y < HEIGHT; y++) {
-				for (int z = 0; z < SIZE; z++) {
-					int x2 = (int) this.x * SIZE + x;
-					int y2 = (int) this.y * HEIGHT + y;
-					int z2 = (int) this.z * SIZE + z;
-					grounded = noise.getNoise(x2, z2) > y2 && noise.getNoise(x2, z2) < y2 + 1;
-					if (random.nextFloat() > 0.997f && grounded) {
-						tree.addTree(blocks, x2, y2, z2, world);
-
-					}
-				}
-			}
-		}
-	}
-
 	public void updateChunk() {
 		bufferSize = 0;
 		buffer.clear();
@@ -203,40 +198,35 @@ public class Chunk {
 					Block block = blocks[x][y][z];
 					int size = 0;
 					if (up) {
+						Vec4 shadow = new Vec4();
 						if (world.getBlock(x2 + 1, y2 + 1, z2) != null) {
-							buffer.put(block.BlockDataUp(x2, y2, z2, new Vec4(1, ao, ao, 1)));
-
+							shadow = new Vec4(1, ao, ao, 1);
 						} else if (world.getBlock(x2 - 1, y2 + 1, z2) != null) {
-							buffer.put(block.BlockDataUp(x2, y2, z2, new Vec4(ao, 1, 1, ao)));
-
+							shadow = new Vec4(ao, 1, 1, ao);
 						} else if (world.getBlock(x2, y2 + 1, z2 + 1) != null) {
-							buffer.put(block.BlockDataUp(x2, y2, z2, new Vec4(1, 1, ao, ao)));
-
+							shadow = new Vec4(1, 1, ao, ao);
 						} else if (world.getBlock(x2, y2 + 1, z2 - 1) != null) {
-							buffer.put(block.BlockDataUp(x2, y2, z2, new Vec4(ao, ao, 1, 1)));
-
+							shadow = new Vec4(ao, ao, 1, 1);
 						} else {
-							buffer.put(block.BlockDataUp(x2, y2, z2, new Vec4(1, 1, 1, 1)));
-
+							shadow = new Vec4(1, 1, 1, 1);
 						}
+						buffer.put(block.BlockDataUp(x2, y2, z2, shadow));
 						size++;
 					}
 					if (down) {
+						Vec4 shadow = new Vec4();
 						if (world.getBlock(x2 - 1, y2 - 1, z2) != null) {
-							buffer.put(block.BlockDataDown(x2, y2, z2, new Vec4(ao, 1, 1, ao)));
+							shadow = new Vec4(ao, 1, 1, ao);
 						} else if (world.getBlock(x2 + 1, y2 - 1, z2) != null) {
-							buffer.put(block.BlockDataDown(x2, y2, z2, new Vec4(1, ao, ao, 1)));
-
+							shadow = new Vec4(1, ao, ao, 1);
 						} else if (world.getBlock(x2, y2 - 1, z2 + 1) != null) {
-							buffer.put(block.BlockDataDown(x2, y2, z2, new Vec4(1, 1, ao, ao)));
-
+							shadow = new Vec4(1, 1, ao, ao);
 						} else if (world.getBlock(x2, y2 - 1, z2 - 1) != null) {
-							buffer.put(block.BlockDataDown(x2, y2, z2, new Vec4(ao, ao, 1, 1)));
-
+							shadow = new Vec4(ao, ao, 1, 1);
 						} else {
-							buffer.put(block.BlockDataDown(x2, y2, z2, new Vec4(1, 1, 1, 1)));
-
+							shadow = new Vec4(1, 1, 1, 1);
 						}
+						buffer.put(block.BlockDataDown(x2, y2, z2, shadow));
 						size++;
 					}
 					if (back) {

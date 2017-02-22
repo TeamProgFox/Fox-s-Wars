@@ -6,7 +6,6 @@ public class GrassBlock extends Block {
 
 	public GrassBlock() {
 		super(new Vec4(0f, 1f, 0f, 1f));
-
 	}
 
 }

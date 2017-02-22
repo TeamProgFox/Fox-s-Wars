@@ -22,8 +22,8 @@ public class Camera {
 	private float fov, zNear, zFar;
 	public Shader shader;
 
-	public Camera(Vec3 position, Vec3 rotation, World world) {
-		player = new LocalPlayer(world, this, UniqueID.getUniqueID(), JOptionPane.showInputDialog("Pseudo : "),
+	public Camera(Vec3 position, Vec3 rotation, World world, String pseudo) {
+		player = new LocalPlayer(world, this, UniqueID.getUniqueID(), pseudo,
 				new Vec3(), new Vec3());
 		player.position = position;
 		player.rotation = rotation;

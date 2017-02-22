@@ -7,12 +7,14 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
+import javax.swing.JOptionPane;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.Drawable;
 
 import fr.ProgFox.Core;
 import fr.ProgFox.Game.Entities.ClientPlayer;
+import fr.ProgFox.Game.Entities.Entity;
 import fr.ProgFox.Game.Entities.EntityManager;
 import fr.ProgFox.Game.Entities.SavePlayersConfiguration;
 import fr.ProgFox.Game.Variables.Var;
@@ -20,7 +22,6 @@ import fr.ProgFox.Game.World.World;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Network.NetworkClient;
 import fr.ProgFox.Renderer.Camera;
-import fr.ProgFox.Renderer.DisplayManager;
 import fr.ProgFox.Utils.Loader;
 import fr.ProgFox.Utils.UniqueID;
 import fr.ProgFox.Utils.VertexBuffer.Cube;
@@ -52,8 +53,11 @@ public class Game implements Runnable {
 
 		if (Var.isInThirdPerson == false)
 			Var.isInFirstPerson = true;
+		
+		String pseudo = JOptionPane.showInputDialog("Pseudo : ");
+		
 		world = new World(-6956537684988609768L);
-		cam = new Camera(new Vec3(posX, posY, posZ), new Vec3(rotX, rotY, 0), world);
+		cam = new Camera(new Vec3(posX, posY, posZ), new Vec3(rotX, rotY, 0), world, pseudo);
 		entityManager = new EntityManager();
 
 		cam.setPerspectiveProjection(70.0f, 0.01f, 10000.0f);
@@ -69,11 +73,11 @@ public class Game implements Runnable {
 		cube.add(0, 0, 0, 0.002f, true);
 		perso.add(0, 0, 0, 1, 1, 1, false);
 		skybox.add(0, 0, 0, 100);
-		net = new NetworkClient(this, "localhost", 2009);
-		
+		//net = new NetworkClient(this, "localhost", 2009);
+
 		cam.player.setWorld(world);
-		
-		new Thread(this).start();
+
+		//new Thread(this).start();
 	}
 
 	public void save() {
@@ -96,9 +100,9 @@ public class Game implements Runnable {
 			return;
 
 		ClientPlayer CPlayer = new ClientPlayer(UniqueID.getUniqueID(), name, new Vec3(x, y, z), new Vec3());
-
+		System.out.println("lol");
 		players.add(CPlayer);
-		entityManager.add(CPlayer);
+		entityManager.add((Entity) CPlayer);
 	}
 
 	public void update() {
@@ -119,24 +123,20 @@ public class Game implements Runnable {
 
 	public void run() {
 
-		new Thread("WorldUpdate") {
-			public void run() {
-				try {
-					Core.sd.makeCurrent();
-				} catch (LWJGLException e) {
-					e.printStackTrace();
-				}
-				while (true) {
-					world.newUpdate(cam);
+		try {
+			Core.sd.makeCurrent();
+		} catch (LWJGLException e) {
+			e.printStackTrace();
+		}
+		while (true) {
+			world.newUpdate(cam);
 
-					try {
-						Thread.sleep(1);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-		}.start();
+		}
 	}
 
 	public void keyboardGestion() {
@@ -156,9 +156,9 @@ public class Game implements Runnable {
 					Var.isInThirdPerson = false;
 				}
 			}
-			if (Keyboard.isKeyDown(Keyboard.KEY_Y)) {
-				net.send((new Random().toString() + ";0;0;0").getBytes());
-			}
+//			if (Keyboard.isKeyDown(Keyboard.KEY_Y)) {
+//				net.send((new Random().toString() + ";0;0;0").getBytes());
+//			}
 
 		}
 	}

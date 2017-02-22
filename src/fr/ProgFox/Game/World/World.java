@@ -1,24 +1,20 @@
 package fr.ProgFox.Game.World;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
-
 import org.lwjgl.opengl.Display;
-
 import fr.ProgFox.Game.Logs.Logs;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.Blocks.Block;
-import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Renderer.DisplayManager;
 
 public class World {
-	public static int sizeX = 8;
-	public static int sizeZ = 8;
+	public static int sizeX = 16;
+	public static int sizeZ = 16;
 	public static int moreSizeX = 0;
 	public static int moreSizeZ = 0;
 	public Noise noise;
+	public Noise noiseColor;
 	public Chunk[][] chunks;
 	public Chunk[][] newChunks;
 	private Random random;
@@ -29,11 +25,12 @@ public class World {
 
 		random = new Random(seed);
 		noise = new Noise(random.nextLong(), 15, 15);
+		noiseColor = new Noise(random.nextLong(), 30, 5);
 		chunks = new Chunk[100][100];
 		newChunks = new Chunk[100][100];
 		for (int x = 0; x < sizeX; x++) {
 			for (int z = 0; z < sizeZ; z++) {
-				chunks[x][z] = new Chunk(x, 0, z, noise, random, this);
+				chunks[x][z] = new Chunk(x, 0, z, noise, noiseColor, random, this);
 				percentage = ((float) (x + 1) / sizeX) * 33;
 				DisplayManager.update();
 			}
@@ -77,7 +74,7 @@ public class World {
 
 		if (chunks[x][z] == null) {
 			new Logs().Info("debut de la génération");
-			chunks[(int) x][(int) z] = new Chunk(x, 0, z, noise, random, this);
+			chunks[(int) x][(int) z] = new Chunk(x, 0, z, noise, noiseColor, random, this);
 			new Logs().Info("debut de la vegetation");
 			chunks[(int) x][(int) z].generateVegetation();
 			new Logs().Info("debut de la création");
@@ -87,8 +84,8 @@ public class World {
 	}
 
 	public void update() {
-		for (int a = 0; a < 100; a++) {
-			for (int b = 0; b < 100; b++) {
+		for (int a = 0; a < sizeX; a++) {
+			for (int b = 0; b < sizeZ; b++) {
 				if (getChunk(a, b) != null && getChunk(a, b).canRender && !getChunk(a, b).canRealyRender) {
 					chunks[a][b].update();
 				}
@@ -96,11 +93,19 @@ public class World {
 		}
 	}
 
+	int renderDistance = 3;
+
 	public void render(Camera cam) {
-		for (int x = 0; x < 100; x++) {
-			for (int z = 0; z < 100; z++) {
+		float xP = (float) (cam.position.x / 16);
+		float zP = (float) (cam.position.z / 16);
+		for (int x = 0; x < sizeX; x++) {
+			for (int z = 0; z < sizeZ; z++) {
 				if (chunks[x][z] != null && chunks[x][z].canRender) {
-					chunks[x][z].render(cam);
+					if (xP < x + renderDistance && xP > x - renderDistance && zP < z + renderDistance
+							&& zP > z - renderDistance) {
+						chunks[x][z].render(cam);
+
+					}
 				}
 			}
 		}
