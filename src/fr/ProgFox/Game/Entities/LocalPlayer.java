@@ -205,7 +205,7 @@ public class LocalPlayer extends Entity {
 					return;
 				if (ry == posY && rx == posX && rz == posZ)
 					return;
-				world.addBlock(rx, ry, rz, new LeafBlock());
+				world.addBlock(rx, ry, rz, Block.TESTE);
 				Chunk.canBreakBlock = false;
 			}
 		}

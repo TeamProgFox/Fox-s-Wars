@@ -1,11 +1,11 @@
 package fr.ProgFox.Game.World.Blocks;
 
-import fr.ProgFox.Math.Vec4;
+import fr.ProgFox.Math.Color4f;
 
 public class GrassBlock extends Block {
 
 	public GrassBlock() {
-		super(new Vec4(0f, 1f, 0f, 1f));
+		super(new Color4f(0f, 1f, 0f, 1f));
 	}
 
 }

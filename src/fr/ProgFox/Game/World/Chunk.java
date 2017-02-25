@@ -73,7 +73,7 @@ public class Chunk {
 						Color4f fC = Color4f.lerp(new Color4f(0f, 0.9f, 0f), new Color4f(0f, 1f, 0f), v);
 
 						blocks[x][y][z] = new GrassBlock();
-						blocks[x][y][z].setColor(new Vec4(fC.r, fC.g, fC.b, fC.a));
+						blocks[x][y][z].setColor(new Color4f(fC.r, fC.g, fC.b, fC.a));
 					}
 				}
 			}
@@ -120,51 +120,51 @@ public class Chunk {
 					int size = 0;
 
 					if (up) {
-						Vec4 shadow = new Vec4();
+						Color4f shadow;
 						if (world.getBlock(x2 + 1, y2 + 1, z2) != null) {
-							shadow = new Vec4(1, ao, ao, 1);
+							shadow = new Color4f(1f, ao, ao, 1f);
 						} else if (world.getBlock(x2 - 1, y2 + 1, z2) != null) {
-							shadow = new Vec4(ao, 1, 1, ao);
+							shadow = new Color4f(ao, 1f, 1f, ao);
 						} else if (world.getBlock(x2, y2 + 1, z2 + 1) != null) {
-							shadow = new Vec4(1, 1, ao, ao);
+							shadow = new Color4f(1f, 1f, ao, ao);
 						} else if (world.getBlock(x2, y2 + 1, z2 - 1) != null) {
-							shadow = new Vec4(ao, ao, 1, 1);
+							shadow = new Color4f(ao, ao, 1f, 1f);
 						} else {
-							shadow = new Vec4(1, 1, 1, 1);
+							shadow = new Color4f(1f, 1f, 1f, 1f);
 						}
 						buffer.put(block.BlockDataUp(x2, y2, z2, shadow));
 						size++;
 					}
 					if (down) {
-						Vec4 shadow = new Vec4();
+						Color4f shadow;
 						if (world.getBlock(x2 - 1, y2 - 1, z2) != null) {
-							shadow = new Vec4(ao, 1, 1, ao);
+							shadow = new Color4f(ao, 1f, 1f, ao);
 						} else if (world.getBlock(x2 + 1, y2 - 1, z2) != null) {
-							shadow = new Vec4(1, ao, ao, 1);
+							shadow = new Color4f(1f, ao, ao, 1f);
 						} else if (world.getBlock(x2, y2 - 1, z2 + 1) != null) {
-							shadow = new Vec4(1, 1, ao, ao);
+							shadow = new Color4f(1f, 1f, ao, ao);
 						} else if (world.getBlock(x2, y2 - 1, z2 - 1) != null) {
-							shadow = new Vec4(ao, ao, 1, 1);
+							shadow = new Color4f(ao, ao, 1f, 1f);
 						} else {
-							shadow = new Vec4(1, 1, 1, 1);
+							shadow = new Color4f(1f, 1f, 1f, 1f);
 						}
 						buffer.put(block.BlockDataDown(x2, y2, z2, shadow));
 						size++;
 					}
 					if (back) {
-						buffer.put(block.BlockDataBack(x2, y2, z2, new Vec4(1, 1, 1, 1)));
+						buffer.put(block.BlockDataBack(x2, y2, z2, new Color4f(1f, 1f, 1f, 1f)));
 						size++;
 					}
 					if (front) {
-						buffer.put(block.BlockDataFront(x2, y2, z2, new Vec4(1, 1, 1, 1)));
+						buffer.put(block.BlockDataFront(x2, y2, z2, new Color4f(1f, 1f, 1f, 1f)));
 						size++;
 					}
 					if (right) {
-						buffer.put(block.BlockDataRight(x2, y2, z2, new Vec4(1, 1, 1, 1)));
+						buffer.put(block.BlockDataRight(x2, y2, z2, new Color4f(1f, 1f, 1f, 1f)));
 						size++;
 					}
 					if (left) {
-						buffer.put(block.BlockDataLeft(x2, y2, z2, new Vec4(1, 1, 1, 1)));
+						buffer.put(block.BlockDataLeft(x2, y2, z2, new Color4f(1f, 1f, 1f, 1f)));
 						size++;
 					}
 					bufferSize += size * 4;
@@ -197,52 +197,53 @@ public class Chunk {
 						continue;
 					Block block = blocks[x][y][z];
 					int size = 0;
+
 					if (up) {
-						Vec4 shadow = new Vec4();
+						Color4f shadow;
 						if (world.getBlock(x2 + 1, y2 + 1, z2) != null) {
-							shadow = new Vec4(1, ao, ao, 1);
+							shadow = new Color4f(1f, ao, ao, 1f);
 						} else if (world.getBlock(x2 - 1, y2 + 1, z2) != null) {
-							shadow = new Vec4(ao, 1, 1, ao);
+							shadow = new Color4f(ao, 1f, 1f, ao);
 						} else if (world.getBlock(x2, y2 + 1, z2 + 1) != null) {
-							shadow = new Vec4(1, 1, ao, ao);
+							shadow = new Color4f(1f, 1f, ao, ao);
 						} else if (world.getBlock(x2, y2 + 1, z2 - 1) != null) {
-							shadow = new Vec4(ao, ao, 1, 1);
+							shadow = new Color4f(ao, ao, 1f, 1f);
 						} else {
-							shadow = new Vec4(1, 1, 1, 1);
+							shadow = new Color4f(1f, 1f, 1f, 1f);
 						}
 						buffer.put(block.BlockDataUp(x2, y2, z2, shadow));
 						size++;
 					}
 					if (down) {
-						Vec4 shadow = new Vec4();
+						Color4f shadow;
 						if (world.getBlock(x2 - 1, y2 - 1, z2) != null) {
-							shadow = new Vec4(ao, 1, 1, ao);
+							shadow = new Color4f(ao, 1f, 1f, ao);
 						} else if (world.getBlock(x2 + 1, y2 - 1, z2) != null) {
-							shadow = new Vec4(1, ao, ao, 1);
+							shadow = new Color4f(1f, ao, ao, 1f);
 						} else if (world.getBlock(x2, y2 - 1, z2 + 1) != null) {
-							shadow = new Vec4(1, 1, ao, ao);
+							shadow = new Color4f(1f, 1f, ao, ao);
 						} else if (world.getBlock(x2, y2 - 1, z2 - 1) != null) {
-							shadow = new Vec4(ao, ao, 1, 1);
+							shadow = new Color4f(ao, ao, 1f, 1f);
 						} else {
-							shadow = new Vec4(1, 1, 1, 1);
+							shadow = new Color4f(1f, 1f, 1f, 1f);
 						}
 						buffer.put(block.BlockDataDown(x2, y2, z2, shadow));
 						size++;
 					}
 					if (back) {
-						buffer.put(block.BlockDataBack(x2, y2, z2, new Vec4(1, 1, 1, 1)));
+						buffer.put(block.BlockDataBack(x2, y2, z2, new Color4f(1f, 1f, 1f, 1f)));
 						size++;
 					}
 					if (front) {
-						buffer.put(block.BlockDataFront(x2, y2, z2, new Vec4(1, 1, 1, 1)));
+						buffer.put(block.BlockDataFront(x2, y2, z2, new Color4f(1f, 1f, 1f, 1f)));
 						size++;
 					}
 					if (right) {
-						buffer.put(block.BlockDataRight(x2, y2, z2, new Vec4(1, 1, 1, 1)));
+						buffer.put(block.BlockDataRight(x2, y2, z2, new Color4f(1f, 1f, 1f, 1f)));
 						size++;
 					}
 					if (left) {
-						buffer.put(block.BlockDataLeft(x2, y2, z2, new Vec4(1, 1, 1, 1)));
+						buffer.put(block.BlockDataLeft(x2, y2, z2, new Color4f(1f, 1f, 1f, 1f)));
 						size++;
 					}
 					bufferSize += size * 4;

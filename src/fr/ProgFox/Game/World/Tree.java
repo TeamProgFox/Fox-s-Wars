@@ -5,8 +5,8 @@ import java.util.Random;
 import fr.ProgFox.Game.World.Blocks.Block;
 import fr.ProgFox.Game.World.Blocks.LeafBlock;
 import fr.ProgFox.Game.World.Blocks.WoodBlock;
+import fr.ProgFox.Math.Color4f;
 import fr.ProgFox.Math.Mathf;
-import fr.ProgFox.Math.Vec4;
 
 public class Tree {
 	private Random random;
@@ -105,7 +105,7 @@ public class Tree {
 
 	public void SapinTree(Block[][][] blocks, int x, int y, int z, World world) {
 		Block block = new LeafBlock();
-		block.setColor(new Vec4(0, 0.55f, 0, 1));
+		block.setColor(new Color4f(0f, 0.55f, 0f, 1f));
 
 		for (int a = 0; a < 7; a++) {
 			for (int b = 0; b < 8; b++) {
