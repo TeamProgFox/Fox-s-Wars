@@ -1,16 +1,17 @@
 package fr.ProgFox.Game.World;
 
 import java.util.Random;
-import org.lwjgl.opengl.Display;
+
 import fr.ProgFox.Game.Logs.Logs;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.Blocks.Block;
 import fr.ProgFox.Renderer.Camera;
-import fr.ProgFox.Renderer.DisplayManager;
+import fr.ProgFox.Renderer.Display;
+import fr.ProgFox.Renderer.Shader.ColorShader;
 
 public class World {
-	public static int sizeX = 16;
-	public static int sizeZ = 16;
+	public static int sizeX = 3;
+	public static int sizeZ = 3;
 	public static int moreSizeX = 0;
 	public static int moreSizeZ = 0;
 	public Noise noise;
@@ -32,9 +33,8 @@ public class World {
 			for (int z = 0; z < sizeZ; z++) {
 				chunks[x][z] = new Chunk(x, 0, z, noise, noiseColor, random, this);
 				percentage = ((float) (x + 1) / sizeX) * 33;
-				DisplayManager.update();
+				Display.update();
 			}
-			Display.setTitle("Fox's Wars - WorldGenerate : " + (int) percentage + "%");
 			System.out.println(percentage);
 		}
 		new Logs().Info("FIN DE LA GENERATION DES CHUNKS");
@@ -42,21 +42,18 @@ public class World {
 			for (int z = 0; z < sizeZ; z++) {
 				chunks[x][z].generateVegetation();
 				percentage = (((float) (x + 1) / sizeX) * 33) + 33;
-				DisplayManager.update();
+				Display.update();
 			}
-			Display.setTitle("Fox's Wars - WorldVegetationGeneration: " + (int) percentage + "%");
 			System.out.println(percentage);
 		}
 		for (int x = 0; x < sizeX; x++) {
 			for (int z = 0; z < sizeZ; z++) {
 				chunks[x][z].createChunk();
 				percentage = (((float) (x + 1) / sizeX) * 33) + 66;
-				DisplayManager.update();
+				Display.update();
 			}
-			Display.setTitle("Fox's Wars - WorldCreation : " + (int) percentage + "%");
 			System.out.println(percentage);
 		}
-
 	}
 
 	int sleepTime = 120;
@@ -71,26 +68,21 @@ public class World {
 			x = 0;
 		if (z < 0)
 			z = 0;
-
-		if (chunks[x][z] == null) {
-			new Logs().Info("debut de la génération");
-			chunks[(int) x][(int) z] = new Chunk(x, 0, z, noise, noiseColor, random, this);
-			new Logs().Info("debut de la vegetation");
-			chunks[(int) x][(int) z].generateVegetation();
-			new Logs().Info("debut de la création");
-			chunks[(int) x][(int) z].createChunk();
+		for (int a = 0; a < 3; a++) {
+			if (chunks[x][z + a] == null) {
+				new Logs().Info("debut de la génération");
+				chunks[(int) x][(int) z + a] = new Chunk(x, 0, z + a, noise, noiseColor, random, this);
+				new Logs().Info("debut de la vegetation");
+				chunks[(int) x][(int) z + a].generateVegetation();
+				new Logs().Info("debut de la création");
+				chunks[(int) x][(int) z + a].createChunk();
+			}
 		}
 
 	}
 
 	public void update() {
-		for (int a = 0; a < sizeX; a++) {
-			for (int b = 0; b < sizeZ; b++) {
-				if (getChunk(a, b) != null && getChunk(a, b).canRender && !getChunk(a, b).canRealyRender) {
-					chunks[a][b].update();
-				}
-			}
-		}
+
 	}
 
 	int renderDistance = 3;
@@ -98,15 +90,21 @@ public class World {
 	public void render(Camera cam) {
 		float xP = (float) (cam.position.x / 16);
 		float zP = (float) (cam.position.z / 16);
-		for (int x = 0; x < sizeX; x++) {
-			for (int z = 0; z < sizeZ; z++) {
-				if (chunks[x][z] != null && chunks[x][z].canRender) {
+		for (int x = 0; x < sizeX + 10; x++) {
+			for (int z = 0; z < sizeZ + 10; z++) {
+				if (chunks[x][z] != null && chunks[x][z].canRender && chunks[x][z].hasShader
+						&& chunks[x][z].createRequest == false) {
 					if (xP < x + renderDistance && xP > x - renderDistance && zP < z + renderDistance
-							&& zP > z - renderDistance) {
+							&& zP > z - renderDistance)
 						chunks[x][z].render(cam);
 
-					}
 				}
+				if (chunks[x][z] != null && chunks[x][z].hasShader == false)
+					chunks[x][z].setShader(new ColorShader());
+				if (chunks[x][z] != null && chunks[x][z].createRequest)
+					chunks[x][z].createBuffer();
+				if (chunks[x][z] != null && chunks[x][z].updateRequest)
+					chunks[x][z].updateVBO();
 			}
 		}
 	}

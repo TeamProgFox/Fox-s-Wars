@@ -1,14 +1,12 @@
 package fr.ProgFox.Network;
 
-import java.io.IOException;
+import java.io.IOException; 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Scanner;
-
-import org.lwjgl.LWJGLException;
 
 import fr.ProgFox.Core;
 import fr.ProgFox.Game.Game;

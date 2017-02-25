@@ -2,8 +2,7 @@ package fr.ProgFox.Game.Entities;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
+import org.lwjgl.glfw.GLFW;
 
 import fr.ProgFox.Game.Game;
 import fr.ProgFox.Game.Raycast;
@@ -12,6 +11,9 @@ import fr.ProgFox.Game.World.Chunk;
 import fr.ProgFox.Game.World.World;
 import fr.ProgFox.Game.World.Blocks.Block;
 import fr.ProgFox.Game.World.Blocks.LeafBlock;
+import fr.ProgFox.Inputs.Input;
+import fr.ProgFox.Inputs.Mouse;
+import fr.ProgFox.Inputs.MouseButton;
 import fr.ProgFox.Math.Mathf;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Network.NetworkClient;
@@ -33,10 +35,9 @@ public class LocalPlayer extends Entity {
 	public NetworkClient net;
 
 	public LocalPlayer(World world, Camera cam, int id, String name, Vec3 position, Vec3 rotation) {
-		
+
 		super(position, rotation);
-		
-		
+
 		this.world = world;
 		this.cam = cam;
 		this.id = id;
@@ -46,8 +47,7 @@ public class LocalPlayer extends Entity {
 		raycast = new Raycast(this);
 		select = new CubeLine(new Vec3(1, 1, 1));
 		perso = new CubeLine(new Vec3(0, 0, 0));
-	
-		
+
 		init();
 	}
 
@@ -105,47 +105,46 @@ public class LocalPlayer extends Entity {
 			return;
 
 		float xDir = 0, yDir = 0, zDir = 0;
-		 
-		rotation.addX(-Mouse.getDY() / sensibilite);
+		rotation.addX(Mouse.getDY() / sensibilite);
 		rotation.addY(-Mouse.getDX() / sensibilite);
 		if (rotation.getX() > 90)
 			rotation.setX(90);
 		if (rotation.getX() < -90)
 			rotation.setX(-90);
 
-		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
+		if (Input.getKey(GLFW.GLFW_KEY_Q)) {
 			speed = 0.8f;
 		} else {
 			speed = 0.1f;
 		}
 
-		if (Keyboard.isKeyDown(Keyboard.KEY_Z)) {
+		if (Input.getKey(GLFW.GLFW_KEY_W)) {
 
 			zDir = speed;
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_Q)) {
+		if (Input.getKey(GLFW.GLFW_KEY_A)) {
 
 			xDir = -speed;
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
+		if (Input.getKey(GLFW.GLFW_KEY_S)) {
 
 			zDir = -speed;
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
+		if (Input.getKey(GLFW.GLFW_KEY_D)) {
 
 			xDir = speed;
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && Var.grounded && !Var.flyMode) {
+		if (Input.getKey(GLFW.GLFW_KEY_SPACE) && Var.grounded && !Var.flyMode) {
 
 			Var.isJumping = true;
 
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && Var.flyMode) {
+		if (Input.getKey(GLFW.GLFW_KEY_SPACE) && Var.flyMode) {
 
 			yDir = speed;
 
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && Var.flyMode) {
+		if (Input.getKey(GLFW.GLFW_KEY_LEFT_SHIFT) && Var.flyMode) {
 			yDir = -speed;
 		}
 
@@ -162,6 +161,7 @@ public class LocalPlayer extends Entity {
 		actionTimeGestion();
 		if (!Var.flyMode)
 			gravity();
+
 	}
 
 	Block lastBlock;
@@ -170,13 +170,13 @@ public class LocalPlayer extends Entity {
 
 	public void removeAndAddBlockGestion() {
 		if (Chunk.canBreakBlock) {
-			if (Mouse.isButtonDown(0)) {
+			if (Input.getMouseDown(0)) {
 
 				world.removeBlock(Var.selectedPosition.x, Var.selectedPosition.y, Var.selectedPosition.z);
 				lastBlock = null;
 				Chunk.canBreakBlock = false;
 			}
-			if (Mouse.isButtonDown(1)) {
+			if (Input.getMouseDown(1)) {
 				int x22 = (int) Var.selectedPosition.x;
 				int y22 = (int) Var.selectedPosition.y;
 				int z22 = (int) Var.selectedPosition.z;
@@ -255,8 +255,6 @@ public class LocalPlayer extends Entity {
 		}
 	}
 
-
-
 	public void isGrounded(float xDir, float yDir, float zDir) {
 		if (!isColliding(0, yDir - 1, 0)) {
 			Var.grounded = false;
@@ -264,7 +262,6 @@ public class LocalPlayer extends Entity {
 			Var.grounded = true;
 		}
 	}
-
 
 	public Vec3 getForward() {
 		Vec3 r = new Vec3();

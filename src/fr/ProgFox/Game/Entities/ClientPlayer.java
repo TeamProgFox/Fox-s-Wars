@@ -1,21 +1,7 @@
 package fr.ProgFox.Game.Entities;
 
-import static org.lwjgl.opengl.GL11.*;
-
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-
 import fr.ProgFox.Game.Game;
-import fr.ProgFox.Game.Raycast;
-import fr.ProgFox.Game.Entities.Entity;
-import fr.ProgFox.Game.Variables.Var;
-import fr.ProgFox.Game.World.Chunk;
-import fr.ProgFox.Game.World.World;
-import fr.ProgFox.Game.World.Blocks.Block;
 import fr.ProgFox.Math.Vec3;
-import fr.ProgFox.Network.NetworkClient;
-import fr.ProgFox.Renderer.Camera;
-import fr.ProgFox.Utils.VertexBuffer.CubeLine;
 
 public class ClientPlayer extends Entity {
 	

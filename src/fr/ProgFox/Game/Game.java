@@ -1,5 +1,6 @@
 package fr.ProgFox.Game;
 
+import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
 import java.util.ArrayList;
@@ -9,8 +10,11 @@ import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
-import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Keyboard;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GLCapabilities;
+import org.lwjgl.opengl.WGL;
+import org.lwjgl.opengl.WGLARBMakeCurrentRead;
 
 import fr.ProgFox.Core;
 import fr.ProgFox.Game.Entities.ClientPlayer;
@@ -19,9 +23,11 @@ import fr.ProgFox.Game.Entities.EntityManager;
 import fr.ProgFox.Game.Entities.SavePlayersConfiguration;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.World;
+import fr.ProgFox.Inputs.Input;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Network.NetworkClient;
 import fr.ProgFox.Renderer.Camera;
+import fr.ProgFox.Renderer.Display;
 import fr.ProgFox.Utils.Loader;
 import fr.ProgFox.Utils.UniqueID;
 import fr.ProgFox.Utils.VertexBuffer.Cube;
@@ -42,7 +48,7 @@ public class Game implements Runnable {
 	private CubeLine perso;
 	public NetworkClient net;
 	public List<ClientPlayer> players = new ArrayList<>();
-
+	public boolean teste = false;
 	public Game() {
 		spc = new SavePlayersConfiguration(this);
 		int pos = World.sizeX * 16;
@@ -53,9 +59,9 @@ public class Game implements Runnable {
 
 		if (Var.isInThirdPerson == false)
 			Var.isInFirstPerson = true;
-		
+
 		String pseudo = JOptionPane.showInputDialog("Pseudo : ");
-		
+
 		world = new World(-6956537684988609768L);
 		cam = new Camera(new Vec3(posX, posY, posZ), new Vec3(rotX, rotY, 0), world, pseudo);
 		entityManager = new EntityManager();
@@ -73,11 +79,11 @@ public class Game implements Runnable {
 		cube.add(0, 0, 0, 0.002f, true);
 		perso.add(0, 0, 0, 1, 1, 1, false);
 		skybox.add(0, 0, 0, 100);
-		//net = new NetworkClient(this, "localhost", 2009);
+		// net = new NetworkClient(this, "localhost", 2009);
 
 		cam.player.setWorld(world);
 
-		//new Thread(this).start();
+		new Thread(this).start();
 	}
 
 	public void save() {
@@ -112,7 +118,7 @@ public class Game implements Runnable {
 		}
 
 		// net.send(("Enzo;0;0;0").getBytes());
-
+		//world.update(cam);
 		entityManager.update();
 		World.cycleToDay();
 		cam.update();
@@ -122,12 +128,6 @@ public class Game implements Runnable {
 	}
 
 	public void run() {
-
-		try {
-			Core.sd.makeCurrent();
-		} catch (LWJGLException e) {
-			e.printStackTrace();
-		}
 		while (true) {
 			world.newUpdate(cam);
 
@@ -140,25 +140,23 @@ public class Game implements Runnable {
 	}
 
 	public void keyboardGestion() {
-		if (Keyboard.next()) {
-			if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
-				Var.flyMode = !Var.flyMode;
+		if (Input.getKey(GLFW.GLFW_KEY_F)) {
+			Var.flyMode = !Var.flyMode;
+		}
+		if (Input.getKey(GLFW.GLFW_KEY_F3)) {
+			Var.debugMode = !Var.debugMode;
+		}
+		if (Input.getKey(GLFW.GLFW_KEY_F5)) {
+			if (Var.isInFirstPerson) {
+				Var.isInFirstPerson = false;
+				Var.isInThirdPerson = true;
+			} else if (Var.isInThirdPerson) {
+				Var.isInFirstPerson = true;
+				Var.isInThirdPerson = false;
 			}
-			if (Keyboard.isKeyDown(Keyboard.KEY_F3)) {
-				Var.debugMode = !Var.debugMode;
-			}
-			if (Keyboard.isKeyDown(Keyboard.KEY_F5)) {
-				if (Var.isInFirstPerson) {
-					Var.isInFirstPerson = false;
-					Var.isInThirdPerson = true;
-				} else if (Var.isInThirdPerson) {
-					Var.isInFirstPerson = true;
-					Var.isInThirdPerson = false;
-				}
-			}
-//			if (Keyboard.isKeyDown(Keyboard.KEY_Y)) {
-//				net.send((new Random().toString() + ";0;0;0").getBytes());
-//			}
+			// if (Keyboard.isKeyDown(Keyboard.KEY_Y)) {
+			// net.send((new Random().toString() + ";0;0;0").getBytes());
+			// }
 
 		}
 	}

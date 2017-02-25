@@ -1,18 +1,16 @@
 package fr.ProgFox;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.glfw.GLFW.*;
 
-import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.Drawable;
-import org.lwjgl.opengl.SharedDrawable;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL;
 
 import fr.ProgFox.Game.Game;
-import fr.ProgFox.Game.Raycast;
 import fr.ProgFox.Game.Variables.Var;
-import fr.ProgFox.Renderer.DisplayManager;
+import fr.ProgFox.Inputs.Input;
+import fr.ProgFox.Inputs.Mouse;
+import fr.ProgFox.Inputs.MouseButton;
+import fr.ProgFox.Renderer.Display;
 
 public class Core {
 	public static final int FRAME_CAP = 600000000;
@@ -20,34 +18,35 @@ public class Core {
 	public static int frames = 0;
 	public static int teste = 1;
 	Game game;
-	public static Drawable sd;
 	public static int width = 1200, height = 600;
 
 	public Core() {
-		DisplayManager.create(width, height, "Fox's Wars");
+		Display.create(width, height, "Fox's Wars");
 		game = new Game();
+
 	}
 
 	public void update() {
-		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
-			Mouse.setGrabbed(false);
+
+		if (Input.getKey(GLFW.GLFW_KEY_ESCAPE)) {
+			GLFW.glfwSetInputMode(Display.getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
 			Var.isInMenu = true;
 			Var.isInGame = false;
 		}
-		if (Mouse.isButtonDown(0) && !Var.isInGame) {
+		Mouse.update();
+		if (Input.getMouseDown(0) && !Var.isInGame) {
 			Var.isInGame = true;
 			Var.isInMenu = false;
-			Mouse.setGrabbed(true);
+			GLFW.glfwSetInputMode(Display.getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
 		}
-		
+
 		game.update();
 		
+		Input.update();
 	}
 
 	public void render() {
-		if (Display.wasResized())
-			glViewport(0, 0, Display.getWidth(), Display.getHeight());
-		DisplayManager.clearBuffers();
+		Display.clearBuffers();
 		game.render();
 	}
 
@@ -66,7 +65,7 @@ public class Core {
 	}
 
 	public void exit() {
-		DisplayManager.dispose();
+		Display.dispose();
 		System.exit(0);
 	}
 
@@ -82,8 +81,7 @@ public class Core {
 		long timer = System.currentTimeMillis();
 
 		while (running) {
-
-			if (DisplayManager.isClosed())
+			if (Display.isClosed())
 				stop();
 			if (System.nanoTime() - lastTickTime > tickTime) {
 				update();
@@ -92,7 +90,7 @@ public class Core {
 			} else if (System.nanoTime() - lastRenderTime > RenderTime) {
 				render();
 				renderGUI();
-				DisplayManager.update();
+				Display.update();
 				frames++;
 				lastRenderTime += RenderTime;
 			} else {
@@ -103,8 +101,8 @@ public class Core {
 				}
 			}
 			if (System.currentTimeMillis() - timer > 1000) {
+				System.out.println("FPS : " + frames + " TPS : " + ticks);
 				timer += 1000;
-				Display.setTitle("Fox's Wars : FPS = " + frames + "/ TPS = " + ticks);
 				ticks = 0;
 				frames = 0;
 			}

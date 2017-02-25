@@ -1,6 +1,6 @@
 package fr.ProgFox.Renderer.Shader;
 
-import static org.lwjgl.opengl.GL20.*;  
+import static org.lwjgl.opengl.GL20.*;
 import fr.ProgFox.Math.Mat4;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Utils.Buffer;
@@ -25,8 +25,7 @@ public abstract class Shader {
 	}
 
 	public void setUniform(String name, Mat4 value) {
-		glUniformMatrix4(getUniform(name), true, Buffer.createBuffer(value));
-
+		glUniformMatrix4fv(getUniform(name), true, Buffer.createBuffer(value));
 	}
 
 	public void setUniform(String name, float value) {

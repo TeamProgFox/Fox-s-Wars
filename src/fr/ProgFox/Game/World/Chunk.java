@@ -13,20 +13,18 @@ import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.Blocks.Block;
 import fr.ProgFox.Game.World.Blocks.GrassBlock;
 import fr.ProgFox.Math.Color4f;
-import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Math.Vec4;
 import fr.ProgFox.Renderer.Camera;
-import fr.ProgFox.Renderer.Shader.ColorShader;
 import fr.ProgFox.Renderer.Shader.Shader;
 import fr.ProgFox.Utils.VertexBuffer.CubeLine;
 
 public class Chunk {
-	private int vbo;
+	public int vbo;
 	public static final int SIZE = 16;
 	public static final int HEIGHT = 64;
 
 	private int bufferSize;
-	private static FloatBuffer buffer;
+	public FloatBuffer buffer;
 	private Noise noise;
 	private float x, y, z;
 	public Block[][][] blocks;
@@ -37,8 +35,10 @@ public class Chunk {
 	private Tree tree;
 	private Random random;
 	public boolean canRender = false;
+	public boolean hasShader = false;
+	public boolean createRequest = false;
+	public boolean updateRequest = false;
 	private CubeLine cl;
-	public boolean canRealyRender = false;
 	public Noise colorNoise;
 
 	public Chunk(float x, float y, float z, Noise noise, Noise colorNoise, Random seed, World world) {
@@ -49,14 +49,14 @@ public class Chunk {
 		this.colorNoise = colorNoise;
 		this.world = world;
 		this.random = seed;
-		this.cl = new CubeLine(new Vec3(1, 1, 1));
+		// this.cl = new CubeLine(new Vec3(1, 1, 1));
 		int x2 = (int) ((int) this.x * SIZE);
 		int y2 = (int) ((int) this.y * HEIGHT);
 		int z2 = (int) ((int) this.z * SIZE);
-		cl.add(x2, y2, z2, SIZE, HEIGHT, SIZE, false);
+		// cl.add(x2, y2, z2, SIZE, HEIGHT, SIZE, false);
 		tree = new Tree(random);
 		blocks = new Block[SIZE][HEIGHT][SIZE];
-		shader = new ColorShader();
+		// shader = new ColorShader();
 		generate();
 	}
 
@@ -172,13 +172,13 @@ public class Chunk {
 			}
 		}
 		buffer.flip();
-		createBuffer();
-		canRender = true;
+		createRequest = true;
+		
 	}
 
 	public void updateChunk() {
-		bufferSize = 0;
 		buffer.clear();
+		bufferSize = 0;
 		for (int x = 0; x < SIZE; x++) {
 			for (int y = 0; y < HEIGHT; y++) {
 				for (int z = 0; z < SIZE; z++) {
@@ -250,7 +250,7 @@ public class Chunk {
 			}
 		}
 		buffer.flip();
-		updateVBO();
+		updateRequest = true;
 	}
 
 	public void updateVBO() {
@@ -258,14 +258,19 @@ public class Chunk {
 		glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
 	}
 
-	private void createBuffer() {
+	public void createBuffer() {
 		vbo = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
+		createRequest = false;
+		canRender = true;
+
+
 	}
 
-	public void update() {
-
+	public void setShader(Shader shader) {
+		this.shader = shader;
+		hasShader = true;
 	}
 
 	public void render(Camera cam) {
@@ -281,7 +286,9 @@ public class Chunk {
 		glDrawArrays(GL_QUADS, 0, bufferSize);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(0);
+
 		if (Var.debugMode) {
+
 			cl.render(GL_LINES, 2, cam.getPerspectiveProjection(), cam.position, shader);
 		}
 	}

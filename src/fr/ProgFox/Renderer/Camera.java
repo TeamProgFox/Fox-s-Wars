@@ -1,12 +1,9 @@
 package fr.ProgFox.Renderer;
 
-import javax.swing.JOptionPane;
-
-import org.lwjgl.opengl.Display;
-
 import fr.ProgFox.Game.Entities.LocalPlayer;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.World;
+import fr.ProgFox.Inputs.Input;
 import fr.ProgFox.Math.Mat4;
 import fr.ProgFox.Math.Transform;
 import fr.ProgFox.Math.Vec3;
@@ -23,8 +20,7 @@ public class Camera {
 	public Shader shader;
 
 	public Camera(Vec3 position, Vec3 rotation, World world, String pseudo) {
-		player = new LocalPlayer(world, this, UniqueID.getUniqueID(), pseudo,
-				new Vec3(), new Vec3());
+		player = new LocalPlayer(world, this, UniqueID.getUniqueID(), pseudo, new Vec3(), new Vec3());
 		player.position = position;
 		player.rotation = rotation;
 		this.shader = new ColorShader();
