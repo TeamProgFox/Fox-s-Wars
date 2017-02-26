@@ -49,13 +49,10 @@ public class Game implements Runnable {
 	public NetworkClient net;
 	public List<ClientPlayer> players = new ArrayList<>();
 	public boolean teste = false;
+
 	public Game() {
 		spc = new SavePlayersConfiguration(this);
-		int pos = World.sizeX * 16;
-
 		Loader.read("saves/Player/Player.tpf", this);
-		this.id = UniqueID.getUniqueID();
-		System.out.println(id);
 
 		if (Var.isInThirdPerson == false)
 			Var.isInFirstPerson = true;
@@ -65,39 +62,26 @@ public class Game implements Runnable {
 		world = new World(-6956537684988609768L);
 		cam = new Camera(new Vec3(posX, posY, posZ), new Vec3(rotX, rotY, 0), world, pseudo);
 		entityManager = new EntityManager();
-
-		cam.setPerspectiveProjection(70.0f, 0.01f, 10000.0f);
-
 		cube = new Cube(new Vec3(1, 1, 1));
 		perso = new CubeLine(new Vec3(1, 1, 1));
-
-		entityManager.add(cam.player);
-
-		cam.player.connect(this, "	", 2009);
 		skybox = new SkyBox(new Vec3(1, 1, 1));
 
+		cam.player.connect(this, "	", 2009);
+
+		cam.setPerspectiveProjection(70.0f, 0.01f, 10000.0f);
+		entityManager.add(cam.player);
 		cube.add(0, 0, 0, 0.002f, true);
 		perso.add(0, 0, 0, 1, 1, 1, false);
 		skybox.add(0, 0, 0, 100);
-		// net = new NetworkClient(this, "localhost", 2009);
-
 		cam.player.setWorld(world);
 
 		new Thread(this).start();
 	}
 
-	public void save() {
-		if (Var.isInMenu) {
-			spc.save();
-		}
-	}
-
 	public void controleEntity(String name, float x, float y, float z) {
-
 		ClientPlayer e = entityManager.getPlayer(name);
-		if (e != null) {
+		if (e != null)
 			e.position = new Vec3(x, y, z);
-		}
 	}
 
 	public void addClientPlayer(String name, float x, float y, float z) {
@@ -113,12 +97,12 @@ public class Game implements Runnable {
 
 	public void update() {
 
-		for (ClientPlayer a : players) {
+		for (ClientPlayer a : players)
 			perso.update(a.position.x, a.position.y, a.position.z, 0.5f, 1.25f, 0.5f, true);
-		}
 
-		// net.send(("Enzo;0;0;0").getBytes());
-		//world.update(cam);
+		if (Var.isInMenu)
+			spc.save();
+
 		entityManager.update();
 		World.cycleToDay();
 		cam.update();
@@ -129,7 +113,7 @@ public class Game implements Runnable {
 
 	public void run() {
 		while (true) {
-			world.newUpdate(cam);
+			world.update(cam);
 
 			try {
 				Thread.sleep(1);
@@ -154,15 +138,12 @@ public class Game implements Runnable {
 				Var.isInFirstPerson = true;
 				Var.isInThirdPerson = false;
 			}
-			// if (Keyboard.isKeyDown(Keyboard.KEY_Y)) {
-			// net.send((new Random().toString() + ";0;0;0").getBytes());
-			// }
-
 		}
 	}
 
 	public void render() {
 		entityManager.render();
+		
 		world.render(cam);
 
 		for (ClientPlayer a : players) {

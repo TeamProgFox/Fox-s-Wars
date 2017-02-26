@@ -3,6 +3,9 @@ package fr.ProgFox.Renderer;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
+import java.nio.IntBuffer;
+
+import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -13,6 +16,7 @@ import fr.ProgFox.Inputs.MouseButton;
 
 public class Display {
 	public static int w, h;
+	public static int lw, lh;
 
 	public static long window;
 	public static GLFWKeyCallback keyCallback;
@@ -51,7 +55,20 @@ public class Display {
 	public static void update() {
 		glfwPollEvents();
 		glfwSwapBuffers(window);
+		IntBuffer w = BufferUtils.createIntBuffer(1);
+		IntBuffer h = BufferUtils.createIntBuffer(1);
+		glfwGetWindowSize(window, w, h);
+		lw = w.get(0);
+		lh = h.get(0);
+	}
 
+	public static boolean wasResized() {
+		if (lw != w || lh != h) {
+			w = lw;
+			h = lh;
+			return true;
+		}
+		return false;
 	}
 
 	public static void clearBuffers() {

@@ -1,6 +1,7 @@
 package fr.ProgFox;
 
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.*;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
@@ -27,6 +28,9 @@ public class Core {
 	}
 
 	public void update() {
+		if (Display.wasResized()) {
+			glViewport(0, 0, Display.getWidth(), Display.getHeight());
+		}
 
 		if (Input.getKey(GLFW.GLFW_KEY_ESCAPE)) {
 			GLFW.glfwSetInputMode(Display.getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
@@ -41,7 +45,7 @@ public class Core {
 		}
 
 		game.update();
-		
+
 		Input.update();
 	}
 

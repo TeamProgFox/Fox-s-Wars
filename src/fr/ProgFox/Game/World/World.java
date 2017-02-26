@@ -1,7 +1,6 @@
 package fr.ProgFox.Game.World;
 
 import java.util.Random;
-
 import fr.ProgFox.Game.Logs.Logs;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.Blocks.Block;
@@ -10,14 +9,13 @@ import fr.ProgFox.Renderer.Display;
 import fr.ProgFox.Renderer.Shader.ColorShader;
 
 public class World {
-	public static int sizeX = 3;
-	public static int sizeZ = 3;
+	public static int sizeX = 0;
+	public static int sizeZ = 0;
 	public static int moreSizeX = 0;
 	public static int moreSizeZ = 0;
 	public Noise noise;
 	public Noise noiseColor;
 	public Chunk[][] chunks;
-	public Chunk[][] newChunks;
 	private Random random;
 	int i = 0;
 	float percentage;
@@ -27,8 +25,7 @@ public class World {
 		random = new Random(seed);
 		noise = new Noise(random.nextLong(), 15, 15);
 		noiseColor = new Noise(random.nextLong(), 30, 5);
-		chunks = new Chunk[100][100];
-		newChunks = new Chunk[100][100];
+		chunks = new Chunk[1000][1000];
 		for (int x = 0; x < sizeX; x++) {
 			for (int z = 0; z < sizeZ; z++) {
 				chunks[x][z] = new Chunk(x, 0, z, noise, noiseColor, random, this);
@@ -56,9 +53,9 @@ public class World {
 		}
 	}
 
-	int sleepTime = 120;
+	int renderSize = 4;
 
-	public void newUpdate(Camera cam) {
+	public void update(Camera cam) {
 		float xP = (float) (cam.position.x / 16);
 		float zP = (float) (cam.position.z / 16);
 
@@ -68,49 +65,89 @@ public class World {
 			x = 0;
 		if (z < 0)
 			z = 0;
-		for (int a = 0; a < 3; a++) {
-			if (chunks[x][z + a] == null) {
-				new Logs().Info("debut de la génération");
-				chunks[(int) x][(int) z + a] = new Chunk(x, 0, z + a, noise, noiseColor, random, this);
-				new Logs().Info("debut de la vegetation");
-				chunks[(int) x][(int) z + a].generateVegetation();
-				new Logs().Info("debut de la création");
-				chunks[(int) x][(int) z + a].createChunk();
+
+		for (int i = 0; i < renderSize; i++) {
+			for (int j = 0; j < renderSize; j++) {
+				if (x + i > 100 || z + j > 100)
+					return;
+				if (x + i < 0 || z + j < 0)
+					return;
+
+				if (chunks[x + i][z + j] == null) {
+					chunks[x + i][z + j] = new Chunk(x + i, 0, z + j, noise, noiseColor, random, this);
+					chunks[x + i][z + j].generateVegetation();
+					chunks[x + i][z + j].createChunk();
+				}
 			}
 		}
 
+		for (int i = 0; i < renderSize; i++) {
+			for (int j = 0; j < renderSize; j++) {
+				if (x - i > 100 || z - j > 100)
+					return;
+				if (x - i < 0 || z - j < 0)
+					return;
+				if (chunks[x - i][z - j] == null) {
+					chunks[x - i][z - j] = new Chunk(x - i, 0, z - j, noise, noiseColor, random, this);
+					chunks[x - i][z - j].generateVegetation();
+					chunks[x - i][z - j].createChunk();
+				}
+			}
+		}
+
+		for (int i = 0; i < renderSize; i++) {
+			for (int j = 0; j < renderSize; j++) {
+				if (x + i > 100 || z - j > 100)
+					return;
+				if (x + i < 0 || z - j < 0)
+					return;
+				if (chunks[x + i][z - j] == null) {
+					chunks[x + i][z - j] = new Chunk(x + i, 0, z - j, noise, noiseColor, random, this);
+					chunks[x + i][z - j].generateVegetation();
+					chunks[x + i][z - j].createChunk();
+				}
+			}
+		}
+
+		for (int i = 0; i < renderSize; i++) {
+			for (int j = 0; j < renderSize; j++) {
+				if (x - i > 100 || z + j > 100)
+					return;
+				if (x - i < 0 || z + j < 0)
+					return;
+				if (chunks[x - i][z + j] == null) {
+					chunks[x - i][z + j] = new Chunk(x - i, 0, z + j, noise, noiseColor, random, this);
+					chunks[x - i][z + j].generateVegetation();
+					chunks[x - i][z + j].createChunk();
+				}
+			}
+		}
 	}
-
-	public void update() {
-
-	}
-
-	int renderDistance = 3;
 
 	public void render(Camera cam) {
 		float xP = (float) (cam.position.x / 16);
 		float zP = (float) (cam.position.z / 16);
-		for (int x = 0; x < sizeX + 10; x++) {
-			for (int z = 0; z < sizeZ + 10; z++) {
-				if (chunks[x][z] != null && chunks[x][z].canRender && chunks[x][z].hasShader
-						&& chunks[x][z].createRequest == false) {
-					if (xP < x + renderDistance && xP > x - renderDistance && zP < z + renderDistance
-							&& zP > z - renderDistance)
-						chunks[x][z].render(cam);
+		for (int x = 0; x < 100; x++) {
+			for (int z = 0; z < 100; z++) {
 
-				}
-				if (chunks[x][z] != null && chunks[x][z].hasShader == false)
+				if (chunks[x][z] != null && chunks[x][z].hasShader == false) {
 					chunks[x][z].setShader(new ColorShader());
-				if (chunks[x][z] != null && chunks[x][z].createRequest)
+				}
+
+				if (chunks[x][z] != null && chunks[x][z].createRequest) {
 					chunks[x][z].createBuffer();
-				if (chunks[x][z] != null && chunks[x][z].updateRequest)
+				}
+
+				if (chunks[x][z] != null && chunks[x][z].updateRequest) {
 					chunks[x][z].updateVBO();
+				}
+				if (chunks[x][z] != null && chunks[x][z].canRender && chunks[x][z].hasShader) {
+					if (xP < x + renderSize && xP > x - renderSize && zP < z + renderSize && zP > z - renderSize) {
+						chunks[x][z].render(cam);
+					}
+				}
 			}
 		}
-	}
-
-	public void newRender(Camera cam) {
-
 	}
 
 	public static void cycleToDay() {
@@ -141,7 +178,8 @@ public class World {
 		return chunk.getBlock(x3, y3, z3);
 	}
 
-	public void addBlock(float x, float y, float z, Block block) {
+	public void addBlock(float x, float y, float z, Block block, boolean update) {
+
 		int xx = (int) (x / Chunk.SIZE);
 		int zz = (int) (z / Chunk.SIZE);
 
@@ -155,10 +193,14 @@ public class World {
 		float x3 = x % Chunk.SIZE;
 		float y3 = y % Chunk.HEIGHT;
 		float z3 = z % Chunk.SIZE;
-		chunk.addBlock(x3, y3, z3, block);
+
+		chunk.addBlock(x3, y3, z3, block, update);
+
 	}
 
-	public void removeBlock(float x, float y, float z) {
+	public void removeBlock(float x, float y, float z, boolean update) {
+		if ((int) y == 0)
+			return;
 		float xx = x / Chunk.SIZE;
 		float zz = z / Chunk.SIZE;
 
@@ -172,7 +214,7 @@ public class World {
 		float y3 = y % Chunk.HEIGHT;
 		float z3 = z % Chunk.SIZE;
 
-		chunk.removeBlock(x3, y3, z3);
+		chunk.removeBlock(x3, y3, z3, update);
 
 		if ((int) x3 == 15) {
 			if (getChunk(xx + 1, zz) != null) {
@@ -190,7 +232,7 @@ public class World {
 			}
 		}
 		if ((int) z3 == 0 && (int) zz > 0) {
-			if (getChunk(xx, zz - -1) != null) {
+			if (getChunk(xx, zz - 1) != null) {
 				getChunk(xx, zz - 1).updateChunk();
 			}
 		}

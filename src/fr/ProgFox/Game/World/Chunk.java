@@ -9,11 +9,12 @@ import java.util.Random;
 
 import org.lwjgl.BufferUtils;
 
+import fr.ProgFox.Game.Logs.Logs;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.Blocks.Block;
 import fr.ProgFox.Game.World.Blocks.GrassBlock;
 import fr.ProgFox.Math.Color4f;
-import fr.ProgFox.Math.Vec4;
+import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Renderer.Shader.Shader;
 import fr.ProgFox.Utils.VertexBuffer.CubeLine;
@@ -37,6 +38,7 @@ public class Chunk {
 	public boolean canRender = false;
 	public boolean hasShader = false;
 	public boolean createRequest = false;
+	public boolean isReady = false;
 	public boolean updateRequest = false;
 	private CubeLine cl;
 	public Noise colorNoise;
@@ -49,11 +51,7 @@ public class Chunk {
 		this.colorNoise = colorNoise;
 		this.world = world;
 		this.random = seed;
-		// this.cl = new CubeLine(new Vec3(1, 1, 1));
-		int x2 = (int) ((int) this.x * SIZE);
-		int y2 = (int) ((int) this.y * HEIGHT);
-		int z2 = (int) ((int) this.z * SIZE);
-		// cl.add(x2, y2, z2, SIZE, HEIGHT, SIZE, false);
+
 		tree = new Tree(random);
 		blocks = new Block[SIZE][HEIGHT][SIZE];
 		// shader = new ColorShader();
@@ -67,7 +65,7 @@ public class Chunk {
 					int x2 = (int) this.x * SIZE + x;
 					int y2 = (int) this.y * HEIGHT + y;
 					int z2 = (int) this.z * SIZE + z;
-					if (noise.getNoise(x2, z2) > y2) {
+					if (noise.getNoise(x2, z2) > y2 - 4) {
 						float v = colorNoise.getNoise(x2, z2);
 
 						Color4f fC = Color4f.lerp(new Color4f(0f, 0.9f, 0f), new Color4f(0f, 1f, 0f), v);
@@ -87,9 +85,9 @@ public class Chunk {
 					int x2 = (int) this.x * SIZE + x;
 					int y2 = (int) this.y * HEIGHT + y;
 					int z2 = (int) this.z * SIZE + z;
-					grounded = noise.getNoise(x2, z2) > y2 && noise.getNoise(x2, z2) < y2 + 1;
+					grounded = noise.getNoise(x2, z2) > y2 - 4 && noise.getNoise(x2, z2) < y2 - 3;
 					if (random.nextFloat() > 0.997f && grounded) {
-						tree.addTree(blocks, x2, y2, z2, world);
+						tree.addTree(blocks, x, y, z, this);
 					}
 				}
 			}
@@ -122,9 +120,9 @@ public class Chunk {
 					if (up) {
 						Color4f shadow;
 						if (world.getBlock(x2 + 1, y2 + 1, z2) != null) {
-							shadow = new Color4f(1f, ao, ao, 1f);
-						} else if (world.getBlock(x2 - 1, y2 + 1, z2) != null) {
 							shadow = new Color4f(ao, 1f, 1f, ao);
+						} else if (world.getBlock(x2 - 1, y2 + 1, z2) != null) {
+							shadow = new Color4f(1f, ao, ao, 1f);
 						} else if (world.getBlock(x2, y2 + 1, z2 + 1) != null) {
 							shadow = new Color4f(1f, 1f, ao, ao);
 						} else if (world.getBlock(x2, y2 + 1, z2 - 1) != null) {
@@ -173,11 +171,11 @@ public class Chunk {
 		}
 		buffer.flip();
 		createRequest = true;
-		
+
 	}
 
 	public void updateChunk() {
-		buffer.clear();
+		buffer = BufferUtils.createFloatBuffer(SIZE * HEIGHT * SIZE * 6 * 4 * (3 + 4));
 		bufferSize = 0;
 		for (int x = 0; x < SIZE; x++) {
 			for (int y = 0; y < HEIGHT; y++) {
@@ -201,9 +199,9 @@ public class Chunk {
 					if (up) {
 						Color4f shadow;
 						if (world.getBlock(x2 + 1, y2 + 1, z2) != null) {
-							shadow = new Color4f(1f, ao, ao, 1f);
-						} else if (world.getBlock(x2 - 1, y2 + 1, z2) != null) {
 							shadow = new Color4f(ao, 1f, 1f, ao);
+						} else if (world.getBlock(x2 - 1, y2 + 1, z2) != null) {
+							shadow = new Color4f(1f, ao, ao, 1f);
 						} else if (world.getBlock(x2, y2 + 1, z2 + 1) != null) {
 							shadow = new Color4f(1f, 1f, ao, ao);
 						} else if (world.getBlock(x2, y2 + 1, z2 - 1) != null) {
@@ -256,16 +254,24 @@ public class Chunk {
 
 	public void updateVBO() {
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
+		if (buffer != null) {
+			glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
+		}
+		buffer = null;
 	}
 
 	public void createBuffer() {
+		int x2 = (int) ((int) this.x * SIZE);
+		int y2 = (int) ((int) this.y * HEIGHT);
+		int z2 = (int) ((int) this.z * SIZE);
+		this.cl = new CubeLine(new Vec3(1, 1, 1));
+		cl.add(x2, y2, z2, SIZE, HEIGHT, SIZE, false);
 		vbo = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
 		createRequest = false;
 		canRender = true;
-
+		buffer = null;
 
 	}
 
@@ -275,6 +281,7 @@ public class Chunk {
 	}
 
 	public void render(Camera cam) {
+		isReady = true;
 		shader.bind();
 		shader.setUniform("perspective", cam.getPerspectiveProjection());
 		shader.setUniform("perspectivePosition", cam.position);
@@ -289,7 +296,6 @@ public class Chunk {
 		glDisableVertexAttribArray(0);
 
 		if (Var.debugMode) {
-
 			cl.render(GL_LINES, 2, cam.getPerspectiveProjection(), cam.position, shader);
 		}
 	}
@@ -300,24 +306,24 @@ public class Chunk {
 		return blocks[(int) x][(int) y][(int) z];
 	}
 
-	public void addBlock(float x, float y, float z, Block block) {
+	public void addBlock(float x, float y, float z, Block block, boolean update) {
 		if (x < 0 || y < 0 || z < 0 || x >= SIZE || y >= HEIGHT || z >= SIZE)
 			return;
 
 		if (blocks[(int) x][(int) y][(int) z] != block) {
 			blocks[(int) x][(int) y][(int) z] = block;
-			if (buffer != null) {
+			if (update) {
 				updateChunk();
 			}
 		}
 	}
 
-	public void removeBlock(float x, float y, float z) {
+	public void removeBlock(float x, float y, float z, boolean update) {
 		if (x < 0 || y < 0 || z < 0 || x >= SIZE || y >= HEIGHT || z >= SIZE)
 			return;
 		if (blocks[(int) x][(int) y][(int) z] != null) {
 			blocks[(int) x][(int) y][(int) z] = null;
-			if (buffer != null) {
+			if (update) {
 				updateChunk();
 			}
 		}

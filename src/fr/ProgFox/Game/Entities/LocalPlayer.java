@@ -37,7 +37,6 @@ public class LocalPlayer extends Entity {
 	public LocalPlayer(World world, Camera cam, int id, String name, Vec3 position, Vec3 rotation) {
 
 		super(position, rotation);
-
 		this.world = world;
 		this.cam = cam;
 		this.id = id;
@@ -172,7 +171,7 @@ public class LocalPlayer extends Entity {
 		if (Chunk.canBreakBlock) {
 			if (Input.getMouseDown(0)) {
 
-				world.removeBlock(Var.selectedPosition.x, Var.selectedPosition.y, Var.selectedPosition.z);
+				world.removeBlock(Var.selectedPosition.x, Var.selectedPosition.y, Var.selectedPosition.z, true);
 				lastBlock = null;
 				Chunk.canBreakBlock = false;
 			}
@@ -205,7 +204,7 @@ public class LocalPlayer extends Entity {
 					return;
 				if (ry == posY && rx == posX && rz == posZ)
 					return;
-				world.addBlock(rx, ry, rz, Block.TESTE);
+				world.addBlock(rx, ry, rz, Block.TESTE, true);
 				Chunk.canBreakBlock = false;
 			}
 		}
