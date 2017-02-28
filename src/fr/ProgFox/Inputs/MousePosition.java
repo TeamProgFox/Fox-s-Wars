@@ -15,8 +15,7 @@ public class MousePosition {
 		DoubleBuffer yBuffer = BufferUtils.createDoubleBuffer(1);
 		glfwGetCursorPos(Display.getWindow(), xBuffer, yBuffer);
 		double x = xBuffer.get(0);
-		double y = yBuffer.get(0);
-
+		
 		return (float) x;
 	}
 

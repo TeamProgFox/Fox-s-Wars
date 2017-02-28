@@ -5,14 +5,18 @@ import fr.ProgFox.Math.Vec4;
  
 public class Block {
 	
-	public static final Block TESTE = new Block(new Color4f(1f, 1f, 1f, 0.5f));
-	
+	public static final Block TESTE = new Block(new Color4f(1f, 1f, 1f, 0.5f), "TESTE");
+	private String name;
 	public Color4f color;
 	public static float sizeX = 1, sizeY = 1, sizeZ = 1;
 
-	public Block(Color4f color) {
-
+	public Block(Color4f color, String name) {
+		this.name = name;
 		this.color = color;
+	}
+	
+	public String getName(){
+		return name;
 	}
 
 	public void setColor(Color4f newColor) {

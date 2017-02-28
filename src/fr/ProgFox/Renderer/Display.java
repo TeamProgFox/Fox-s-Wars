@@ -1,6 +1,6 @@
 package fr.ProgFox.Renderer;
 
-import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.*; 
 import static org.lwjgl.opengl.GL11.*;
 
 import java.nio.IntBuffer;
@@ -19,6 +19,7 @@ public class Display {
 	public static int lw, lh;
 
 	public static long window;
+
 	public static GLFWKeyCallback keyCallback;
 	public static GLFWMouseButtonCallbackI mouseCallback;
 
@@ -27,11 +28,9 @@ public class Display {
 		w = width;
 		h = height;
 		if (!glfwInit()) {
-			System.err.println("lol");
 			System.exit(1);
 		}
 		window = glfwCreateWindow(width, height, title, 0, 0);
-
 		glfwSetKeyCallback(window, keyCallback = new Input());
 		glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1);
 		glfwShowWindow(window);

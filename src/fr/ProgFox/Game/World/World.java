@@ -1,6 +1,8 @@
 package fr.ProgFox.Game.World;
 
 import java.util.Random;
+
+import fr.ProgFox.Main;
 import fr.ProgFox.Game.Logs.Logs;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.Blocks.Block;
@@ -9,48 +11,19 @@ import fr.ProgFox.Renderer.Display;
 import fr.ProgFox.Renderer.Shader.ColorShader;
 
 public class World {
-	public static int sizeX = 0;
-	public static int sizeZ = 0;
-	public static int moreSizeX = 0;
-	public static int moreSizeZ = 0;
 	public Noise noise;
 	public Noise noiseColor;
 	public Chunk[][] chunks;
 	private Random random;
-	int i = 0;
 	float percentage;
 
 	public World(long seed) {
-
 		random = new Random(seed);
 		noise = new Noise(random.nextLong(), 15, 15);
 		noiseColor = new Noise(random.nextLong(), 30, 5);
 		chunks = new Chunk[1000][1000];
-		for (int x = 0; x < sizeX; x++) {
-			for (int z = 0; z < sizeZ; z++) {
-				chunks[x][z] = new Chunk(x, 0, z, noise, noiseColor, random, this);
-				percentage = ((float) (x + 1) / sizeX) * 33;
-				Display.update();
-			}
-			System.out.println(percentage);
-		}
-		new Logs().Info("FIN DE LA GENERATION DES CHUNKS");
-		for (int x = 0; x < sizeX; x++) {
-			for (int z = 0; z < sizeZ; z++) {
-				chunks[x][z].generateVegetation();
-				percentage = (((float) (x + 1) / sizeX) * 33) + 33;
-				Display.update();
-			}
-			System.out.println(percentage);
-		}
-		for (int x = 0; x < sizeX; x++) {
-			for (int z = 0; z < sizeZ; z++) {
-				chunks[x][z].createChunk();
-				percentage = (((float) (x + 1) / sizeX) * 33) + 66;
-				Display.update();
-			}
-			System.out.println(percentage);
-		}
+
+
 	}
 
 	int renderSize = 4;
@@ -122,6 +95,7 @@ public class World {
 				}
 			}
 		}
+		
 	}
 
 	public void render(Camera cam) {
@@ -195,6 +169,7 @@ public class World {
 		float z3 = z % Chunk.SIZE;
 
 		chunk.addBlock(x3, y3, z3, block, update);
+		
 
 	}
 
@@ -215,7 +190,6 @@ public class World {
 		float z3 = z % Chunk.SIZE;
 
 		chunk.removeBlock(x3, y3, z3, update);
-
 		if ((int) x3 == 15) {
 			if (getChunk(xx + 1, zz) != null) {
 				getChunk(xx + 1, zz).updateChunk();
@@ -236,6 +210,8 @@ public class World {
 				getChunk(xx, zz - 1).updateChunk();
 			}
 		}
+		
+	
 	}
 
 	public Chunk getChunk(float x, float z) {
@@ -243,6 +219,21 @@ public class World {
 			return null;
 		Chunk c = chunks[(int) x][(int) z];
 		return c;
+	}
+
+	public Chunk getChunkAtBlok(float x, float z) {
+		int xx = (int) (x / Chunk.SIZE);
+		int zz = (int) (z / Chunk.SIZE);
+
+		if (xx < 0 || xx >= 100 || zz < 0 || zz >= 100)
+			return null;
+
+		Chunk chunk = chunks[(int) xx][(int) zz];
+		if (chunk == null)
+			return null;
+
+		return chunk;
+
 	}
 
 	// TESTE

@@ -1,99 +1,101 @@
 package fr.ProgFox.Network;
 
-import java.io.IOException; 
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.ArrayList;
 
-import fr.ProgFox.Core;
 import fr.ProgFox.Game.Game;
-import fr.ProgFox.Game.Entities.Entity;
 import fr.ProgFox.Math.Vec3;
 
-public class NetworkClient implements Runnable {
-	private int port;
-	private boolean isRunning = false;
-	private InetAddress address;
-	private DatagramSocket socket;
-	private Game game;
+public class NetworkClient {
+	String username;
+	ArrayList<String> users = new ArrayList();
+	Boolean isConnected = false;
 
-	public NetworkClient(Game game, String address, int port) {
-		try {
-			this.address = InetAddress.getByName(address);
-			this.port = port;
+	Socket sock;
+	BufferedReader reader;
+	PrintWriter writer;
+	Game game;
+
+	public NetworkClient(String address, int port, String username, Game game) {
+		if (isConnected == false) {
+			this.username = username;
 			this.game = game;
-			socket = new DatagramSocket();
-			isRunning = true;
-		} catch (SocketException | UnknownHostException e) {
-			e.printStackTrace();
-		}
 
-		new Thread(this).start();
-	}
-
-	public void run() {
-		System.out.println("Client running: " + address.getHostAddress() + ":" + port);
-		
-		
-		while (isRunning) {
 			try {
-				byte[] data = new byte[1024];
-				DatagramPacket packet = new DatagramPacket(data, data.length, address, port);
-
-				socket.receive(packet);
-				parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
-			} catch (IOException e) {
-				e.printStackTrace();
+				sock = new Socket(address, port);
+				InputStreamReader streamreader = new InputStreamReader(sock.getInputStream());
+				reader = new BufferedReader(streamreader);
+				writer = new PrintWriter(sock.getOutputStream());
+				writer.println(username + " : has connected");
+				writer.flush();
+				isConnected = true;
+			} catch (Exception ex) {
+				System.out.println("Cannot connect ! Try Again");
+				System.exit(1);
 			}
+
+			receive();
+
+		} else if (isConnected == true) {
+			System.out.println("You arre already connected");
+			System.exit(0);
 		}
-	}
-
-	public void parsePacket(byte[] data, InetAddress address, int port) {
-		String msg = new String(data);
-
-		int indexOfTab = 0;
-		String[] controle = new String[4];
-		controle[0] = "";
-		controle[1] = "";
-		controle[2] = "";
-		controle[3] = "";
-
-		for (int i = 0; i < msg.length(); i++) {
-			if (msg.charAt(i) != ';') {
-				controle[indexOfTab] += msg.charAt(i);
-			} else {
-				indexOfTab++;
-			}
-		}
-		String name = controle[0];
-		float x = Float.parseFloat(controle[1]);
-		float y = Float.parseFloat(controle[2]);
-		float z = Float.parseFloat(controle[3]);
-
-		// System.out.println(name);
-		// System.out.println(x);
-		// System.out.println(y);
-		// System.out.println(z);
-		game.addClientPlayer(name, x, y, z);
-		game.controleEntity(name, x, y, z);
 
 	}
 
-	public void send(byte[] data) {
+	public void send(String message) {
 		new Thread("Send") {
 			public void run() {
-				try {
-					DatagramPacket packet = new DatagramPacket(data, data.length, address, port);
+				writer.println(message);
+				writer.flush();
+			}
+		}.start();
+	}
 
-					socket.send(packet);
-				} catch (IOException e) {
-					e.printStackTrace();
+	public void receive() {
+		new Thread("Receive") {
+			public void run() {
+				while (true) {
+					String stream;
+					String[] data;
+					try {
+						while ((stream = reader.readLine()) != null) {
+							data = stream.split(";");
+							controle(data);
+						}
+					} catch (Exception ex) {
+					}
 				}
 			}
 		}.start();
+	}
+	
+	public void controle(String[] data) {
+		if (data[0].equals("player")) {
+			String name = data[1];
+			float x = Float.parseFloat(data[2]);
+			float y = Float.parseFloat(data[3]);
+			float z = Float.parseFloat(data[4]);
+
+			game.addClientPlayer(name, x, y, z);
+		} else if (data[0].equals("controle")) {
+			String name = data[1];
+			float x = Float.parseFloat(data[2]);
+			float y = Float.parseFloat(data[3]);
+			float z = Float.parseFloat(data[4]);
+
+			game.controlePlayer(name, x, y, z);
+		} else if (data[0].equals("removeBlock")) {
+			float x = Float.parseFloat(data[1]);
+			float y = Float.parseFloat(data[2]);
+			float z = Float.parseFloat(data[3]);
+
+			game.removeBlock(new Vec3(x, y, z));
+		}
+
 	}
 
 }

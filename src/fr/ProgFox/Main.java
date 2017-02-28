@@ -8,36 +8,42 @@ import org.lwjgl.opengl.GL;
 
 import fr.ProgFox.Game.Game;
 import fr.ProgFox.Game.Variables.Var;
+import fr.ProgFox.Game.World.SaveChunk;
 import fr.ProgFox.Inputs.Input;
 import fr.ProgFox.Inputs.Mouse;
 import fr.ProgFox.Inputs.MouseButton;
 import fr.ProgFox.Renderer.Display;
 
-public class Core {
-	public static final int FRAME_CAP = 600000000;
+public class Main {
+
 	public static boolean running = false;
+
+	public static final int FRAME_CAP = 600000000;
 	public static int frames = 0;
 	public static int teste = 1;
-	Game game;
 	public static int width = 1200, height = 600;
+	static Main main;
 
-	public Core() {
+	Game game;
+
+	public static void main(String[] args) {
+		main = new Main();
+		main.start();
+	}
+
+	public Main() {
 		Display.create(width, height, "Fox's Wars");
-		game = new Game();
-
 	}
 
 	public void update() {
-		if (Display.wasResized()) {
+		Display.update();
+		if (Display.wasResized())
 			glViewport(0, 0, Display.getWidth(), Display.getHeight());
-		}
-
 		if (Input.getKey(GLFW.GLFW_KEY_ESCAPE)) {
 			GLFW.glfwSetInputMode(Display.getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
 			Var.isInMenu = true;
 			Var.isInGame = false;
 		}
-		Mouse.update();
 		if (Input.getMouseDown(0) && !Var.isInGame) {
 			Var.isInGame = true;
 			Var.isInMenu = false;
@@ -45,7 +51,6 @@ public class Core {
 		}
 
 		game.update();
-
 		Input.update();
 	}
 
@@ -60,6 +65,8 @@ public class Core {
 
 	// ----
 	public void start() {
+		game = new Game();
+		game.init();
 		running = true;
 		loop();
 	}
@@ -85,6 +92,7 @@ public class Core {
 		long timer = System.currentTimeMillis();
 
 		while (running) {
+
 			if (Display.isClosed())
 				stop();
 			if (System.nanoTime() - lastTickTime > tickTime) {
@@ -94,7 +102,6 @@ public class Core {
 			} else if (System.nanoTime() - lastRenderTime > RenderTime) {
 				render();
 				renderGUI();
-				Display.update();
 				frames++;
 				lastRenderTime += RenderTime;
 			} else {
@@ -105,7 +112,7 @@ public class Core {
 				}
 			}
 			if (System.currentTimeMillis() - timer > 1000) {
-				System.out.println("FPS : " + frames + " TPS : " + ticks);
+				//System.out.println("FPS : " + frames + " TPS : " + ticks);
 				timer += 1000;
 				ticks = 0;
 				frames = 0;
@@ -114,8 +121,16 @@ public class Core {
 		exit();
 	}
 
-	public static void main(String[] args) {
-		Core main = new Core();
-		main.start();
+	public void log() {
+		System.out.println("lol");
 	}
+
+	public static Main getMain() {
+		return main;
+	}
+
+	public Game getGame() {
+		return game;
+	}
+
 }

@@ -28,7 +28,7 @@ public class Input extends GLFWKeyCallback {
 	}
 	
 	public static void update(){
-		
+		Mouse.update();
 	}
 
 	public static float getDX(){

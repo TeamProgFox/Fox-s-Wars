@@ -65,13 +65,12 @@ public class SkyBox {
 		skybox.addVertex(x + size, y - size, z + size, new Vec3(bleu2, bleu2, blanc));
 		skybox.addVertex(x + size, y - size, z - size, new Vec3(bleu2, bleu2, blanc));
 
-		skybox.addVertex(x - size, y + size, z - size, new Vec3(bleu2, bleu2, blanc));
 		skybox.addVertex(x - size, y + size, z + size, new Vec3(bleu2, bleu2, blanc));
-		skybox.addVertex(x + size, y + size, z + size, new Vec3(bleu2, bleu2, blanc));
+		skybox.addVertex(x - size, y + size, z - size, new Vec3(bleu2, bleu2, blanc));
 		skybox.addVertex(x + size, y + size, z - size, new Vec3(bleu2, bleu2, blanc));
+		skybox.addVertex(x + size, y + size, z + size, new Vec3(bleu2, bleu2, blanc));
 
 		skybox.end();
-
 
 	}
 
@@ -80,15 +79,15 @@ public class SkyBox {
 		skybox.init(48);
 		float blanc = 0.7f, bleu = 0.3f, bleu2 = 0.3f;
 
-		skybox.update(x - size, y - size, z + size, new Vec3(bleu, bleu, blanc));
 		skybox.update(x + size, y - size, z + size, new Vec3(bleu, bleu, blanc));
-		skybox.update(x + size, y, z + size, new Vec3(blanc, blanc, blanc));
+		skybox.update(x - size, y - size, z + size, new Vec3(bleu, bleu, blanc));
 		skybox.update(x - size, y, z + size, new Vec3(blanc, blanc, blanc));
+		skybox.update(x + size, y, z + size, new Vec3(blanc, blanc, blanc));
 
-		skybox.update(x - size, y, z + size, new Vec3(blanc, blanc, blanc));
 		skybox.update(x + size, y, z + size, new Vec3(blanc, blanc, blanc));
-		skybox.update(x + size, y + size, z + size, new Vec3(bleu, bleu, blanc));
+		skybox.update(x - size, y, z + size, new Vec3(blanc, blanc, blanc));
 		skybox.update(x - size, y + size, z + size, new Vec3(bleu, bleu, blanc));
+		skybox.update(x + size, y + size, z + size, new Vec3(bleu, bleu, blanc));
 
 		skybox.update(x - size, y - size, z - size, new Vec3(bleu, bleu, blanc));
 		skybox.update(x + size, y - size, z - size, new Vec3(bleu, bleu, blanc));
@@ -100,15 +99,15 @@ public class SkyBox {
 		skybox.update(x + size, y + size, z - size, new Vec3(bleu, bleu, blanc));
 		skybox.update(x - size, y + size, z - size, new Vec3(bleu, bleu, blanc));
 
-		skybox.update(x - size, y - size, z - size, new Vec3(bleu, bleu, blanc));
 		skybox.update(x - size, y - size, z + size, new Vec3(bleu, bleu, blanc));
-		skybox.update(x - size, y, z + size, new Vec3(blanc, blanc, blanc));
+		skybox.update(x - size, y - size, z - size, new Vec3(bleu, bleu, blanc));
 		skybox.update(x - size, y, z - size, new Vec3(blanc, blanc, blanc));
+		skybox.update(x - size, y, z + size, new Vec3(blanc, blanc, blanc));
 
-		skybox.update(x - size, y, z - size, new Vec3(blanc, blanc, blanc));
 		skybox.update(x - size, y, z + size, new Vec3(blanc, blanc, blanc));
-		skybox.update(x - size, y + size, z + size, new Vec3(bleu, bleu, blanc));
+		skybox.update(x - size, y, z - size, new Vec3(blanc, blanc, blanc));
 		skybox.update(x - size, y + size, z - size, new Vec3(bleu, bleu, blanc));
+		skybox.update(x - size, y + size, z + size, new Vec3(bleu, bleu, blanc));
 
 		skybox.update(x + size, y - size, z - size, new Vec3(bleu, bleu, blanc));
 		skybox.update(x + size, y - size, z + size, new Vec3(bleu, bleu, blanc));
@@ -125,10 +124,10 @@ public class SkyBox {
 		skybox.update(x + size, y - size, z + size, new Vec3(bleu2, bleu2, blanc));
 		skybox.update(x + size, y - size, z - size, new Vec3(bleu2, bleu2, blanc));
 
-		skybox.update(x - size, y + size, z - size, new Vec3(bleu2, bleu2, blanc));
 		skybox.update(x - size, y + size, z + size, new Vec3(bleu2, bleu2, blanc));
-		skybox.update(x + size, y + size, z + size, new Vec3(bleu2, bleu2, blanc));
+		skybox.update(x - size, y + size, z - size, new Vec3(bleu2, bleu2, blanc));
 		skybox.update(x + size, y + size, z - size, new Vec3(bleu2, bleu2, blanc));
+		skybox.update(x + size, y + size, z + size, new Vec3(bleu2, bleu2, blanc));
 
 		skybox.updateEnd();
 

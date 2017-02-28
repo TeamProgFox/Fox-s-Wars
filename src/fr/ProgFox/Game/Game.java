@@ -1,33 +1,29 @@
 package fr.ProgFox.Game;
 
-import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GLCapabilities;
-import org.lwjgl.opengl.WGL;
-import org.lwjgl.opengl.WGLARBMakeCurrentRead;
 
-import fr.ProgFox.Core;
+import fr.ProgFox.Main;
 import fr.ProgFox.Game.Entities.ClientPlayer;
 import fr.ProgFox.Game.Entities.Entity;
 import fr.ProgFox.Game.Entities.EntityManager;
 import fr.ProgFox.Game.Entities.SavePlayersConfiguration;
 import fr.ProgFox.Game.Variables.Var;
+import fr.ProgFox.Game.World.SaveChunk;
 import fr.ProgFox.Game.World.World;
+import fr.ProgFox.Game.World.Blocks.Block;
+import fr.ProgFox.Game.World.Blocks.GrassBlock;
 import fr.ProgFox.Inputs.Input;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Network.NetworkClient;
 import fr.ProgFox.Renderer.Camera;
-import fr.ProgFox.Renderer.Display;
 import fr.ProgFox.Utils.Loader;
 import fr.ProgFox.Utils.UniqueID;
 import fr.ProgFox.Utils.VertexBuffer.Cube;
@@ -35,86 +31,131 @@ import fr.ProgFox.Utils.VertexBuffer.CubeLine;
 import fr.ProgFox.Utils.VertexBuffer.SkyBox;
 
 public class Game implements Runnable {
-	public Camera cam;
-	public World world;
-	private Cube cube;
-	public EntityManager entityManager;
-	private SkyBox skybox;
+
 	public float posX, posY, posZ;
 	public float rotX, rotY;
-	public SavePlayersConfiguration spc;
-	public static Scanner sc = new Scanner(System.in);
 	public int id;
-	private CubeLine perso;
-	public NetworkClient net;
-	public List<ClientPlayer> players = new ArrayList<>();
 	public boolean teste = false;
+	private boolean addCLientPlayerRequest = false;
+	public List<String> players = new ArrayList<>();
+
+	public static Scanner sc = new Scanner(System.in);
+
+	private Camera cam;
+	private World world;
+	private EntityManager entityManager;
+	private SavePlayersConfiguration spc;
+	private NetworkClient net;
+	private String ClientPlayerName;
+	private Vec3 cpp;
+	private Cube cube;
+	private SkyBox skybox;
+
+	public Vec3 removePos;
+	public boolean removeBlockRequest = false;
+
+	String pseudo;
 
 	public Game() {
-		spc = new SavePlayersConfiguration(this);
+
 		Loader.read("saves/Player/Player.tpf", this);
 
 		if (Var.isInThirdPerson == false)
 			Var.isInFirstPerson = true;
 
-		String pseudo = JOptionPane.showInputDialog("Pseudo : ");
+		pseudo = JOptionPane.showInputDialog("Pseudo : ");
 
 		world = new World(-6956537684988609768L);
 		cam = new Camera(new Vec3(posX, posY, posZ), new Vec3(rotX, rotY, 0), world, pseudo);
 		entityManager = new EntityManager();
-		cube = new Cube(new Vec3(1, 1, 1));
-		perso = new CubeLine(new Vec3(1, 1, 1));
 		skybox = new SkyBox(new Vec3(1, 1, 1));
-
-		cam.player.connect(this, "	", 2009);
+		cube = new Cube(new Vec3(1, 1, 1));
+		net = new NetworkClient("localhost", 2222, pseudo, this);
 
 		cam.setPerspectiveProjection(70.0f, 0.01f, 10000.0f);
-		entityManager.add(cam.player);
+		entityManager.add(getCamera().getPlayer());
 		cube.add(0, 0, 0, 0.002f, true);
-		perso.add(0, 0, 0, 1, 1, 1, false);
 		skybox.add(0, 0, 0, 100);
-		cam.player.setWorld(world);
+		getCamera().getPlayer().setWorld(world);
 
 		new Thread(this).start();
+
 	}
 
-	public void controleEntity(String name, float x, float y, float z) {
-		ClientPlayer e = entityManager.getPlayer(name);
-		if (e != null)
-			e.position = new Vec3(x, y, z);
+	public void init() {
+		spc = new SavePlayersConfiguration();
+	}
+
+	public void log(String msg) {
+		System.out.println(msg);
 	}
 
 	public void addClientPlayer(String name, float x, float y, float z) {
-		ClientPlayer cp = entityManager.getPlayer(name);
-		if (cp != null)
-			return;
+		if (!pseudo.equals(name)) {
+			this.ClientPlayerName = name;
+			this.cpp = new Vec3(x, y, z);
+			players.add(name);
+			addCLientPlayerRequest = true;
+		}
+	}
 
-		ClientPlayer CPlayer = new ClientPlayer(UniqueID.getUniqueID(), name, new Vec3(x, y, z), new Vec3());
-		System.out.println("lol");
-		players.add(CPlayer);
-		entityManager.add((Entity) CPlayer);
+	public void removeBlock(Vec3 pos) {
+		removePos = pos;
+		removeBlockRequest = true;
+		System.out.println("REMOVE BLOCK " + removePos.x + " / " + removePos.y + " / " + removePos.z);
+	}
+
+	public void controlePlayer(String name, float x, float y, float z) {
+		ClientPlayer e = entityManager.getPlayer(name);
+		if (e != null) {
+			e.position = new Vec3(x, y, z);
+		}
+
 	}
 
 	public void update() {
-
-		for (ClientPlayer a : players)
-			perso.update(a.position.x, a.position.y, a.position.z, 0.5f, 1.25f, 0.5f, true);
 
 		if (Var.isInMenu)
 			spc.save();
 
 		entityManager.update();
+		entityManager.updateClientPlayer();
 		World.cycleToDay();
 		cam.update();
-
+		world.addBlock(0, 2, 0, Block.TESTE, true);
 		keyboardGestion();
+		multiplayerManager();
 
+		if (addCLientPlayerRequest) {
+			ClientPlayer e = entityManager.getPlayer(ClientPlayerName);
+			if (e == null) {
+				ClientPlayer cP = new ClientPlayer(100, ClientPlayerName, cpp, new Vec3());
+				entityManager.add(cP);
+				addCLientPlayerRequest = false;
+			}
+		}
+		if (removeBlockRequest) {
+			world.removeBlock(removePos.x, removePos.y, removePos.z, true);
+			System.out.println("REMOVE BLOCK AT " + removePos.x + " / " + removePos.y + " / " + removePos.z);
+			removeBlockRequest = false;
+		}
+
+	}
+
+	public void multiplayerManager() {
+		new Thread("MultiPlayer") {
+			public void run() {
+				net.send("player;" + pseudo + ";" + getCamera().getPlayer().position.x + ";"
+						+ getCamera().getPlayer().position.y + ";" + getCamera().getPlayer().position.z);
+				net.send("controle;" + pseudo + ";" + getCamera().getPlayer().position.x + ";"
+						+ getCamera().getPlayer().position.y + ";" + getCamera().getPlayer().position.z);
+			}
+		}.start();
 	}
 
 	public void run() {
 		while (true) {
 			world.update(cam);
-
 			try {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {
@@ -143,12 +184,10 @@ public class Game implements Runnable {
 
 	public void render() {
 		entityManager.render();
-		
+
+		entityManager.renderClientPlayer();
 		world.render(cam);
 
-		for (ClientPlayer a : players) {
-			perso.render(GL_LINES, 2, cam.getPerspectiveProjection(), cam.position, cam.shader);
-		}
 	}
 
 	public void renderGUI() {
@@ -163,4 +202,17 @@ public class Game implements Runnable {
 		skybox.render(GL_QUADS, cam.getPerspectiveProjection(), cam.position);
 		cube.render(GL_QUADS, cam.getPerspectiveProjection(), cam.position);
 	}
+
+	public World getWorld() {
+		return world;
+	}
+
+	public Camera getCamera() {
+		return cam;
+	}
+
+	public NetworkClient getNetwork() {
+		return net;
+	}
+
 }

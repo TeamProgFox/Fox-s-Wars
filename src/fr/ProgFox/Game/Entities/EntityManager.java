@@ -3,11 +3,15 @@ package fr.ProgFox.Game.Entities;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntityManager{
+public class EntityManager {
 	private List<Entity> e;
+	private List<ClientPlayer> cp;
+	private List<String> name;
 
 	public EntityManager() {
 		e = new ArrayList<Entity>();
+		cp = new ArrayList<ClientPlayer>();
+		name = new ArrayList<String>();
 	}
 
 	public void update() {
@@ -26,18 +30,6 @@ public class EntityManager{
 		this.e.add((Entity) e);
 	}
 
-	public void add(ClientPlayer e) {
-		this.e.add((ClientPlayer) e);
-	}
-
-	public Entity getEntity(int id) {
-		for (Entity a : e) {
-			if (a.id == id)
-				return a;
-		}
-		return null;
-	}
-
 	public Entity getEntity(String name) {
 		for (Entity a : e) {
 			if (a.name.equals(name))
@@ -46,14 +38,36 @@ public class EntityManager{
 		return null;
 	}
 
-	public ClientPlayer getPlayer(String name) {
-		for (Entity a : e) {
-			if (a.name.equals(name))
-				return (ClientPlayer) a;
-		}
-
-		return null;
+	public void add(ClientPlayer cp) {
+		this.cp.add(cp);
+		this.name.add(cp.name);
 
 	}
 
+	public void updateClientPlayer() {
+		for (ClientPlayer a : cp) {
+			a.update();
+		}
+	}
+
+	public void renderClientPlayer() {
+		for (ClientPlayer a : cp) {
+			a.render();
+		}
+	}
+	public boolean get(String cP){
+		if(name.contains(cP))
+			return true;
+		return false;
+	}
+	
+	public ClientPlayer getPlayer(String name) {
+		for (ClientPlayer a : cp) {
+			if (a.name.equals(name)) {
+				return a;
+			}
+		}
+		return null;
+	}
+	
 }

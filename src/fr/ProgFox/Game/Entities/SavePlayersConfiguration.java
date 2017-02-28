@@ -1,30 +1,30 @@
 package fr.ProgFox.Game.Entities;
 
-import java.io.BufferedWriter;
+import java.io.BufferedWriter; 
 import java.io.FileWriter;
 import java.io.IOException;
 
-import fr.ProgFox.Game.Game;
+import fr.ProgFox.Main;
 import fr.ProgFox.Game.Variables.Var;
 
 public class SavePlayersConfiguration {
-	public Game game;
-	public SavePlayersConfiguration(Game game){
-		this.game = game;
+	private LocalPlayer player;
+	public SavePlayersConfiguration(){
+	player = Main.getMain().getGame().getCamera().getPlayer();
 	}
 	
 	public void save(){
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter("saves/Player/Player.tpf"));
-			bw.write(Float.toString(game.cam.player.position.x));
+			bw.write(Float.toString(player.position.x));
 			bw.newLine();
-			bw.write(Float.toString(game.cam.player.position.y));
+			bw.write(Float.toString(player.position.y));
 			bw.newLine();
-			bw.write(Float.toString(game.cam.player.position.z));
+			bw.write(Float.toString(player.position.z));
 			bw.newLine();
-			bw.write(Float.toString(game.cam.player.rotation.x));
+			bw.write(Float.toString(player.rotation.x));
 			bw.newLine();
-			bw.write(Float.toString(game.cam.player.rotation.y));
+			bw.write(Float.toString(player.rotation.y));
 			bw.newLine();
 			bw.write(Boolean.toString(Var.flyMode));
 			bw.newLine();

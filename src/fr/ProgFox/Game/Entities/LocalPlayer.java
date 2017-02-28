@@ -4,10 +4,12 @@ import static org.lwjgl.opengl.GL11.*;
 
 import org.lwjgl.glfw.GLFW;
 
+import fr.ProgFox.Main;
 import fr.ProgFox.Game.Game;
 import fr.ProgFox.Game.Raycast;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.Chunk;
+import fr.ProgFox.Game.World.SaveChunk;
 import fr.ProgFox.Game.World.World;
 import fr.ProgFox.Game.World.Blocks.Block;
 import fr.ProgFox.Game.World.Blocks.LeafBlock;
@@ -32,7 +34,6 @@ public class LocalPlayer extends Entity {
 	int vbo;
 	private Camera cam;
 	private Shader shader;
-	public NetworkClient net;
 
 	public LocalPlayer(World world, Camera cam, int id, String name, Vec3 position, Vec3 rotation) {
 
@@ -50,19 +51,13 @@ public class LocalPlayer extends Entity {
 		init();
 	}
 
-	public void connect(Game game, String address, int port) {
-	}
-
-	public NetworkClient getNetwork() {
-		return net;
-	}
-
 	public void init() {
 		int x2 = (int) 0;
 		int y2 = (int) 0;
 		int z2 = (int) 0;
 		select.add(x2, y2, z2, 1, 1, 1, false);
 		perso.add(position.x, position.y, position.z, 0.5f, 2, 0.5f, true);
+
 	}
 
 	public void update() {
@@ -174,6 +169,8 @@ public class LocalPlayer extends Entity {
 				world.removeBlock(Var.selectedPosition.x, Var.selectedPosition.y, Var.selectedPosition.z, true);
 				lastBlock = null;
 				Chunk.canBreakBlock = false;
+				Main.getMain().getGame().getNetwork().send("removeBlock;" + Var.selectedPosition.x + ";"
+						+ Var.selectedPosition.y + ";" + Var.selectedPosition.z);
 			}
 			if (Input.getMouseDown(1)) {
 				int x22 = (int) Var.selectedPosition.x;
@@ -206,6 +203,7 @@ public class LocalPlayer extends Entity {
 					return;
 				world.addBlock(rx, ry, rz, Block.TESTE, true);
 				Chunk.canBreakBlock = false;
+
 			}
 		}
 	}

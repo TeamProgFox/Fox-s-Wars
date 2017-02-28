@@ -13,11 +13,13 @@ import fr.ProgFox.Utils.UniqueID;
 
 public class Camera {
 
-	public LocalPlayer player;
-	World world;
-	public Vec3 position, rotation;
 	private float fov, zNear, zFar;
+	
+	private LocalPlayer player;
+	public Vec3 position, rotation;
 	public Shader shader;
+	
+	World world;
 
 	public Camera(Vec3 position, Vec3 rotation, World world, String pseudo) {
 		player = new LocalPlayer(world, this, UniqueID.getUniqueID(), pseudo, new Vec3(), new Vec3());
@@ -87,6 +89,10 @@ public class Camera {
 		Mat4 p = new Mat4().perspective(fov, (float) Display.getWidth() / (float) Display.getHeight(), zNear, zFar);
 		return p.mul(t.toMatrix().mul(t2.toMatrix()));
 
+	}
+	
+	public LocalPlayer getPlayer(){
+		return player;
 	}
 
 }

@@ -24,7 +24,7 @@ public class Tree {
 	}
 
 	public void SimpleTree(Block[][][] blocks, int x, int y, int z, Chunk world) {
-		if(x + 4 >= 16 || x - 4 < 0 || z + 4 >= 16 | z - 4 < 0)
+		if(x + 2 >= 16 || x - 2 < 0 || z + 2 >= 16 | z - 2 < 0)
 			return;
 		
 		Block block = new LeafBlock();
@@ -107,7 +107,7 @@ public class Tree {
 	}
 
 	public void SapinTree(Block[][][] blocks, int x, int y, int z, Chunk world) {
-		if(x + 4 >= 16 || x - 4 < 0 || z + 4 >= 16 | z - 4 < 0)
+		if(x + 3 >= 16 || x - 3 < 0 || z + 3 >= 16 | z - 3 < 0)
 			return;
 		
 		Block block = new LeafBlock();

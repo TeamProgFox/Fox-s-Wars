@@ -20,28 +20,35 @@ import fr.ProgFox.Renderer.Shader.Shader;
 import fr.ProgFox.Utils.VertexBuffer.CubeLine;
 
 public class Chunk {
-	public int vbo;
+	private int vbo;
 	public static final int SIZE = 16;
 	public static final int HEIGHT = 64;
 
 	private int bufferSize;
+	private float x, y, z;
+	private boolean isUpdating = false;
+	private boolean isCreating = false;
+
 	public FloatBuffer buffer;
 	private Noise noise;
-	private float x, y, z;
-	public Block[][][] blocks;
-	public static boolean canBreakBlock = true;
-	public static boolean grounded;
 	private Shader shader;
 	private World world;
 	private Tree tree;
 	private Random random;
+	private CubeLine cl;
+	private int oneTimes = 0;
+
+	public Block[][][] blocks = new Block[SIZE][HEIGHT][SIZE];;
+	public Noise colorNoise;
+
+	public static boolean canBreakBlock = true;
+	public static boolean grounded;
+
 	public boolean canRender = false;
 	public boolean hasShader = false;
 	public boolean createRequest = false;
 	public boolean isReady = false;
 	public boolean updateRequest = false;
-	private CubeLine cl;
-	public Noise colorNoise;
 
 	public Chunk(float x, float y, float z, Noise noise, Noise colorNoise, Random seed, World world) {
 		this.noise = noise;
@@ -53,8 +60,6 @@ public class Chunk {
 		this.random = seed;
 
 		tree = new Tree(random);
-		blocks = new Block[SIZE][HEIGHT][SIZE];
-		// shader = new ColorShader();
 		generate();
 	}
 
@@ -69,9 +74,10 @@ public class Chunk {
 						float v = colorNoise.getNoise(x2, z2);
 
 						Color4f fC = Color4f.lerp(new Color4f(0f, 0.9f, 0f), new Color4f(0f, 1f, 0f), v);
-
-						blocks[x][y][z] = new GrassBlock();
-						blocks[x][y][z].setColor(new Color4f(fC.r, fC.g, fC.b, fC.a));
+						if (blocks[x][y][z] == null) {
+							blocks[x][y][z] = new GrassBlock();
+							blocks[x][y][z].setColor(new Color4f(fC.r, fC.g, fC.b, fC.a));
+						}
 					}
 				}
 			}
@@ -86,7 +92,7 @@ public class Chunk {
 					int y2 = (int) this.y * HEIGHT + y;
 					int z2 = (int) this.z * SIZE + z;
 					grounded = noise.getNoise(x2, z2) > y2 - 4 && noise.getNoise(x2, z2) < y2 - 3;
-					if (random.nextFloat() > 0.997f && grounded) {
+					if (random.nextFloat() > 0.99f && grounded) {
 						tree.addTree(blocks, x, y, z, this);
 					}
 				}
@@ -97,6 +103,7 @@ public class Chunk {
 	float ao = 0.8f;
 
 	public void createChunk() {
+		isCreating = true;
 		buffer = BufferUtils.createFloatBuffer(SIZE * HEIGHT * SIZE * 6 * 4 * (3 + 4));
 		for (int x = 0; x < SIZE; x++) {
 			for (int y = 0; y < HEIGHT; y++) {
@@ -171,10 +178,12 @@ public class Chunk {
 		}
 		buffer.flip();
 		createRequest = true;
+		isCreating = false;
 
 	}
 
 	public void updateChunk() {
+		isUpdating = true;
 		buffer = BufferUtils.createFloatBuffer(SIZE * HEIGHT * SIZE * 6 * 4 * (3 + 4));
 		bufferSize = 0;
 		for (int x = 0; x < SIZE; x++) {
@@ -248,11 +257,15 @@ public class Chunk {
 				}
 			}
 		}
+
 		buffer.flip();
 		updateRequest = true;
+		isUpdating = false;
 	}
 
 	public void updateVBO() {
+		if (isUpdating || isCreating)
+			return;
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		if (buffer != null) {
 			glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
@@ -261,6 +274,8 @@ public class Chunk {
 	}
 
 	public void createBuffer() {
+		if (isCreating || isUpdating)
+			return;
 		int x2 = (int) ((int) this.x * SIZE);
 		int y2 = (int) ((int) this.y * HEIGHT);
 		int z2 = (int) ((int) this.z * SIZE);
@@ -282,6 +297,7 @@ public class Chunk {
 
 	public void render(Camera cam) {
 		isReady = true;
+
 		shader.bind();
 		shader.setUniform("perspective", cam.getPerspectiveProjection());
 		shader.setUniform("perspectivePosition", cam.position);
@@ -323,10 +339,15 @@ public class Chunk {
 			return;
 		if (blocks[(int) x][(int) y][(int) z] != null) {
 			blocks[(int) x][(int) y][(int) z] = null;
+
 			if (update) {
 				updateChunk();
 			}
 		}
+	}
+
+	public String getName() {
+		return (x + "][" + z).toString();
 	}
 
 }
