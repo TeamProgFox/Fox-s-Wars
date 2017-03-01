@@ -14,16 +14,23 @@ public class World {
 	public Noise noise;
 	public Noise noiseColor;
 	public Chunk[][] chunks;
-	private Random random;
+	public Random random;
 	float percentage;
 
-	public World(long seed) {
+	public World(long seed, float x, float z) {
 		random = new Random(seed);
 		noise = new Noise(random.nextLong(), 15, 15);
 		noiseColor = new Noise(random.nextLong(), 30, 5);
 		chunks = new Chunk[1000][1000];
 
+		int xx = (int) (x / Chunk.SIZE);
+		int zz = (int) (z / Chunk.SIZE);
 
+		if (xx < 0 || xx >= 100 || zz < 0 || zz >= 100)
+			return;
+		chunks[xx][zz] = new Chunk(xx, 0, zz, noise, noiseColor, random, this);
+		chunks[xx][zz].generateVegetation();
+		chunks[xx][zz].createChunk();
 	}
 
 	int renderSize = 4;
@@ -217,8 +224,8 @@ public class World {
 	public Chunk getChunk(float x, float z) {
 		if (x < 0 || z < 0 || x >= 100 || z >= 100)
 			return null;
-		Chunk c = chunks[(int) x][(int) z];
-		return c;
+		Chunk chunk = chunks[(int) x][(int) z];
+		return chunk;
 	}
 
 	public Chunk getChunkAtBlok(float x, float z) {

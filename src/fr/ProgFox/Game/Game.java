@@ -10,24 +10,23 @@ import javax.swing.JOptionPane;
 
 import org.lwjgl.glfw.GLFW;
 
-import fr.ProgFox.Main;
 import fr.ProgFox.Game.Entities.ClientPlayer;
-import fr.ProgFox.Game.Entities.Entity;
 import fr.ProgFox.Game.Entities.EntityManager;
 import fr.ProgFox.Game.Entities.SavePlayersConfiguration;
 import fr.ProgFox.Game.Variables.Var;
-import fr.ProgFox.Game.World.SaveChunk;
+import fr.ProgFox.Game.World.Chunk;
 import fr.ProgFox.Game.World.World;
 import fr.ProgFox.Game.World.Blocks.Block;
 import fr.ProgFox.Game.World.Blocks.GrassBlock;
+import fr.ProgFox.Game.World.Blocks.LeafBlock;
+import fr.ProgFox.Game.World.Blocks.StoneBlock;
+import fr.ProgFox.Game.World.Blocks.WoodBlock;
 import fr.ProgFox.Inputs.Input;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Network.NetworkClient;
 import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Utils.Loader;
-import fr.ProgFox.Utils.UniqueID;
 import fr.ProgFox.Utils.VertexBuffer.Cube;
-import fr.ProgFox.Utils.VertexBuffer.CubeLine;
 import fr.ProgFox.Utils.VertexBuffer.SkyBox;
 
 public class Game implements Runnable {
@@ -51,8 +50,12 @@ public class Game implements Runnable {
 	private Cube cube;
 	private SkyBox skybox;
 
-	public Vec3 removePos;
+	public List<Vec3> removePos = new ArrayList<>();
 	public boolean removeBlockRequest = false;
+
+	public List<Vec3> addPos = new ArrayList<>();
+	public boolean addBlockRequest = false;
+	public List<Block> add = new ArrayList<>();
 
 	String pseudo;
 
@@ -65,7 +68,13 @@ public class Game implements Runnable {
 
 		pseudo = JOptionPane.showInputDialog("Pseudo : ");
 
-		world = new World(-6956537684988609768L);
+		Block.add(new GrassBlock());
+		Block.add(new LeafBlock());
+		Block.add(new StoneBlock());
+		Block.add(new WoodBlock());
+		Block.add(Block.TESTE);
+
+		world = new World(-6956537684988609768L, posX, posZ);
 		cam = new Camera(new Vec3(posX, posY, posZ), new Vec3(rotX, rotY, 0), world, pseudo);
 		entityManager = new EntityManager();
 		skybox = new SkyBox(new Vec3(1, 1, 1));
@@ -100,9 +109,14 @@ public class Game implements Runnable {
 	}
 
 	public void removeBlock(Vec3 pos) {
-		removePos = pos;
+		removePos.add(pos);
 		removeBlockRequest = true;
-		System.out.println("REMOVE BLOCK " + removePos.x + " / " + removePos.y + " / " + removePos.z);
+	}
+
+	public void addBlock(Vec3 pos, String block) {
+		addPos.add(pos);
+		add.add(Block.getBlock(block));
+		addBlockRequest = true;
 	}
 
 	public void controlePlayer(String name, float x, float y, float z) {
@@ -134,21 +148,18 @@ public class Game implements Runnable {
 				addCLientPlayerRequest = false;
 			}
 		}
-		if (removeBlockRequest) {
-			world.removeBlock(removePos.x, removePos.y, removePos.z, true);
-			System.out.println("REMOVE BLOCK AT " + removePos.x + " / " + removePos.y + " / " + removePos.z);
-			removeBlockRequest = false;
-		}
 
 	}
 
 	public void multiplayerManager() {
 		new Thread("MultiPlayer") {
 			public void run() {
+
 				net.send("player;" + pseudo + ";" + getCamera().getPlayer().position.x + ";"
 						+ getCamera().getPlayer().position.y + ";" + getCamera().getPlayer().position.z);
 				net.send("controle;" + pseudo + ";" + getCamera().getPlayer().position.x + ";"
 						+ getCamera().getPlayer().position.y + ";" + getCamera().getPlayer().position.z);
+
 			}
 		}.start();
 	}
@@ -156,6 +167,44 @@ public class Game implements Runnable {
 	public void run() {
 		while (true) {
 			world.update(cam);
+			if (addBlockRequest) {
+
+				for (int i = 0; i < addPos.size(); i++) {
+					int xx = (int) (addPos.get(i).x / Chunk.SIZE);
+					int zz = (int) (addPos.get(i).z / Chunk.SIZE);
+
+					if (xx < 0 || xx >= 100 || zz < 0 || zz >= 100)
+						return;
+					if (world.getChunk(xx, zz) == null) {
+						world.chunks[xx][zz] = new Chunk(xx, 0, zz, world.noise, world.noiseColor, world.random, world);
+						world.chunks[xx][zz].generateVegetation();
+						world.chunks[xx][zz].createChunk();
+					}
+					world.addBlock(addPos.get(i).x, addPos.get(i).y, addPos.get(i).z, add.get(i), true);
+				}
+
+				addPos.clear();
+				add.clear();
+				addBlockRequest = false;
+			}
+
+			if (removeBlockRequest) {
+				for (int i = 0; i < removePos.size(); i++) {
+					int xx = (int) (removePos.get(i).x / Chunk.SIZE);
+					int zz = (int) (removePos.get(i).z / Chunk.SIZE);
+					if (xx < 0 || xx >= 100 || zz < 0 || zz >= 100)
+						return;
+					if (world.getChunk(xx, zz) == null) {
+						world.chunks[xx][zz] = new Chunk(xx, 0, zz, world.noise, world.noiseColor, world.random, world);
+						world.chunks[xx][zz].generateVegetation();
+						world.chunks[xx][zz].createChunk();
+					}
+					world.removeBlock(removePos.get(i).x, removePos.get(i).y, removePos.get(i).z, true);
+				}
+				removePos.clear();
+				removeBlockRequest = false;
+			}
+
 			try {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {

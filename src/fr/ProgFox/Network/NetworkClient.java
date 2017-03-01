@@ -29,7 +29,7 @@ public class NetworkClient {
 				InputStreamReader streamreader = new InputStreamReader(sock.getInputStream());
 				reader = new BufferedReader(streamreader);
 				writer = new PrintWriter(sock.getOutputStream());
-				writer.println(username + " : has connected");
+				writer.println(username + ";connected");
 				writer.flush();
 				isConnected = true;
 			} catch (Exception ex) {
@@ -94,6 +94,13 @@ public class NetworkClient {
 			float z = Float.parseFloat(data[3]);
 
 			game.removeBlock(new Vec3(x, y, z));
+		} else if (data[0].equals("addBlock")) {
+			float x = Float.parseFloat(data[1]);
+			float y = Float.parseFloat(data[2]);
+			float z = Float.parseFloat(data[3]);
+			String block = data[4];
+			System.out.println("addBlock !!!");
+			game.addBlock(new Vec3(x, y, z), block);
 		}
 
 	}

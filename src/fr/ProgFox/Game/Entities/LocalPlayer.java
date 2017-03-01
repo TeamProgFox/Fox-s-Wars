@@ -173,6 +173,7 @@ public class LocalPlayer extends Entity {
 						+ Var.selectedPosition.y + ";" + Var.selectedPosition.z);
 			}
 			if (Input.getMouseDown(1)) {
+
 				int x22 = (int) Var.selectedPosition.x;
 				int y22 = (int) Var.selectedPosition.y;
 				int z22 = (int) Var.selectedPosition.z;
@@ -202,6 +203,8 @@ public class LocalPlayer extends Entity {
 				if (ry == posY && rx == posX && rz == posZ)
 					return;
 				world.addBlock(rx, ry, rz, Block.TESTE, true);
+				Main.getMain().getGame().getNetwork()
+						.send("addBlock;" + rx + ";" + ry + ";" + rz + ";" + Block.TESTE.getName());
 				Chunk.canBreakBlock = false;
 
 			}
