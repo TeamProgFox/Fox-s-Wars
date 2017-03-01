@@ -1,17 +1,14 @@
 package fr.ProgFox.Utils.VertexBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
-
-import fr.ProgFox.Game.Entities.LocalPlayer;
 import fr.ProgFox.Math.Mat4;
 import fr.ProgFox.Math.Vec3;
-import fr.ProgFox.Renderer.Camera;
-import fr.ProgFox.Renderer.Shader.ColorShader;
 import fr.ProgFox.Renderer.Shader.Shader;
 
 public class CubeLine {
 	public Vec3 color;
 	private VBO cube;
+
 	public CubeLine(Vec3 color) {
 		this.color = color;
 		this.cube = new VBO();

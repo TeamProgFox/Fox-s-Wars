@@ -15,6 +15,7 @@ import fr.ProgFox.Game.Entities.EntityManager;
 import fr.ProgFox.Game.Entities.SavePlayersConfiguration;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.Chunk;
+import fr.ProgFox.Game.World.GestionBlock;
 import fr.ProgFox.Game.World.World;
 import fr.ProgFox.Game.World.Blocks.Block;
 import fr.ProgFox.Game.World.Blocks.GrassBlock;
@@ -56,6 +57,13 @@ public class Game implements Runnable {
 	public List<Vec3> addPos = new ArrayList<>();
 	public boolean addBlockRequest = false;
 	public List<Block> add = new ArrayList<>();
+	public boolean canContinue = false;
+
+	public List<GestionBlock> gestionBlock = new ArrayList<>();
+	
+	public boolean addBlock = false;
+	public boolean removeBlock = false;
+	public boolean isConnected = false;
 
 	String pseudo;
 
@@ -86,7 +94,6 @@ public class Game implements Runnable {
 		cube.add(0, 0, 0, 0.002f, true);
 		skybox.add(0, 0, 0, 100);
 		getCamera().getPlayer().setWorld(world);
-
 		new Thread(this).start();
 
 	}
@@ -109,16 +116,29 @@ public class Game implements Runnable {
 	}
 
 	public void removeBlock(Vec3 pos) {
-		removePos.add(pos);
+
 		removeBlockRequest = true;
+		gestionBlock.add(new GestionBlock(pos.x, pos.y, pos.z, "", true));
+
 	}
 
 	public void addBlock(Vec3 pos, String block) {
-		addPos.add(pos);
-		add.add(Block.getBlock(block));
 		addBlockRequest = true;
+		gestionBlock.add(new GestionBlock(pos.x, pos.y, pos.z, block, false));
+
 	}
 
+	public void addBlock2(Vec3 pos, String block) {
+		addPos.add(pos);
+		add.add(Block.getBlock(block));
+		addBlock = true;
+	}
+
+	public void removeBlock2(Vec3 pos) {
+		removePos.add(pos);
+		removeBlock = true;
+	}
+	
 	public void controlePlayer(String name, float x, float y, float z) {
 		ClientPlayer e = entityManager.getPlayer(name);
 		if (e != null) {
@@ -128,7 +148,73 @@ public class Game implements Runnable {
 	}
 
 	public void update() {
+		if (!canContinue)
+			return;
 
+		if ((addBlockRequest || removeBlockRequest) && !isConnected) {
+			for (GestionBlock a : gestionBlock) {
+				int xx = (int) (a.getX() / Chunk.SIZE);
+				int zz = (int) (a.getZ() / Chunk.SIZE);
+				if (xx < 0 || xx >= 100 || zz < 0 || zz >= 100)
+					return;
+			
+				if(world.getChunk(xx, zz) == null){
+					world.chunks[xx][zz] = new Chunk(xx, 0, zz, world.noise, world.noiseColor, world.random, world);
+					world.chunks[xx][zz].generateVegetation();
+					world.chunks[xx][zz].createChunk();
+				}
+				if(a.getAction()){
+					world.removeBlock(a.getX(), a.getY(), a.getZ(), true);
+				} else {
+					world.addBlock(a.getX(), a.getY(), a.getZ(), Block.getBlock(a.getBlock()), true);
+				}
+				
+				
+			}
+			gestionBlock.clear();
+			
+			addBlockRequest = false;
+			removeBlockRequest = false;
+			isConnected = true;
+		}
+
+		if (addBlock) {
+
+			for (int i = 0; i < addPos.size(); i++) {
+				int xx = (int) (addPos.get(i).x / Chunk.SIZE);
+				int zz = (int) (addPos.get(i).z / Chunk.SIZE);
+
+				if (xx < 0 || xx >= 100 || zz < 0 || zz >= 100)
+					return;
+				if (world.getChunk(xx, zz) == null) {
+					world.chunks[xx][zz] = new Chunk(xx, 0, zz, world.noise, world.noiseColor, world.random, world);
+					world.chunks[xx][zz].generateVegetation();
+					world.chunks[xx][zz].createChunk();
+				}
+				world.addBlock(addPos.get(i).x, addPos.get(i).y, addPos.get(i).z, add.get(i), true);
+			}
+
+			addPos.clear();
+			add.clear();
+			addBlock = false;
+		}
+
+		if (removeBlock) {
+			for (int i = 0; i < removePos.size(); i++) {
+				int xx = (int) (removePos.get(i).x / Chunk.SIZE);
+				int zz = (int) (removePos.get(i).z / Chunk.SIZE);
+				if (xx < 0 || xx >= 100 || zz < 0 || zz >= 100)
+					return;
+				if (world.getChunk(xx, zz) == null) {
+					world.chunks[xx][zz] = new Chunk(xx, 0, zz, world.noise, world.noiseColor, world.random, world);
+					world.chunks[xx][zz].generateVegetation();
+					world.chunks[xx][zz].createChunk();
+				}
+				world.removeBlock(removePos.get(i).x, removePos.get(i).y, removePos.get(i).z, true);
+			}
+			removePos.clear();
+			removeBlock = false;
+		}
 		if (Var.isInMenu)
 			spc.save();
 
@@ -136,7 +222,6 @@ public class Game implements Runnable {
 		entityManager.updateClientPlayer();
 		World.cycleToDay();
 		cam.update();
-		world.addBlock(0, 2, 0, Block.TESTE, true);
 		keyboardGestion();
 		multiplayerManager();
 
@@ -167,43 +252,7 @@ public class Game implements Runnable {
 	public void run() {
 		while (true) {
 			world.update(cam);
-			if (addBlockRequest) {
-
-				for (int i = 0; i < addPos.size(); i++) {
-					int xx = (int) (addPos.get(i).x / Chunk.SIZE);
-					int zz = (int) (addPos.get(i).z / Chunk.SIZE);
-
-					if (xx < 0 || xx >= 100 || zz < 0 || zz >= 100)
-						return;
-					if (world.getChunk(xx, zz) == null) {
-						world.chunks[xx][zz] = new Chunk(xx, 0, zz, world.noise, world.noiseColor, world.random, world);
-						world.chunks[xx][zz].generateVegetation();
-						world.chunks[xx][zz].createChunk();
-					}
-					world.addBlock(addPos.get(i).x, addPos.get(i).y, addPos.get(i).z, add.get(i), true);
-				}
-
-				addPos.clear();
-				add.clear();
-				addBlockRequest = false;
-			}
-
-			if (removeBlockRequest) {
-				for (int i = 0; i < removePos.size(); i++) {
-					int xx = (int) (removePos.get(i).x / Chunk.SIZE);
-					int zz = (int) (removePos.get(i).z / Chunk.SIZE);
-					if (xx < 0 || xx >= 100 || zz < 0 || zz >= 100)
-						return;
-					if (world.getChunk(xx, zz) == null) {
-						world.chunks[xx][zz] = new Chunk(xx, 0, zz, world.noise, world.noiseColor, world.random, world);
-						world.chunks[xx][zz].generateVegetation();
-						world.chunks[xx][zz].createChunk();
-					}
-					world.removeBlock(removePos.get(i).x, removePos.get(i).y, removePos.get(i).z, true);
-				}
-				removePos.clear();
-				removeBlockRequest = false;
-			}
+			
 
 			try {
 				Thread.sleep(1);

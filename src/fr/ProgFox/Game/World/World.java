@@ -148,10 +148,13 @@ public class World {
 	public Block getBlock(float x, float y, float z) {
 		float xx = x / Chunk.SIZE;
 		float zz = z / Chunk.SIZE;
+		
 		if (xx < 0 || xx >= 100 || zz < 0 || zz >= 100)
 			return null;
-		if (chunks[(int) xx][(int) zz] == null)
+		if (chunks[(int) xx][(int) zz] == null){
 			return null;
+		}
+		
 		Chunk chunk = chunks[(int) xx][(int) zz];
 		float x3 = x % Chunk.SIZE;
 		float y3 = y % Chunk.HEIGHT;

@@ -169,8 +169,11 @@ public class LocalPlayer extends Entity {
 				world.removeBlock(Var.selectedPosition.x, Var.selectedPosition.y, Var.selectedPosition.z, true);
 				lastBlock = null;
 				Chunk.canBreakBlock = false;
+				if (Var.selectedBlock != null) {
+
 				Main.getMain().getGame().getNetwork().send("removeBlock;" + Var.selectedPosition.x + ";"
-						+ Var.selectedPosition.y + ";" + Var.selectedPosition.z);
+						+ Var.selectedPosition.y + ";" + Var.selectedPosition.z + ";" + Var.selectedBlock.getName());
+				}
 			}
 			if (Input.getMouseDown(1)) {
 

@@ -1,13 +1,12 @@
 package fr.ProgFox.Utils.VertexBuffer;
 
-import fr.ProgFox.Game.Entities.LocalPlayer;
 import fr.ProgFox.Math.Mat4;
 import fr.ProgFox.Math.Vec3;
-import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Renderer.Shader.ColorShader;
 import fr.ProgFox.Renderer.Shader.Shader;
 
 public class Cube {
+
 	private Vec3 color;
 	private Shader shader;
 	private VBO cube;

@@ -1,30 +1,23 @@
 package fr.ProgFox;
 
-import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL;
-
 import fr.ProgFox.Game.Game;
 import fr.ProgFox.Game.Variables.Var;
-import fr.ProgFox.Game.World.SaveChunk;
 import fr.ProgFox.Inputs.Input;
-import fr.ProgFox.Inputs.Mouse;
-import fr.ProgFox.Inputs.MouseButton;
 import fr.ProgFox.Renderer.Display;
 
 public class Main {
 
 	public static boolean running = false;
-
 	public static final int FRAME_CAP = 600000000;
 	public static int frames = 0;
 	public static int teste = 1;
 	public static int width = 1200, height = 600;
-	static Main main;
+	
+	private static Main main;
+	private Game game;
 
-	Game game;
 
 	public static void main(String[] args) {
 		main = new Main();
@@ -112,7 +105,7 @@ public class Main {
 				}
 			}
 			if (System.currentTimeMillis() - timer > 1000) {
-				//System.out.println("FPS : " + frames + " TPS : " + ticks);
+				// System.out.println("FPS : " + frames + " TPS : " + ticks);
 				timer += 1000;
 				ticks = 0;
 				frames = 0;

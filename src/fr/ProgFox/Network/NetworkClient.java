@@ -18,6 +18,8 @@ public class NetworkClient {
 	BufferedReader reader;
 	PrintWriter writer;
 	Game game;
+	int size = 0;
+	int realSize;
 
 	public NetworkClient(String address, int port, String username, Game game) {
 		if (isConnected == false) {
@@ -72,7 +74,7 @@ public class NetworkClient {
 			}
 		}.start();
 	}
-	
+
 	public void controle(String[] data) {
 		if (data[0].equals("player")) {
 			String name = data[1];
@@ -93,16 +95,37 @@ public class NetworkClient {
 			float y = Float.parseFloat(data[2]);
 			float z = Float.parseFloat(data[3]);
 
-			game.removeBlock(new Vec3(x, y, z));
+			game.removeBlock2(new Vec3(x, y, z));
+
 		} else if (data[0].equals("addBlock")) {
 			float x = Float.parseFloat(data[1]);
 			float y = Float.parseFloat(data[2]);
 			float z = Float.parseFloat(data[3]);
 			String block = data[4];
-			System.out.println("addBlock !!!");
+			game.addBlock2(new Vec3(x, y, z), block);
+
+		} else if (data[0].equals("nombre")) {
+			realSize = Integer.parseInt(data[1]);
+
+		} else if (data[0].equals("addBlockConnect")) {
+			float x = Float.parseFloat(data[1]);
+			float y = Float.parseFloat(data[2]);
+			float z = Float.parseFloat(data[3]);
+			String block = data[4];
 			game.addBlock(new Vec3(x, y, z), block);
+			size++;
+		} else if (data[0].equals("removeBlockConnect")) {
+			float x = Float.parseFloat(data[1]);
+			float y = Float.parseFloat(data[2]);
+			float z = Float.parseFloat(data[3]);
+
+			game.removeBlock(new Vec3(x, y, z));
+			size++;
 		}
 
+		if (realSize == size) {
+			game.canContinue = true;
+		}
 	}
 
 }

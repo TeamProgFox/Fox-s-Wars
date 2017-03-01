@@ -319,6 +319,7 @@ public class Chunk {
 	public Block getBlock(float x, float y, float z) {
 		if (x < 0 || y < 0 || z < 0 || x >= SIZE || y >= HEIGHT || z >= SIZE)
 			return null;
+		
 		return blocks[(int) x][(int) y][(int) z];
 	}
 
