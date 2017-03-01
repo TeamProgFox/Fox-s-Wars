@@ -60,7 +60,7 @@ public class Game implements Runnable {
 	public boolean canContinue = false;
 
 	public List<GestionBlock> gestionBlock = new ArrayList<>();
-	
+
 	public boolean addBlock = false;
 	public boolean removeBlock = false;
 	public boolean isConnected = false;
@@ -138,7 +138,7 @@ public class Game implements Runnable {
 		removePos.add(pos);
 		removeBlock = true;
 	}
-	
+
 	public void controlePlayer(String name, float x, float y, float z) {
 		ClientPlayer e = entityManager.getPlayer(name);
 		if (e != null) {
@@ -148,6 +148,8 @@ public class Game implements Runnable {
 	}
 
 	public void update() {
+		world.updateWorld();
+		
 		if (!canContinue)
 			return;
 
@@ -157,64 +159,26 @@ public class Game implements Runnable {
 				int zz = (int) (a.getZ() / Chunk.SIZE);
 				if (xx < 0 || xx >= 100 || zz < 0 || zz >= 100)
 					return;
-			
-				if(world.getChunk(xx, zz) == null){
+
+				if (world.getChunk(xx, zz) == null) {
 					world.chunks[xx][zz] = new Chunk(xx, 0, zz, world.noise, world.noiseColor, world.random, world);
 					world.chunks[xx][zz].generateVegetation();
 					world.chunks[xx][zz].createChunk();
 				}
-				if(a.getAction()){
+				if (a.getAction()) {
 					world.removeBlock(a.getX(), a.getY(), a.getZ(), true);
 				} else {
 					world.addBlock(a.getX(), a.getY(), a.getZ(), Block.getBlock(a.getBlock()), true);
 				}
-				
-				
+
 			}
 			gestionBlock.clear();
-			
+
 			addBlockRequest = false;
 			removeBlockRequest = false;
 			isConnected = true;
 		}
 
-		if (addBlock) {
-
-			for (int i = 0; i < addPos.size(); i++) {
-				int xx = (int) (addPos.get(i).x / Chunk.SIZE);
-				int zz = (int) (addPos.get(i).z / Chunk.SIZE);
-
-				if (xx < 0 || xx >= 100 || zz < 0 || zz >= 100)
-					return;
-				if (world.getChunk(xx, zz) == null) {
-					world.chunks[xx][zz] = new Chunk(xx, 0, zz, world.noise, world.noiseColor, world.random, world);
-					world.chunks[xx][zz].generateVegetation();
-					world.chunks[xx][zz].createChunk();
-				}
-				world.addBlock(addPos.get(i).x, addPos.get(i).y, addPos.get(i).z, add.get(i), true);
-			}
-
-			addPos.clear();
-			add.clear();
-			addBlock = false;
-		}
-
-		if (removeBlock) {
-			for (int i = 0; i < removePos.size(); i++) {
-				int xx = (int) (removePos.get(i).x / Chunk.SIZE);
-				int zz = (int) (removePos.get(i).z / Chunk.SIZE);
-				if (xx < 0 || xx >= 100 || zz < 0 || zz >= 100)
-					return;
-				if (world.getChunk(xx, zz) == null) {
-					world.chunks[xx][zz] = new Chunk(xx, 0, zz, world.noise, world.noiseColor, world.random, world);
-					world.chunks[xx][zz].generateVegetation();
-					world.chunks[xx][zz].createChunk();
-				}
-				world.removeBlock(removePos.get(i).x, removePos.get(i).y, removePos.get(i).z, true);
-			}
-			removePos.clear();
-			removeBlock = false;
-		}
 		if (Var.isInMenu)
 			spc.save();
 
@@ -252,8 +216,46 @@ public class Game implements Runnable {
 	public void run() {
 		while (true) {
 			world.update(cam);
-			
 
+			if (addBlock) {
+
+				for (int i = 0; i < addPos.size(); i++) {
+					int xx = (int) (addPos.get(i).x / Chunk.SIZE);
+					int zz = (int) (addPos.get(i).z / Chunk.SIZE);
+
+					if (xx < 0 || xx >= 100 || zz < 0 || zz >= 100)
+						return;
+					if (world.getChunk(xx, zz) == null) {
+						world.chunks[xx][zz] = new Chunk(xx, 0, zz, world.noise, world.noiseColor, world.random, world);
+						world.chunks[xx][zz].generateVegetation();
+						world.chunks[xx][zz].createChunk();
+					}
+					world.addBlock = new Vec3(addPos.get(i).x, addPos.get(i).y, addPos.get(i).z);
+					world.block = add.get(i);
+					world.addBlockRequest = true;
+				}
+				addPos.clear();
+				add.clear();
+				addBlock = false;
+			}
+
+			if (removeBlock) {
+				for (int i = 0; i < removePos.size(); i++) {
+					int xx = (int) (removePos.get(i).x / Chunk.SIZE);
+					int zz = (int) (removePos.get(i).z / Chunk.SIZE);
+					if (xx < 0 || xx >= 100 || zz < 0 || zz >= 100)
+						return;
+					if (world.getChunk(xx, zz) == null) {
+						world.chunks[xx][zz] = new Chunk(xx, 0, zz, world.noise, world.noiseColor, world.random, world);
+						world.chunks[xx][zz].generateVegetation();
+						world.chunks[xx][zz].createChunk();
+					}
+					world.removeBlock = new Vec3(removePos.get(i).x, removePos.get(i).y, removePos.get(i).z);
+					world.removeBlockRequest = true;
+				}
+				removePos.clear();
+				removeBlock = false;
+			}
 			try {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {

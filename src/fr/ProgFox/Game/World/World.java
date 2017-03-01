@@ -6,6 +6,7 @@ import fr.ProgFox.Main;
 import fr.ProgFox.Game.Logs.Logs;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.Blocks.Block;
+import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Renderer.Display;
 import fr.ProgFox.Renderer.Shader.ColorShader;
@@ -16,6 +17,13 @@ public class World {
 	public Chunk[][] chunks;
 	public Random random;
 	float percentage;
+
+	public Vec3 removeBlock;
+	public boolean removeBlockRequest = false;
+
+	public Vec3 addBlock;
+	public Block block;
+	public boolean addBlockRequest = false;
 
 	public World(long seed, float x, float z) {
 		random = new Random(seed);
@@ -102,7 +110,7 @@ public class World {
 				}
 			}
 		}
-		
+
 	}
 
 	public void render(Camera cam) {
@@ -131,6 +139,18 @@ public class World {
 		}
 	}
 
+	public void updateWorld() {
+		if (removeBlockRequest) {
+			removeBlock(removeBlock.x, removeBlock.y, removeBlock.z, true);
+			removeBlockRequest = false;
+		}
+
+		if (addBlockRequest) {
+			addBlock(addBlock.x, addBlock.y, addBlock.z, block, true);
+			addBlockRequest = false;
+		}
+	}
+
 	public static void cycleToDay() {
 		if (Var.isInDay) {
 			Var.light += Var.speedTime;
@@ -148,13 +168,13 @@ public class World {
 	public Block getBlock(float x, float y, float z) {
 		float xx = x / Chunk.SIZE;
 		float zz = z / Chunk.SIZE;
-		
+
 		if (xx < 0 || xx >= 100 || zz < 0 || zz >= 100)
 			return null;
-		if (chunks[(int) xx][(int) zz] == null){
+		if (chunks[(int) xx][(int) zz] == null) {
 			return null;
 		}
-		
+
 		Chunk chunk = chunks[(int) xx][(int) zz];
 		float x3 = x % Chunk.SIZE;
 		float y3 = y % Chunk.HEIGHT;
@@ -179,7 +199,6 @@ public class World {
 		float z3 = z % Chunk.SIZE;
 
 		chunk.addBlock(x3, y3, z3, block, update);
-		
 
 	}
 
@@ -220,8 +239,7 @@ public class World {
 				getChunk(xx, zz - 1).updateChunk();
 			}
 		}
-		
-	
+
 	}
 
 	public Chunk getChunk(float x, float z) {
