@@ -13,10 +13,12 @@ import fr.ProgFox.Game.Logs.Logs;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.Blocks.Block;
 import fr.ProgFox.Game.World.Blocks.GrassBlock;
+import fr.ProgFox.Game.World.Blocks.StoneBlock;
 import fr.ProgFox.Math.Color4f;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Renderer.Shader.Shader;
+import fr.ProgFox.Utils.Writter;
 import fr.ProgFox.Utils.VertexBuffer.CubeLine;
 
 public class Chunk {
@@ -64,20 +66,33 @@ public class Chunk {
 	}
 
 	public void generate() {
+
 		for (int x = 0; x < SIZE; x++) {
 			for (int y = 0; y < HEIGHT; y++) {
 				for (int z = 0; z < SIZE; z++) {
 					int x2 = (int) this.x * SIZE + x;
 					int y2 = (int) this.y * HEIGHT + y;
 					int z2 = (int) this.z * SIZE + z;
-					if (noise.getNoise(x2, z2) > y2 - 4) {
+					if (noise.getNoise(x2, z2) > y2 - 20) {
 						float v = colorNoise.getNoise(x2, z2);
 
 						Color4f fC = Color4f.lerp(new Color4f(0f, 0.9f, 0f), new Color4f(0f, 1f, 0f), v);
+						grounded = noise.getNoise(x2, z2) > y2 - 10;
 						if (blocks[x][y][z] == null) {
-							blocks[x][y][z] = new GrassBlock();
-							blocks[x][y][z].setColor(new Color4f(fC.r, fC.g, fC.b, fC.a));
+							if (grounded) {
+								blocks[x][y][z] = new StoneBlock();
+							} else {
+								blocks[x][y][z] = new GrassBlock();
+								blocks[x][y][z].setColor(new Color4f(fC.r, fC.g, fC.b, fC.a));
+							}
 						}
+
+						grounded = noise.getNoise(x2, z2) > y2 - 20 && noise.getNoise(x2, z2) < y2 - 19;
+
+						if (random.nextFloat() > 0.99f && grounded) {
+							tree.addTree(blocks, x, y, z, this);
+						}
+
 					}
 				}
 			}
@@ -85,19 +100,16 @@ public class Chunk {
 	}
 
 	public void generateVegetation() {
-		for (int x = 0; x < SIZE; x++) {
-			for (int y = 0; y < HEIGHT; y++) {
-				for (int z = 0; z < SIZE; z++) {
-					int x2 = (int) this.x * SIZE + x;
-					int y2 = (int) this.y * HEIGHT + y;
-					int z2 = (int) this.z * SIZE + z;
-					grounded = noise.getNoise(x2, z2) > y2 - 4 && noise.getNoise(x2, z2) < y2 - 3;
-					if (random.nextFloat() > 0.99f && grounded) {
-						tree.addTree(blocks, x, y, z, this);
-					}
-				}
-			}
-		}
+		// for (int x = 0; x < SIZE; x++) {
+		// for (int y = 0; y < HEIGHT; y++) {
+		// for (int z = 0; z < SIZE; z++) {
+		// int x2 = (int) this.x * SIZE + x;
+		// int y2 = (int) this.y * HEIGHT + y;
+		// int z2 = (int) this.z * SIZE + z;
+		//
+		// }
+		// }
+		// }
 	}
 
 	float ao = 0.8f;

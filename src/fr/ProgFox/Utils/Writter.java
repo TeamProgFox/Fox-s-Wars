@@ -19,6 +19,19 @@ public class Writter {
 		}
 		
 	}
+	public static void write(String path, String value) {
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(path));
+			bw.write(value);
+			bw.newLine();
+			bw.flush();
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
 	
 	public static void reset(String path){
 		new File(path).delete();

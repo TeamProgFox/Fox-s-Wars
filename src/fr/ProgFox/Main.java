@@ -3,21 +3,20 @@ package fr.ProgFox;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.glfw.GLFW;
 import fr.ProgFox.Game.Game;
+import fr.ProgFox.Game.Inputs.Input;
 import fr.ProgFox.Game.Variables.Var;
-import fr.ProgFox.Inputs.Input;
 import fr.ProgFox.Renderer.Display;
 
 public class Main {
 
-	public static boolean running = false;
-	public static final int FRAME_CAP = 600000000;
-	public static int frames = 0;
-	public static int teste = 1;
+	private boolean running = false;
+	private final int FRAME_CAP = 600000000;
 	public static int width = 1200, height = 600;
-	
+
 	private static Main main;
 	private Game game;
 
+	public Input input;
 
 	public static void main(String[] args) {
 		main = new Main();
@@ -25,26 +24,31 @@ public class Main {
 	}
 
 	public Main() {
-		Display.create(width, height, "Fox's Wars");
+		input = new Input();
+		Display.create(width, height, "Fox's Wars", input);
 	}
 
 	public void update() {
 		Display.update();
 		if (Display.wasResized())
 			glViewport(0, 0, Display.getWidth(), Display.getHeight());
-		if (Input.getKey(GLFW.GLFW_KEY_ESCAPE)) {
+		if (input.getKey(Input.KEY_ESCAPE)) {
 			GLFW.glfwSetInputMode(Display.getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
 			Var.isInMenu = true;
 			Var.isInGame = false;
+			input.getMouse().setGrabbed(false);
 		}
-		if (Input.getMouseDown(0) && !Var.isInGame) {
+		if (input.getMouse().getButton(0) && !Var.isInGame) {
 			Var.isInGame = true;
 			Var.isInMenu = false;
+			input.getMouse().setGrabbed(true);
 			GLFW.glfwSetInputMode(Display.getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
 		}
 
 		game.update();
-		Input.update();
+		
+		input.getKeyboardCallback().update();
+		input.getMouse().update();
 	}
 
 	public void render() {
@@ -82,6 +86,7 @@ public class Main {
 		double RenderTime = 1000000000.0 / FRAME_CAP;
 
 		int ticks = 0;
+		int frames = 0;
 		long timer = System.currentTimeMillis();
 
 		while (running) {
@@ -105,7 +110,8 @@ public class Main {
 				}
 			}
 			if (System.currentTimeMillis() - timer > 1000) {
-				// System.out.println("FPS : " + frames + " TPS : " + ticks);
+				Display.setTitle("Fox's Wars | FPS : " + frames + " TPS : " + ticks);
+				game.oneSecond();
 				timer += 1000;
 				ticks = 0;
 				frames = 0;

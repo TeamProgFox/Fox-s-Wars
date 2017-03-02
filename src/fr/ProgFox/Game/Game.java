@@ -10,9 +10,11 @@ import javax.swing.JOptionPane;
 
 import org.lwjgl.glfw.GLFW;
 
+import fr.ProgFox.Main;
 import fr.ProgFox.Game.Entities.ClientPlayer;
 import fr.ProgFox.Game.Entities.EntityManager;
 import fr.ProgFox.Game.Entities.SavePlayersConfiguration;
+import fr.ProgFox.Game.Inputs.Input;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.Chunk;
 import fr.ProgFox.Game.World.GestionBlock;
@@ -22,7 +24,6 @@ import fr.ProgFox.Game.World.Blocks.GrassBlock;
 import fr.ProgFox.Game.World.Blocks.LeafBlock;
 import fr.ProgFox.Game.World.Blocks.StoneBlock;
 import fr.ProgFox.Game.World.Blocks.WoodBlock;
-import fr.ProgFox.Inputs.Input;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Network.NetworkClient;
 import fr.ProgFox.Renderer.Camera;
@@ -34,10 +35,23 @@ public class Game implements Runnable {
 
 	public float posX, posY, posZ;
 	public float rotX, rotY;
-	public int id;
+
 	public boolean teste = false;
 	private boolean addCLientPlayerRequest = false;
+	public boolean addBlock = false;
+	public boolean removeBlock = false;
+	public boolean isConnected = false;
+	public boolean removeBlockRequest = false;
+	public boolean addBlockRequest = false;
+	public boolean canContinue = false;
+
 	public List<String> players = new ArrayList<>();
+	public List<Vec3> removePos = new ArrayList<>();
+	public List<Vec3> addPos = new ArrayList<>();
+
+	public List<Block> add = new ArrayList<>();
+
+	public List<GestionBlock> gestionBlock = new ArrayList<>();
 
 	public static Scanner sc = new Scanner(System.in);
 
@@ -51,20 +65,6 @@ public class Game implements Runnable {
 	private Cube cube;
 	private SkyBox skybox;
 
-	public List<Vec3> removePos = new ArrayList<>();
-	public boolean removeBlockRequest = false;
-
-	public List<Vec3> addPos = new ArrayList<>();
-	public boolean addBlockRequest = false;
-	public List<Block> add = new ArrayList<>();
-	public boolean canContinue = false;
-
-	public List<GestionBlock> gestionBlock = new ArrayList<>();
-
-	public boolean addBlock = false;
-	public boolean removeBlock = false;
-	public boolean isConnected = false;
-
 	String pseudo;
 
 	public Game() {
@@ -73,8 +73,10 @@ public class Game implements Runnable {
 
 		if (Var.isInThirdPerson == false)
 			Var.isInFirstPerson = true;
+		do {
 
-		pseudo = JOptionPane.showInputDialog("Pseudo : ");
+			pseudo = JOptionPane.showInputDialog("Pseudo : ");
+		} while (pseudo.contains(";"));
 
 		Block.add(new GrassBlock());
 		Block.add(new LeafBlock());
@@ -149,7 +151,7 @@ public class Game implements Runnable {
 
 	public void update() {
 		world.updateWorld();
-		
+
 		if (!canContinue)
 			return;
 
@@ -162,7 +164,6 @@ public class Game implements Runnable {
 
 				if (world.getChunk(xx, zz) == null) {
 					world.chunks[xx][zz] = new Chunk(xx, 0, zz, world.noise, world.noiseColor, world.random, world);
-					world.chunks[xx][zz].generateVegetation();
 					world.chunks[xx][zz].createChunk();
 				}
 				if (a.getAction()) {
@@ -204,13 +205,16 @@ public class Game implements Runnable {
 		new Thread("MultiPlayer") {
 			public void run() {
 
-				net.send("player;" + pseudo + ";" + getCamera().getPlayer().position.x + ";"
-						+ getCamera().getPlayer().position.y + ";" + getCamera().getPlayer().position.z);
 				net.send("controle;" + pseudo + ";" + getCamera().getPlayer().position.x + ";"
 						+ getCamera().getPlayer().position.y + ";" + getCamera().getPlayer().position.z);
 
 			}
 		}.start();
+	}
+
+	public void oneSecond() {
+		net.send("player;" + pseudo + ";" + getCamera().getPlayer().position.x + ";"
+				+ getCamera().getPlayer().position.y + ";" + getCamera().getPlayer().position.z);
 	}
 
 	public void run() {
@@ -227,7 +231,6 @@ public class Game implements Runnable {
 						return;
 					if (world.getChunk(xx, zz) == null) {
 						world.chunks[xx][zz] = new Chunk(xx, 0, zz, world.noise, world.noiseColor, world.random, world);
-						world.chunks[xx][zz].generateVegetation();
 						world.chunks[xx][zz].createChunk();
 					}
 					world.addBlock = new Vec3(addPos.get(i).x, addPos.get(i).y, addPos.get(i).z);
@@ -247,7 +250,6 @@ public class Game implements Runnable {
 						return;
 					if (world.getChunk(xx, zz) == null) {
 						world.chunks[xx][zz] = new Chunk(xx, 0, zz, world.noise, world.noiseColor, world.random, world);
-						world.chunks[xx][zz].generateVegetation();
 						world.chunks[xx][zz].createChunk();
 					}
 					world.removeBlock = new Vec3(removePos.get(i).x, removePos.get(i).y, removePos.get(i).z);
@@ -265,13 +267,13 @@ public class Game implements Runnable {
 	}
 
 	public void keyboardGestion() {
-		if (Input.getKey(GLFW.GLFW_KEY_F)) {
+		if (Main.getMain().input.getKeyDown(Input.KEY_F)) {
 			Var.flyMode = !Var.flyMode;
 		}
-		if (Input.getKey(GLFW.GLFW_KEY_F3)) {
+		if (Main.getMain().input.getKeyDown(Input.KEY_F3)) {
 			Var.debugMode = !Var.debugMode;
 		}
-		if (Input.getKey(GLFW.GLFW_KEY_F5)) {
+		if (Main.getMain().input.getKeyDown(Input.KEY_F5)) {
 			if (Var.isInFirstPerson) {
 				Var.isInFirstPerson = false;
 				Var.isInThirdPerson = true;

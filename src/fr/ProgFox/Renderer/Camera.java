@@ -1,9 +1,8 @@
 package fr.ProgFox.Renderer;
 
-import fr.ProgFox.Game.Entities.LocalPlayer;
+import fr.ProgFox.Game.Entities.LocalPlayer; 
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.World;
-import fr.ProgFox.Inputs.Input;
 import fr.ProgFox.Math.Mat4;
 import fr.ProgFox.Math.Transform;
 import fr.ProgFox.Math.Vec3;

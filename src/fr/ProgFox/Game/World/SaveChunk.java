@@ -7,24 +7,70 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class SaveChunk {
+
+	private static List<String> list = new ArrayList<>();
+
 	public SaveChunk() {
 
 	}
 
-	public void save(Chunk c, int x, int y, int z, String block, boolean add) {
+	public static void save(String name, int x, int y, int z) {
 		try {
-			// new File("save/chunks/" + c.toString() + ".tpf").createNewFile();
-			BufferedWriter writer = new BufferedWriter(
-					new FileWriter(new File("saves/chunks/" + c.getName() + ".tpf"), true));
-			writer.write((x + ";" + y + ";" + z + ";" + block + ";" + add));
+			BufferedWriter writer = new BufferedWriter(new FileWriter(new File("saves/trees/" + name + ".tpf"), true));
+			writer.write((x + ";" + y + ";" + z));
 			writer.newLine();
 			writer.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static void init(String name) {
+		list.clear();
+		FileInputStream fin;
+		try {
+			fin = new FileInputStream("saves/trees/" + name + ".tpf");
+
+			BufferedReader br = new BufferedReader(new InputStreamReader(fin));
+
+			String ligne;
+
+			while ((ligne = br.readLine()) != null) {
+				StringTokenizer st = new StringTokenizer(ligne, ",");
+
+				while (st.hasMoreTokens()) {
+					list.add(st.nextToken());
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public static boolean equals(int x, int y, int z) {
+		String[] data;
+		int xx, yy, zz;
+		for (String a : list) {
+			if (a != null) {
+
+				data = a.split(";");
+				xx = Integer.parseInt(data[0]);
+				yy = Integer.parseInt(data[1]);
+				zz = Integer.parseInt(data[2]);
+				if (xx == x && yy == y && zz == z) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+
 	}
 
 	public void replace(Chunk chunk) {

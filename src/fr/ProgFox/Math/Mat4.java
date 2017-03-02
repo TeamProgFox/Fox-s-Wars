@@ -164,28 +164,30 @@ public class Mat4 {
 		result.matrix[2][2] = f.z;
 		return result;
 	}
+
 	public static Mat4 rotate(Vec3 forward, Vec3 up) {
 		Mat4 m = identity();
-		
+
 		Vec3 f = new Vec3(forward).normalize();
 		Vec3 r = new Vec3(up).normalize();
 		r = r.cross(f);
 		Vec3 u = f.cross(r);
-		
-		m.matrix[0][0] = r.x;	
-		m.matrix[0][1] = r.y;	
+
+		m.matrix[0][0] = r.x;
+		m.matrix[0][1] = r.y;
 		m.matrix[0][2] = r.z;
-		
+
 		m.matrix[1][0] = u.x;
-		m.matrix[1][1] = u.y;	
+		m.matrix[1][1] = u.y;
 		m.matrix[1][2] = u.z;
-		
+
 		m.matrix[2][0] = f.x;
-		m.matrix[2][1] = f.y;	
+		m.matrix[2][1] = f.y;
 		m.matrix[2][2] = f.z;
-		
+
 		return m;
 	}
+
 	public static Mat4 scale(float x, float y, float z) {
 		Mat4 result = identity();
 		result.matrix[0][0] = x;
@@ -243,15 +245,15 @@ public class Mat4 {
 	public float determinant() {
 		float f = matrix[0][0]
 				* ((matrix[1][1] * matrix[2][2] * matrix[3][3] + matrix[1][2] * matrix[2][3] * matrix[3][1]
-				+ matrix[1][3] * matrix[2][1] * matrix[3][2]) - matrix[1][3] * matrix[2][2] * matrix[3][1]
-				- matrix[1][1] * matrix[2][3] * matrix[3][2] - matrix[1][2] * matrix[2][1] * matrix[3][3]);
-		f -= 	matrix[0][1] * ((matrix[1][0] * matrix[2][2] * matrix[3][3] + matrix[1][2] * matrix[2][3] * matrix[3][0]
+						+ matrix[1][3] * matrix[2][1] * matrix[3][2]) - matrix[1][3] * matrix[2][2] * matrix[3][1]
+						- matrix[1][1] * matrix[2][3] * matrix[3][2] - matrix[1][2] * matrix[2][1] * matrix[3][3]);
+		f -= matrix[0][1] * ((matrix[1][0] * matrix[2][2] * matrix[3][3] + matrix[1][2] * matrix[2][3] * matrix[3][0]
 				+ matrix[1][3] * matrix[2][0] * matrix[3][2]) - matrix[1][3] * matrix[2][2] * matrix[3][0]
 				- matrix[1][0] * matrix[2][3] * matrix[3][2] - matrix[1][2] * matrix[2][0] * matrix[3][3]);
-		f += 	matrix[0][2] * ((matrix[1][0] * matrix[2][1] * matrix[3][3] + matrix[1][1] * matrix[2][3] * matrix[3][0]
+		f += matrix[0][2] * ((matrix[1][0] * matrix[2][1] * matrix[3][3] + matrix[1][1] * matrix[2][3] * matrix[3][0]
 				+ matrix[1][3] * matrix[2][0] * matrix[3][1]) - matrix[1][3] * matrix[2][1] * matrix[3][0]
 				- matrix[1][0] * matrix[2][3] * matrix[3][1] - matrix[1][1] * matrix[2][0] * matrix[3][3]);
-		f -= 	matrix[0][3] * ((matrix[1][0] * matrix[2][1] * matrix[3][2] + matrix[1][1] * matrix[2][2] * matrix[3][0]
+		f -= matrix[0][3] * ((matrix[1][0] * matrix[2][1] * matrix[3][2] + matrix[1][1] * matrix[2][2] * matrix[3][0]
 				+ matrix[1][2] * matrix[2][0] * matrix[3][1]) - matrix[1][2] * matrix[2][1] * matrix[3][0]
 				- matrix[1][0] * matrix[2][2] * matrix[3][1] - matrix[1][1] * matrix[2][0] * matrix[3][2]);
 		return f;
@@ -268,7 +270,8 @@ public class Mat4 {
 
 		return result;
 	}
-	public float getM(int x, int y){
+
+	public float getM(int x, int y) {
 		return matrix[x][y];
 	}
 }

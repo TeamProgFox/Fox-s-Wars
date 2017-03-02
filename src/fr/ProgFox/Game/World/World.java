@@ -2,13 +2,10 @@ package fr.ProgFox.Game.World;
 
 import java.util.Random;
 
-import fr.ProgFox.Main;
-import fr.ProgFox.Game.Logs.Logs;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.Blocks.Block;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Renderer.Camera;
-import fr.ProgFox.Renderer.Display;
 import fr.ProgFox.Renderer.Shader.ColorShader;
 
 public class World {
@@ -23,6 +20,7 @@ public class World {
 
 	public Vec3 addBlock;
 	public Block block;
+	public Random[][] rand;
 	public boolean addBlockRequest = false;
 
 	public World(long seed, float x, float z) {
@@ -30,18 +28,17 @@ public class World {
 		noise = new Noise(random.nextLong(), 15, 15);
 		noiseColor = new Noise(random.nextLong(), 30, 5);
 		chunks = new Chunk[1000][1000];
+		rand = new Random[1000][1000];
 
-		int xx = (int) (x / Chunk.SIZE);
-		int zz = (int) (z / Chunk.SIZE);
+		for (int xx = 0; xx < 100; xx++) {
+			for (int zz = 0; zz < 100; zz++) {
+				rand[xx][zz] = new Random(seed);
+			}
+		}
 
-		if (xx < 0 || xx >= 100 || zz < 0 || zz >= 100)
-			return;
-		chunks[xx][zz] = new Chunk(xx, 0, zz, noise, noiseColor, random, this);
-		chunks[xx][zz].generateVegetation();
-		chunks[xx][zz].createChunk();
 	}
 
-	int renderSize = 4;
+	int renderSize = 5;
 
 	public void update(Camera cam) {
 		float xP = (float) (cam.position.x / 16);
@@ -62,8 +59,7 @@ public class World {
 					return;
 
 				if (chunks[x + i][z + j] == null) {
-					chunks[x + i][z + j] = new Chunk(x + i, 0, z + j, noise, noiseColor, random, this);
-					chunks[x + i][z + j].generateVegetation();
+					chunks[x + i][z + j] = new Chunk(x + i, 0, z + j, noise, noiseColor, rand[x + i][z + j], this);
 					chunks[x + i][z + j].createChunk();
 				}
 			}
@@ -76,8 +72,7 @@ public class World {
 				if (x - i < 0 || z - j < 0)
 					return;
 				if (chunks[x - i][z - j] == null) {
-					chunks[x - i][z - j] = new Chunk(x - i, 0, z - j, noise, noiseColor, random, this);
-					chunks[x - i][z - j].generateVegetation();
+					chunks[x - i][z - j] = new Chunk(x - i, 0, z - j, noise, noiseColor, rand[x - i][z - j], this);
 					chunks[x - i][z - j].createChunk();
 				}
 			}
@@ -90,8 +85,7 @@ public class World {
 				if (x + i < 0 || z - j < 0)
 					return;
 				if (chunks[x + i][z - j] == null) {
-					chunks[x + i][z - j] = new Chunk(x + i, 0, z - j, noise, noiseColor, random, this);
-					chunks[x + i][z - j].generateVegetation();
+					chunks[x + i][z - j] = new Chunk(x + i, 0, z - j, noise, noiseColor, rand[x + i][z - j], this);
 					chunks[x + i][z - j].createChunk();
 				}
 			}
@@ -104,13 +98,11 @@ public class World {
 				if (x - i < 0 || z + j < 0)
 					return;
 				if (chunks[x - i][z + j] == null) {
-					chunks[x - i][z + j] = new Chunk(x - i, 0, z + j, noise, noiseColor, random, this);
-					chunks[x - i][z + j].generateVegetation();
+					chunks[x - i][z + j] = new Chunk(x - i, 0, z + j, noise, noiseColor, rand[x - i][z + j], this);
 					chunks[x - i][z + j].createChunk();
 				}
 			}
 		}
-
 	}
 
 	public void render(Camera cam) {

@@ -1,24 +1,19 @@
 package fr.ProgFox.Game.Entities;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.*; 
 
 import org.lwjgl.glfw.GLFW;
 
 import fr.ProgFox.Main;
-import fr.ProgFox.Game.Game;
 import fr.ProgFox.Game.Raycast;
+import fr.ProgFox.Game.Inputs.Input;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.Chunk;
-import fr.ProgFox.Game.World.SaveChunk;
 import fr.ProgFox.Game.World.World;
 import fr.ProgFox.Game.World.Blocks.Block;
-import fr.ProgFox.Game.World.Blocks.LeafBlock;
-import fr.ProgFox.Inputs.Input;
-import fr.ProgFox.Inputs.Mouse;
-import fr.ProgFox.Inputs.MouseButton;
 import fr.ProgFox.Math.Mathf;
 import fr.ProgFox.Math.Vec3;
-import fr.ProgFox.Network.NetworkClient;
+import fr.ProgFox.Network.PacketBlock;
 import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Renderer.Shader.ColorShader;
 import fr.ProgFox.Renderer.Shader.Shader;
@@ -99,46 +94,46 @@ public class LocalPlayer extends Entity {
 			return;
 
 		float xDir = 0, yDir = 0, zDir = 0;
-		rotation.addX(Mouse.getDY() / sensibilite);
-		rotation.addY(-Mouse.getDX() / sensibilite);
+		rotation.addX(Main.getMain().input.getMouse().getDY() / sensibilite);
+		rotation.addY(-Main.getMain().input.getMouse().getDX() / sensibilite);
 		if (rotation.getX() > 90)
 			rotation.setX(90);
 		if (rotation.getX() < -90)
 			rotation.setX(-90);
 
-		if (Input.getKey(GLFW.GLFW_KEY_Q)) {
+		if (Main.getMain().input.getKey(Input.KEY_A)) {
 			speed = 0.8f;
 		} else {
 			speed = 0.1f;
 		}
 
-		if (Input.getKey(GLFW.GLFW_KEY_W)) {
+		if (Main.getMain().input.getKey(Input.KEY_Z)) {
 
 			zDir = speed;
 		}
-		if (Input.getKey(GLFW.GLFW_KEY_A)) {
+		if (Main.getMain().input.getKey(Input.KEY_Q)) {
 
 			xDir = -speed;
 		}
-		if (Input.getKey(GLFW.GLFW_KEY_S)) {
+		if (Main.getMain().input.getKey(Input.KEY_S)) {
 
 			zDir = -speed;
 		}
-		if (Input.getKey(GLFW.GLFW_KEY_D)) {
+		if (Main.getMain().input.getKey(Input.KEY_D)) {
 
 			xDir = speed;
 		}
-		if (Input.getKey(GLFW.GLFW_KEY_SPACE) && Var.grounded && !Var.flyMode) {
+		if (Main.getMain().input.getKey(Input.KEY_SPACE) && Var.grounded && !Var.flyMode) {
 
 			Var.isJumping = true;
 
 		}
-		if (Input.getKey(GLFW.GLFW_KEY_SPACE) && Var.flyMode) {
+		if (Main.getMain().input.getKey(Input.KEY_SPACE) && Var.flyMode) {
 
 			yDir = speed;
 
 		}
-		if (Input.getKey(GLFW.GLFW_KEY_LEFT_SHIFT) && Var.flyMode) {
+		if (Main.getMain().input.getKey(Input.KEY_LEFT_SHIFT) && Var.flyMode) {
 			yDir = -speed;
 		}
 
@@ -163,19 +158,23 @@ public class LocalPlayer extends Entity {
 	Vec3 nowPos;
 
 	public void removeAndAddBlockGestion() {
-		if (Chunk.canBreakBlock) {
-			if (Input.getMouseDown(0)) {
+			if (Main.getMain().input.getMouse().getButtonDown(0)) {
 
 				world.removeBlock(Var.selectedPosition.x, Var.selectedPosition.y, Var.selectedPosition.z, true);
 				lastBlock = null;
 				Chunk.canBreakBlock = false;
 				if (Var.selectedBlock != null) {
 
-				Main.getMain().getGame().getNetwork().send("removeBlock;" + Var.selectedPosition.x + ";"
-						+ Var.selectedPosition.y + ";" + Var.selectedPosition.z + ";" + Var.selectedBlock.getName());
+					new PacketBlock("removeBlock", Var.selectedPosition.x, Var.selectedPosition.y,
+							Var.selectedPosition.z, Var.selectedBlock.getName(), Main.getMain().getGame().getNetwork());
+
+					// Main.getMain().getGame().getNetwork().send("removeBlock;"
+					// + Var.selectedPosition.x + ";"
+					// + Var.selectedPosition.y + ";" + Var.selectedPosition.z +
+					// ";" + Var.selectedBlock.getName());
 				}
 			}
-			if (Input.getMouseDown(1)) {
+			if (Main.getMain().input.getMouse().getButtonDown(1)) {
 
 				int x22 = (int) Var.selectedPosition.x;
 				int y22 = (int) Var.selectedPosition.y;
@@ -206,12 +205,10 @@ public class LocalPlayer extends Entity {
 				if (ry == posY && rx == posX && rz == posZ)
 					return;
 				world.addBlock(rx, ry, rz, Block.TESTE, true);
-				Main.getMain().getGame().getNetwork()
-						.send("addBlock;" + rx + ";" + ry + ";" + rz + ";" + Block.TESTE.getName());
+				new PacketBlock("addBlock",rx, ry, rz, Block.TESTE.getName(), Main.getMain().getGame().getNetwork());
 				Chunk.canBreakBlock = false;
 
 			}
-		}
 	}
 
 	public void gravity() {
