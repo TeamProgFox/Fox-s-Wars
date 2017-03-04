@@ -1,34 +1,32 @@
 package fr.ProgFox.Game.Entities;
 
-import static org.lwjgl.opengl.GL11.*; 
-
-import org.lwjgl.glfw.GLFW;
+import static org.lwjgl.opengl.GL11.*;
 
 import fr.ProgFox.Main;
 import fr.ProgFox.Game.Raycast;
-import fr.ProgFox.Game.Inputs.Input;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.Chunk;
 import fr.ProgFox.Game.World.World;
 import fr.ProgFox.Game.World.Blocks.Block;
+import fr.ProgFox.Inputs.Input;
 import fr.ProgFox.Math.Mathf;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Network.PacketBlock;
 import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Renderer.Shader.ColorShader;
 import fr.ProgFox.Renderer.Shader.Shader;
-import fr.ProgFox.Utils.VertexBuffer.CubeLine;
+import fr.ProgFox.Renderer.VertexBuffer.CubeLine;
 
 public class LocalPlayer extends Entity {
-	public boolean gravity = true;
-	public World world;
-	public Raycast raycast;
+
+	private boolean gravity = true;
 	private boolean updateVBO = true;
+
+	private World world;
+	private Raycast raycast;
 	private CubeLine select;
 	private CubeLine perso;
-	int vbo;
 	private Camera cam;
-	private Shader shader;
 
 	public LocalPlayer(World world, Camera cam, int id, String name, Vec3 position, Vec3 rotation) {
 
@@ -37,7 +35,6 @@ public class LocalPlayer extends Entity {
 		this.cam = cam;
 		this.id = id;
 		this.name = name;
-		this.shader = new ColorShader();
 		Var.selectedPosition = new Vec3(0, 0, 0);
 		raycast = new Raycast(this);
 		select = new CubeLine(new Vec3(1, 1, 1));
@@ -81,8 +78,8 @@ public class LocalPlayer extends Entity {
 			updateVBO = false;
 		}
 		if (Var.isInThirdPerson)
-			perso.render(GL_LINES, 2, cam.getPerspectiveProjection(), cam.position, shader);
-		select.render(GL_LINES, 2, cam.getPerspectiveProjection(), cam.position, shader);
+			perso.render(GL_LINES, 2, cam.getProjectionMatrix(), cam.getTransform(cam.position, cam.rotation), Main.getMain().getShader());
+			select.render(GL_LINES, 2, cam.getProjectionMatrix(), cam.getTransform(cam.position, cam.rotation), Main.getMain().getShader());
 
 	}
 
@@ -158,57 +155,46 @@ public class LocalPlayer extends Entity {
 	Vec3 nowPos;
 
 	public void removeAndAddBlockGestion() {
-			if (Main.getMain().input.getMouse().getButtonDown(0)) {
+		if (Main.getMain().input.getMouse().getButtonDown(0)) {
 
-				world.removeBlock(Var.selectedPosition.x, Var.selectedPosition.y, Var.selectedPosition.z, true);
-				lastBlock = null;
-				Chunk.canBreakBlock = false;
-				if (Var.selectedBlock != null) {
+			world.removeBlock(Var.selectedPosition.x, Var.selectedPosition.y, Var.selectedPosition.z, true);
+			lastBlock = null;
+		}
+		if (Main.getMain().input.getMouse().getButtonDown(1)) {
 
-					new PacketBlock("removeBlock", Var.selectedPosition.x, Var.selectedPosition.y,
-							Var.selectedPosition.z, Var.selectedBlock.getName(), Main.getMain().getGame().getNetwork());
+			int x22 = (int) Var.selectedPosition.x;
+			int y22 = (int) Var.selectedPosition.y;
+			int z22 = (int) Var.selectedPosition.z;
 
-					// Main.getMain().getGame().getNetwork().send("removeBlock;"
-					// + Var.selectedPosition.x + ";"
-					// + Var.selectedPosition.y + ";" + Var.selectedPosition.z +
-					// ";" + Var.selectedBlock.getName());
-				}
-			}
-			if (Main.getMain().input.getMouse().getButtonDown(1)) {
+			float x33 = Var.selectedPosition.x;
+			float y33 = Var.selectedPosition.y;
+			float z33 = Var.selectedPosition.z;
 
-				int x22 = (int) Var.selectedPosition.x;
-				int y22 = (int) Var.selectedPosition.y;
-				int z22 = (int) Var.selectedPosition.z;
+			float vx = x33 - x22;
+			float vy = y33 - y22;
+			float vz = z33 - z22;
 
-				float x33 = Var.selectedPosition.x;
-				float y33 = Var.selectedPosition.y;
-				float z33 = Var.selectedPosition.z;
+			Vec3 check = new Vec3(vx, vy, vz).check();
 
-				float vx = x33 - x22;
-				float vy = y33 - y22;
-				float vz = z33 - z22;
+			int xp = (int) check.x;
+			int yp = (int) check.y;
+			int zp = (int) check.z;
 
-				Vec3 check = new Vec3(vx, vy, vz).check();
+			int rx = x22 + xp;
+			int ry = y22 + yp;
+			int rz = z22 + zp;
+			int posX = (int) Math.abs(position.x);
+			int posY = (int) Math.abs(position.y);
+			int posZ = (int) Math.abs(position.z);
+			if (rx == posX && ry == posY - 1 && rz == posZ)
+				return;
+			if (ry == posY && rx == posX && rz == posZ)
+				return;
+			world.addBlock(rx, ry, rz, Block.TESTE, true);
 
-				int xp = (int) check.x;
-				int yp = (int) check.y;
-				int zp = (int) check.z;
+			Chunk.canBreakBlock = false;
 
-				int rx = x22 + xp;
-				int ry = y22 + yp;
-				int rz = z22 + zp;
-				int posX = (int) Math.abs(position.x);
-				int posY = (int) Math.abs(position.y);
-				int posZ = (int) Math.abs(position.z);
-				if (rx == posX && ry == posY - 1 && rz == posZ)
-					return;
-				if (ry == posY && rx == posX && rz == posZ)
-					return;
-				world.addBlock(rx, ry, rz, Block.TESTE, true);
-				new PacketBlock("addBlock",rx, ry, rz, Block.TESTE.getName(), Main.getMain().getGame().getNetwork());
-				Chunk.canBreakBlock = false;
-
-			}
+		}
 	}
 
 	public void gravity() {

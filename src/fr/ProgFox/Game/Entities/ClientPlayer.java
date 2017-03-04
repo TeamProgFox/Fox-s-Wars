@@ -6,7 +6,7 @@ import fr.ProgFox.Main;
 import fr.ProgFox.Game.Game;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Renderer.Camera;
-import fr.ProgFox.Utils.VertexBuffer.CubeLine;
+import fr.ProgFox.Renderer.VertexBuffer.CubeLine;
 
 public class ClientPlayer extends Entity {
 	public CubeLine perso;
@@ -35,10 +35,10 @@ public class ClientPlayer extends Entity {
 
 	public void render() {
 		Camera cam = Main.getMain().getGame().getCamera();
-		if(cam.getPlayer().position.equals(position))
+		if (cam.getPlayer().position.equals(position))
 			return;
-		
-		perso.render(GL_LINES, 2, cam.getPerspectiveProjection(), cam.position, cam.shader);
+
+		perso.render(GL_LINES, 2, cam.getProjectionMatrix(), cam.getTransform(cam.position, cam.rotation), Main.getMain().getShader());
 
 	}
 

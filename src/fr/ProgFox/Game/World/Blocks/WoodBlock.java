@@ -6,7 +6,7 @@ import fr.ProgFox.Math.Vec4;
 public class WoodBlock extends Block {
 
 	public WoodBlock() {
-		super(new Color4f(109f / 255f, 83f / 255f, 38f / 255f, 1), "WOOD");
+		super(new Color4f(109f / 255f, 83f / 255f, 38f / 255f, 1f), "WOOD");
 	}
 
 }

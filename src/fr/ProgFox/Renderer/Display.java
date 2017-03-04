@@ -1,6 +1,6 @@
 package fr.ProgFox.Renderer;
 
-import static org.lwjgl.glfw.GLFW.*;  
+import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
 import java.nio.IntBuffer;
@@ -11,12 +11,10 @@ import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 
-import fr.ProgFox.Game.Inputs.Input;
-import fr.ProgFox.Game.Inputs.Keyboard;
-import fr.ProgFox.Game.Inputs.Mouse;
-import fr.ProgFox.Game.Inputs.MouseButton;
-
-
+import fr.ProgFox.Inputs.Input;
+import fr.ProgFox.Inputs.Keyboard;
+import fr.ProgFox.Inputs.Mouse;
+import fr.ProgFox.Inputs.MouseButton;
 
 public class Display {
 	public static int w, h;
@@ -35,20 +33,24 @@ public class Display {
 			System.exit(1);
 		}
 		window = glfwCreateWindow(width, height, title, 0, 0);
-		glfwSetKeyCallback(window, keyCallback = input.getKeyboardCallback());
-		glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1);
 		glfwShowWindow(window);
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-		glfwSetCursorPosCallback(getWindow(), input.getMouse().getCursorPosCallback());
+
+		glfwSetKeyCallback(window, keyCallback = input.getKeyboardCallback());
+		glfwSetCursorPosCallback(window, input.getMouse().getCursorPosCallback());
 		glfwSetMouseButtonCallback(window, mouseCallback = input.getMouse().getMouseButtonCallback());
+		glfwSetScrollCallback(window, input.getMouse().getScrollCallback());
 
 		GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 		glfwSetWindowPos(window, (vidmode.width() - width) / 2, (vidmode.height() - height) / 2);
+
 		glfwMakeContextCurrent(window);
 		GL.createCapabilities();
+
 		glfwSwapInterval(0);
+
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_FRONT);

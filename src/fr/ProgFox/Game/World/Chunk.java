@@ -9,7 +9,7 @@ import java.util.Random;
 
 import org.lwjgl.BufferUtils;
 
-import fr.ProgFox.Game.Logs.Logs;
+import fr.ProgFox.*;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.Blocks.Block;
 import fr.ProgFox.Game.World.Blocks.GrassBlock;
@@ -18,39 +18,35 @@ import fr.ProgFox.Math.Color4f;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Renderer.Camera;
 import fr.ProgFox.Renderer.Shader.Shader;
-import fr.ProgFox.Utils.Writter;
-import fr.ProgFox.Utils.VertexBuffer.CubeLine;
+import fr.ProgFox.Renderer.VertexBuffer.CubeLine;
 
 public class Chunk {
-	private int vbo;
-	public static final int SIZE = 16;
-	public static final int HEIGHT = 64;
 
+	private int vbo;
 	private int bufferSize;
 	private float x, y, z;
 	private boolean isUpdating = false;
 	private boolean isCreating = false;
 
-	public FloatBuffer buffer;
 	private Noise noise;
-	private Shader shader;
 	private World world;
 	private Tree tree;
 	private Random random;
 	private CubeLine cl;
-	private int oneTimes = 0;
 
-	public Block[][][] blocks = new Block[SIZE][HEIGHT][SIZE];;
-	public Noise colorNoise;
-
+	public static final int SIZE = 16;
+	public static final int HEIGHT = 64;
 	public static boolean canBreakBlock = true;
 	public static boolean grounded;
 
 	public boolean canRender = false;
-	public boolean hasShader = false;
 	public boolean createRequest = false;
 	public boolean isReady = false;
 	public boolean updateRequest = false;
+
+	public FloatBuffer buffer;
+	public Block[][][] blocks = new Block[SIZE][HEIGHT][SIZE];;
+	public Noise colorNoise;
 
 	public Chunk(float x, float y, float z, Noise noise, Noise colorNoise, Random seed, World world) {
 		this.noise = noise;
@@ -90,7 +86,7 @@ public class Chunk {
 						grounded = noise.getNoise(x2, z2) > y2 - 20 && noise.getNoise(x2, z2) < y2 - 19;
 
 						if (random.nextFloat() > 0.99f && grounded) {
-							tree.addTree(blocks, x, y, z, this);
+							tree.addTree(x, y, z, this);
 						}
 
 					}
@@ -303,18 +299,13 @@ public class Chunk {
 
 	}
 
-	public void setShader(Shader shader) {
-		this.shader = shader;
-		hasShader = true;
-	}
-
 	public void render(Camera cam) {
 		isReady = true;
 
-		shader.bind();
-		shader.setUniform("perspective", cam.getPerspectiveProjection());
-		shader.setUniform("perspectivePosition", cam.position);
-		shader.setUniform("light", Var.light);
+		Main.getMain().getShader().bind();
+		Main.getMain().getShader().setUniform("projectionMatrix", cam.getProjectionMatrix());
+		Main.getMain().getShader().setUniform("modelViewMatrix", cam.getTransform(cam.position, cam.rotation));
+		Main.getMain().getShader().setUniform("light", Var.light);
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -325,7 +316,7 @@ public class Chunk {
 		glDisableVertexAttribArray(0);
 
 		if (Var.debugMode) {
-			cl.render(GL_LINES, 2, cam.getPerspectiveProjection(), cam.position, shader);
+			cl.render(GL_LINES, 2, cam.getProjectionMatrix(), cam.getTransform(cam.position, cam.rotation), Main.getMain().getShader());
 		}
 	}
 
@@ -359,9 +350,4 @@ public class Chunk {
 			}
 		}
 	}
-
-	public String getName() {
-		return (x + "][" + z).toString();
-	}
-
 }

@@ -1,6 +1,6 @@
-package fr.ProgFox.Utils.VertexBuffer;
+package fr.ProgFox.Renderer.VertexBuffer2D;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.*; 
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 
@@ -13,7 +13,7 @@ import fr.ProgFox.Math.Mat4;
 import fr.ProgFox.Math.Vec3;
 import fr.ProgFox.Renderer.Shader.Shader;
 
-public class VBO {
+public class VBO2D {
 	private FloatBuffer buffer;
 	private int vbo;
 	private int length = 0;
@@ -23,35 +23,46 @@ public class VBO {
 		length = vertexLenght * 6;
 	}
 
-	public void addVertex(float x, float y, float z, Vec3 color) {
-		buffer.put(x).put(y).put(z).put(color.x).put(color.y).put(color.z);
+	public void addVertex(float x, float y, Vec3 color) {
+		if (buffer == null) {
+			buffer = BufferUtils.createFloatBuffer(length);
+		}
+
+		buffer.put(x).put(y).put(0).put(color.x).put(color.y).put(color.z);
 	}
-	public void clearBuffer(){
+
+	public void clearBuffer() {
 		buffer.clear();
 	}
+
 	public void end() {
-			buffer.flip();
+		buffer.flip();
 		vbo = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
+		buffer = null;
 	}
 
-	public void update(float x, float y, float z, Vec3 color) {
-		buffer.put(x).put(y).put(z).put(color.x).put(color.y).put(color.z);
-		
+	public void update(float x, float y, Vec3 color) {
+		if (buffer == null) {
+			buffer = BufferUtils.createFloatBuffer(length);
+		}
+		buffer.put(x).put(y).put(0).put(color.x).put(color.y).put(color.z);
+
 	}
+
 	public void updateEnd() {
 		buffer.flip();
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		for(int i  = 0; i < length; i++){
-		glBufferSubData(GL_ARRAY_BUFFER, i, buffer);
+		for (int i = 0; i < length; i++) {
+			glBufferSubData(GL_ARRAY_BUFFER, i, buffer);
 		}
 	}
 
-	public void render(int mode, Mat4 perspective, Vec3 pos, Shader shader) {
+	public void render(int mode, Shader shader, Mat4 perspective, Mat4 transform) {
 		shader.bind();
-		shader.setUniform("perspective", perspective);
-		shader.setUniform("perspectivePosition", pos);
+		shader.setUniform("projectionMatrix", perspective);
+		shader.setUniform("modelViewMatrix", transform);
 		shader.setUniform("light", Var.light);
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
@@ -63,4 +74,6 @@ public class VBO {
 		glDisableVertexAttribArray(0);
 	}
 
+	
+	
 }

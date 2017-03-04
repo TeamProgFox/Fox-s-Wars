@@ -1,4 +1,4 @@
-package fr.ProgFox.Utils.VertexBuffer;
+package fr.ProgFox.Renderer.VertexBuffer;
 
 import fr.ProgFox.Math.Mat4;
 import fr.ProgFox.Math.Vec3;
@@ -9,12 +9,12 @@ public class Cube {
 
 	private Vec3 color;
 	private Shader shader;
-	private VBO cube;
+	private VBO3D cube;
 
 	public Cube(Vec3 color) {
 		this.color = color;
 		this.shader = new ColorShader();
-		this.cube = new VBO();
+		this.cube = new VBO3D();
 	}
 
 	public void add(float x, float y, float z, float size, boolean isInCenter) {
@@ -156,7 +156,7 @@ public class Cube {
 
 	}
 
-	public void render(int mode, Mat4 perspective, Vec3 pos) {
-		cube.render(mode, perspective, pos, shader);
+	public void render(int mode, Mat4 perspective, Mat4 transform) {
+		cube.render(mode, perspective, transform, shader);
 	}
 }

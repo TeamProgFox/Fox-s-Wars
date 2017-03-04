@@ -2,11 +2,12 @@ package fr.ProgFox.Game.World;
 
 import java.util.Random;
 
+import fr.ProgFox.*;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.Blocks.Block;
 import fr.ProgFox.Math.Vec3;
+import fr.ProgFox.Network.*;
 import fr.ProgFox.Renderer.Camera;
-import fr.ProgFox.Renderer.Shader.ColorShader;
 
 public class World {
 	public Noise noise;
@@ -111,10 +112,6 @@ public class World {
 		for (int x = 0; x < 100; x++) {
 			for (int z = 0; z < 100; z++) {
 
-				if (chunks[x][z] != null && chunks[x][z].hasShader == false) {
-					chunks[x][z].setShader(new ColorShader());
-				}
-
 				if (chunks[x][z] != null && chunks[x][z].createRequest) {
 					chunks[x][z].createBuffer();
 				}
@@ -122,7 +119,7 @@ public class World {
 				if (chunks[x][z] != null && chunks[x][z].updateRequest) {
 					chunks[x][z].updateVBO();
 				}
-				if (chunks[x][z] != null && chunks[x][z].canRender && chunks[x][z].hasShader) {
+				if (chunks[x][z] != null && chunks[x][z].canRender) {
 					if (xP < x + renderSize && xP > x - renderSize && zP < z + renderSize && zP > z - renderSize) {
 						chunks[x][z].render(cam);
 					}
@@ -191,7 +188,7 @@ public class World {
 		float z3 = z % Chunk.SIZE;
 
 		chunk.addBlock(x3, y3, z3, block, update);
-
+		new PacketBlock("addBlock", x, y, z, Block.TESTE.getName(), Main.getMain().getGame().getNetwork());
 	}
 
 	public void removeBlock(float x, float y, float z, boolean update) {
@@ -211,27 +208,34 @@ public class World {
 		float z3 = z % Chunk.SIZE;
 
 		chunk.removeBlock(x3, y3, z3, update);
+
 		if ((int) x3 == 15) {
 			if (getChunk(xx + 1, zz) != null) {
 				getChunk(xx + 1, zz).updateChunk();
 			}
 		}
+
 		if ((int) x3 == 0 && (int) xx > 0) {
 			if (getChunk(xx - 1, zz) != null) {
 				getChunk(xx - 1, zz).updateChunk();
 			}
 		}
+
 		if ((int) z3 == 15) {
 			if (getChunk(xx, zz + 1) != null) {
 				getChunk(xx, zz + 1).updateChunk();
 			}
 		}
+
 		if ((int) z3 == 0 && (int) zz > 0) {
 			if (getChunk(xx, zz - 1) != null) {
 				getChunk(xx, zz - 1).updateChunk();
 			}
 		}
 
+		if (Var.selectedBlock != null) {
+			new PacketBlock("removeBlock", x, y, z, Var.selectedBlock.getName(), Main.getMain().getGame().getNetwork());
+		}
 	}
 
 	public Chunk getChunk(float x, float z) {

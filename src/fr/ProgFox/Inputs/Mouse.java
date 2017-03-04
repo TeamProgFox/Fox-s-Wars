@@ -1,4 +1,4 @@
-package fr.ProgFox.Game.Inputs;
+package fr.ProgFox.Inputs;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -8,7 +8,6 @@ import org.lwjgl.glfw.GLFW;
 
 import fr.ProgFox.Math.Vec2;
 import fr.ProgFox.Renderer.Display;
-
 
 public class Mouse {
 	public static final int NUM_MOUSEBUTTONS = 5;
@@ -28,9 +27,9 @@ public class Mouse {
 	private ArrayList<Integer> currentMouse = new ArrayList<>();
 	private ArrayList<Integer> downMouse = new ArrayList<>();
 	private ArrayList<Integer> upMouse = new ArrayList<>();
-
+	
 	public Mouse() {
-		
+
 	}
 
 	public void update() {

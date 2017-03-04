@@ -1,4 +1,4 @@
-package fr.ProgFox.Utils.VertexBuffer;
+package fr.ProgFox.Renderer.VertexBuffer;
 
 import fr.ProgFox.Math.Mat4;
 import fr.ProgFox.Math.Vec3;
@@ -8,12 +8,12 @@ import fr.ProgFox.Renderer.Shader.Shader;
 public class SkyBox {
 	private Vec3 color;
 	private Shader shader;
-	private VBO skybox;
+	private VBO3D skybox;
 
 	public SkyBox(Vec3 color) {
 		this.color = color;
 		this.shader = new ColorShader();
-		this.skybox = new VBO();
+		this.skybox = new VBO3D();
 	}
 
 	public void add(float x, float y, float z, float size) {
@@ -133,7 +133,7 @@ public class SkyBox {
 
 	}
 
-	public void render(int mode, Mat4 perspective, Vec3 pos) {
-		skybox.render(mode, perspective, pos, shader);
+	public void render(int mode, Mat4 perspective, Mat4 transform) {
+		skybox.render(mode, perspective, transform, shader);
 	}
 }

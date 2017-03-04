@@ -1,11 +1,12 @@
 package fr.ProgFox;
 
 import static org.lwjgl.opengl.GL11.*;
-import org.lwjgl.glfw.GLFW;
-import fr.ProgFox.Game.Game;
-import fr.ProgFox.Game.Inputs.Input;
-import fr.ProgFox.Game.Variables.Var;
-import fr.ProgFox.Renderer.Display;
+
+import fr.ProgFox.Game.*;
+import fr.ProgFox.Game.Entities.*;
+import fr.ProgFox.Inputs.*;
+import fr.ProgFox.Renderer.*;
+import fr.ProgFox.Renderer.Shader.*;
 
 public class Main {
 
@@ -13,6 +14,9 @@ public class Main {
 	private final int FRAME_CAP = 600000000;
 	public static int width = 1200, height = 600;
 
+	private Shader shader;
+
+	public boolean pointButton = false;
 	private static Main main;
 	private Game game;
 
@@ -26,37 +30,31 @@ public class Main {
 	public Main() {
 		input = new Input();
 		Display.create(width, height, "Fox's Wars", input);
+		shader = new ColorShader();
 	}
 
 	public void update() {
 		Display.update();
-		if (Display.wasResized())
+		if (Display.wasResized()) {
 			glViewport(0, 0, Display.getWidth(), Display.getHeight());
-		if (input.getKey(Input.KEY_ESCAPE)) {
-			GLFW.glfwSetInputMode(Display.getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
-			Var.isInMenu = true;
-			Var.isInGame = false;
-			input.getMouse().setGrabbed(false);
-		}
-		if (input.getMouse().getButton(0) && !Var.isInGame) {
-			Var.isInGame = true;
-			Var.isInMenu = false;
-			input.getMouse().setGrabbed(true);
-			GLFW.glfwSetInputMode(Display.getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+			game.updateWhenResized();
 		}
 
 		game.update();
-		
+
 		input.getKeyboardCallback().update();
 		input.getMouse().update();
 	}
 
 	public void render() {
 		Display.clearBuffers();
+
 		game.render();
+
 	}
 
 	public void renderGUI() {
+
 		game.renderGUI();
 	}
 
@@ -132,4 +130,15 @@ public class Main {
 		return game;
 	}
 
+	public Camera getCamera() {
+		return game.getCamera();
+	}
+
+	public LocalPlayer getPlayer() {
+		return getCamera().getPlayer();
+	}
+
+	public Shader getShader() {
+		return shader;
+	}
 }

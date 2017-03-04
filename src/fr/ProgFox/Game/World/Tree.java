@@ -15,18 +15,18 @@ public class Tree {
 		this.random = random;
 	}
 
-	public void addTree(Block[][][] blocks, int x, int y, int z, Chunk world) {
+	public void addTree(int x, int y, int z, Chunk world) {
 		if (random.nextFloat() > 0.5f) {
-			SimpleTree(blocks, x, y, z, world);
+			SimpleTree(x, y, z, world);
 		} else {
-			SapinTree(blocks, x, y, z, world);
+			SapinTree(x, y, z, world);
 		}
 	}
 
-	public void SimpleTree(Block[][][] blocks, int x, int y, int z, Chunk world) {
-		if(x + 2 >= 16 || x - 2 < 0 || z + 2 >= 16 | z - 2 < 0)
+	public void SimpleTree(int x, int y, int z, Chunk world) {
+		if (x + 2 >= 16 || x - 2 < 0 || z + 2 >= 16 | z - 2 < 0)
 			return;
-		
+
 		Block block = new LeafBlock();
 
 		world.addBlock(x + 1, y + 4, z + 1, block, false);
@@ -106,10 +106,10 @@ public class Tree {
 		}
 	}
 
-	public void SapinTree(Block[][][] blocks, int x, int y, int z, Chunk world) {
-		if(x + 3 >= 16 || x - 3 < 0 || z + 3 >= 16 | z - 3 < 0)
+	public void SapinTree(int x, int y, int z, Chunk world) {
+		if (x + 3 >= 16 || x - 3 < 0 || z + 3 >= 16 | z - 3 < 0)
 			return;
-		
+
 		Block block = new LeafBlock();
 		block.setColor(new Color4f(0f, 0.55f, 0f, 1f));
 
@@ -124,7 +124,7 @@ public class Tree {
 
 					size -= (float) b / 8f;
 					if (l < 3.5f * size) {
-						
+
 						world.addBlock((int) (x + a2), (int) (y + b2 + 7), (int) (z + c2), block, false);
 					}
 				}

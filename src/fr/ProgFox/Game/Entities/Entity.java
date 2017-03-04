@@ -24,7 +24,6 @@ public abstract class Entity {
 	public abstract void render();
 
 	public void move(float xDir, float yDir, float zDir) {
-
 		if (!isColliding(xDir, 0, 0)) {
 			position.addX(xDir);
 		}
@@ -55,36 +54,28 @@ public abstract class Entity {
 		float z1 = (position.getZ() + zDir) + rayon;
 
 		if (world.getBlock(x0, y0, z0) != null) {
-			// System.out.println("1");
 			return true;
 		}
 		if (world.getBlock(x1, y0, z0) != null) {
-			// System.out.println("2");
 			return true;
 		}
 		if (world.getBlock(x1, y1, z0) != null) {
-			// System.out.println("3");
 			return true;
 		}
 		if (world.getBlock(x0, y1, z0) != null) {
-			// System.out.println("4");
 			return true;
 		}
 
 		if (world.getBlock(x0, y0, z1) != null) {
-			// System.out.println("5");
 			return true;
 		}
 		if (world.getBlock(x1, y0, z1) != null) {
-			// System.out.println("6");
 			return true;
 		}
 		if (world.getBlock(x1, y1, z1) != null) {
-			// System.out.println("7");
 			return true;
 		}
 		if (world.getBlock(x0, y1, z1) != null) {
-			// System.out.println("8");
 			return true;
 		}
 

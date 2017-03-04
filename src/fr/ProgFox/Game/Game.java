@@ -2,42 +2,29 @@ package fr.ProgFox.Game;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
-import org.lwjgl.glfw.GLFW;
-
-import fr.ProgFox.Main;
-import fr.ProgFox.Game.Entities.ClientPlayer;
-import fr.ProgFox.Game.Entities.EntityManager;
-import fr.ProgFox.Game.Entities.SavePlayersConfiguration;
-import fr.ProgFox.Game.Inputs.Input;
-import fr.ProgFox.Game.Variables.Var;
-import fr.ProgFox.Game.World.Chunk;
-import fr.ProgFox.Game.World.GestionBlock;
-import fr.ProgFox.Game.World.World;
-import fr.ProgFox.Game.World.Blocks.Block;
-import fr.ProgFox.Game.World.Blocks.GrassBlock;
-import fr.ProgFox.Game.World.Blocks.LeafBlock;
-import fr.ProgFox.Game.World.Blocks.StoneBlock;
-import fr.ProgFox.Game.World.Blocks.WoodBlock;
-import fr.ProgFox.Math.Vec3;
-import fr.ProgFox.Network.NetworkClient;
-import fr.ProgFox.Renderer.Camera;
-import fr.ProgFox.Utils.Loader;
-import fr.ProgFox.Utils.VertexBuffer.Cube;
-import fr.ProgFox.Utils.VertexBuffer.SkyBox;
+import fr.ProgFox.*;
+import fr.ProgFox.Game.Entities.*;
+import fr.ProgFox.Game.Variables.*;
+import fr.ProgFox.Game.World.*;
+import fr.ProgFox.Game.World.Blocks.*;
+import fr.ProgFox.Inputs.Input;
+import fr.ProgFox.Math.*;
+import fr.ProgFox.Network.*;
+import fr.ProgFox.Renderer.*;
+import fr.ProgFox.Renderer.GUI.*;
+import fr.ProgFox.Renderer.VertexBuffer.*;
+import fr.ProgFox.Renderer.VertexBuffer2D.*;
+import fr.ProgFox.Utils.*;
 
 public class Game implements Runnable {
 
 	public float posX, posY, posZ;
 	public float rotX, rotY;
 
-	public boolean teste = false;
-	private boolean addCLientPlayerRequest = false;
 	public boolean addBlock = false;
 	public boolean removeBlock = false;
 	public boolean isConnected = false;
@@ -48,12 +35,12 @@ public class Game implements Runnable {
 	public List<String> players = new ArrayList<>();
 	public List<Vec3> removePos = new ArrayList<>();
 	public List<Vec3> addPos = new ArrayList<>();
-
 	public List<Block> add = new ArrayList<>();
-
 	public List<GestionBlock> gestionBlock = new ArrayList<>();
 
 	public static Scanner sc = new Scanner(System.in);
+
+	private boolean addCLientPlayerRequest = false;
 
 	private Camera cam;
 	private World world;
@@ -62,10 +49,11 @@ public class Game implements Runnable {
 	private NetworkClient net;
 	private String ClientPlayerName;
 	private Vec3 cpp;
-	private Cube cube;
 	private SkyBox skybox;
-
+	private VBO2D crosser;
 	String pseudo;
+	private GUIButton buttonQuit;
+	private GUIButton buttonResume;
 
 	public Game() {
 
@@ -76,7 +64,7 @@ public class Game implements Runnable {
 		do {
 
 			pseudo = JOptionPane.showInputDialog("Pseudo : ");
-		} while (pseudo.contains(";"));
+		} while (pseudo.contains(";") || pseudo == null);
 
 		Block.add(new GrassBlock());
 		Block.add(new LeafBlock());
@@ -88,20 +76,58 @@ public class Game implements Runnable {
 		cam = new Camera(new Vec3(posX, posY, posZ), new Vec3(rotX, rotY, 0), world, pseudo);
 		entityManager = new EntityManager();
 		skybox = new SkyBox(new Vec3(1, 1, 1));
-		cube = new Cube(new Vec3(1, 1, 1));
 		net = new NetworkClient("localhost", 2222, pseudo, this);
+		crosser = new VBO2D();
 
 		cam.setPerspectiveProjection(70.0f, 0.01f, 10000.0f);
 		entityManager.add(getCamera().getPlayer());
-		cube.add(0, 0, 0, 0.002f, true);
 		skybox.add(0, 0, 0, 100);
 		getCamera().getPlayer().setWorld(world);
+
 		new Thread(this).start();
 
 	}
 
 	public void init() {
+
+		buttonQuit = new GUIButton(0, 0, 200, 100, new Vec3(1, 0, 0), "Quit game", new Vec3(1, 1, 1));
+		buttonResume = new GUIButton(Display.getWidth() / 2 - 100, Display.getHeight() / 2 - 50, 200, 100,
+				new Vec3(192f / 255f, 192f / 255f, 192f / 255f), "Resume Game", new Vec3(1, 1, 1));
+
 		spc = new SavePlayersConfiguration();
+
+		float x, y, xx, yy;
+		int size = 1;
+
+		x = Display.getWidth() / 2 - size;
+		y = Display.getHeight() / 2 - size;
+
+		xx = Display.getWidth() / 2 + size;
+		yy = Display.getHeight() / 2 + size;
+
+		crosser.init(4);
+		crosser.addVertex(x, y, new Vec3(1, 1, 1));
+		crosser.addVertex(xx, y, new Vec3(1, 1, 1));
+		crosser.addVertex(xx, yy, new Vec3(1, 1, 1));
+		crosser.addVertex(x, yy, new Vec3(1, 1, 1));
+		crosser.end();
+	}
+
+	public void updateWhenResized() {
+		float x, y, xx, yy;
+		int size = 1;
+		System.out.println(Display.getWidth() + " / " + Display.getHeight());
+		x = Display.getWidth() / 2 - size;
+		y = Display.getHeight() / 2 - size;
+
+		xx = Display.getWidth() / 2 + size;
+		yy = Display.getHeight() / 2 + size;
+		crosser.update(x, y, new Vec3(1, 1, 1));
+		crosser.update(xx, y, new Vec3(1, 1, 1));
+		crosser.update(xx, yy, new Vec3(1, 1, 1));
+		crosser.update(x, yy, new Vec3(1, 1, 1));
+		crosser.updateEnd();
+
 	}
 
 	public void log(String msg) {
@@ -118,16 +144,13 @@ public class Game implements Runnable {
 	}
 
 	public void removeBlock(Vec3 pos) {
-
 		removeBlockRequest = true;
 		gestionBlock.add(new GestionBlock(pos.x, pos.y, pos.z, "", true));
-
 	}
 
 	public void addBlock(Vec3 pos, String block) {
 		addBlockRequest = true;
 		gestionBlock.add(new GestionBlock(pos.x, pos.y, pos.z, block, false));
-
 	}
 
 	public void addBlock2(Vec3 pos, String block) {
@@ -146,7 +169,6 @@ public class Game implements Runnable {
 		if (e != null) {
 			e.position = new Vec3(x, y, z);
 		}
-
 	}
 
 	public void update() {
@@ -154,30 +176,8 @@ public class Game implements Runnable {
 
 		if (!canContinue)
 			return;
-
-		if ((addBlockRequest || removeBlockRequest) && !isConnected) {
-			for (GestionBlock a : gestionBlock) {
-				int xx = (int) (a.getX() / Chunk.SIZE);
-				int zz = (int) (a.getZ() / Chunk.SIZE);
-				if (xx < 0 || xx >= 100 || zz < 0 || zz >= 100)
-					return;
-
-				if (world.getChunk(xx, zz) == null) {
-					world.chunks[xx][zz] = new Chunk(xx, 0, zz, world.noise, world.noiseColor, world.random, world);
-					world.chunks[xx][zz].createChunk();
-				}
-				if (a.getAction()) {
-					world.removeBlock(a.getX(), a.getY(), a.getZ(), true);
-				} else {
-					world.addBlock(a.getX(), a.getY(), a.getZ(), Block.getBlock(a.getBlock()), true);
-				}
-
-			}
-			gestionBlock.clear();
-
-			addBlockRequest = false;
-			removeBlockRequest = false;
-			isConnected = true;
+		if (!isConnected) {
+			MultiPlayer.rePlace(this);
 		}
 
 		if (Var.isInMenu)
@@ -199,15 +199,15 @@ public class Game implements Runnable {
 			}
 		}
 
+		ClickedGestion();
+
 	}
 
 	public void multiplayerManager() {
+		Game e = this;
 		new Thread("MultiPlayer") {
 			public void run() {
-
-				net.send("controle;" + pseudo + ";" + getCamera().getPlayer().position.x + ";"
-						+ getCamera().getPlayer().position.y + ";" + getCamera().getPlayer().position.z);
-
+				MultiPlayer.sendPos(net, e);
 			}
 		}.start();
 	}
@@ -220,49 +220,7 @@ public class Game implements Runnable {
 	public void run() {
 		while (true) {
 			world.update(cam);
-
-			if (addBlock) {
-
-				for (int i = 0; i < addPos.size(); i++) {
-					int xx = (int) (addPos.get(i).x / Chunk.SIZE);
-					int zz = (int) (addPos.get(i).z / Chunk.SIZE);
-
-					if (xx < 0 || xx >= 100 || zz < 0 || zz >= 100)
-						return;
-					if (world.getChunk(xx, zz) == null) {
-						world.chunks[xx][zz] = new Chunk(xx, 0, zz, world.noise, world.noiseColor, world.random, world);
-						world.chunks[xx][zz].createChunk();
-					}
-					world.addBlock = new Vec3(addPos.get(i).x, addPos.get(i).y, addPos.get(i).z);
-					world.block = add.get(i);
-					world.addBlockRequest = true;
-				}
-				addPos.clear();
-				add.clear();
-				addBlock = false;
-			}
-
-			if (removeBlock) {
-				for (int i = 0; i < removePos.size(); i++) {
-					int xx = (int) (removePos.get(i).x / Chunk.SIZE);
-					int zz = (int) (removePos.get(i).z / Chunk.SIZE);
-					if (xx < 0 || xx >= 100 || zz < 0 || zz >= 100)
-						return;
-					if (world.getChunk(xx, zz) == null) {
-						world.chunks[xx][zz] = new Chunk(xx, 0, zz, world.noise, world.noiseColor, world.random, world);
-						world.chunks[xx][zz].createChunk();
-					}
-					world.removeBlock = new Vec3(removePos.get(i).x, removePos.get(i).y, removePos.get(i).z);
-					world.removeBlockRequest = true;
-				}
-				removePos.clear();
-				removeBlock = false;
-			}
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			MultiPlayer.place(net, this);
 		}
 	}
 
@@ -286,23 +244,42 @@ public class Game implements Runnable {
 
 	public void render() {
 		entityManager.render();
-
 		entityManager.renderClientPlayer();
 		world.render(cam);
 
+		skybox.update(cam.position.x, cam.position.y, cam.position.z, 2000);
+		skybox.render(GL_QUADS, cam.getProjectionMatrix(), getCamera().getTransform(cam.position, new Vec3(0, 0, 0)));
 	}
 
 	public void renderGUI() {
 
-		float x = (float) (cam.position.x + cam.getForward().x);
-		float y = (float) (cam.position.y - cam.getForward().y);
-		float z = (float) (cam.position.z + cam.getForward().z);
+		if (Var.isInMenu) {
+			buttonQuit.renderGUI();
+			buttonResume.renderGUI();
+		}
+		crosser.render(GL_QUADS, Main.getMain().getShader(),
+				Mat4.orthographic(Display.getWidth(), 0, 0, Display.getHeight(), -1, 1),
+				cam.getTransform(new Vec3(), new Vec3()));
 
-		cube.update(x, y, z, 0.002f, true);
-		skybox.update(cam.position.x, cam.position.y, cam.position.z, 2000);
+	}
 
-		skybox.render(GL_QUADS, cam.getPerspectiveProjection(), cam.position);
-		cube.render(GL_QUADS, cam.getPerspectiveProjection(), cam.position);
+	public void ClickedGestion() {
+		if (buttonQuit.isClicked) {
+			Main.getMain().stop();
+		}
+
+		if (buttonResume.isClicked) {
+			Var.isInGame = true;
+			Var.isInMenu = false;
+			Main.getMain().input.getMouse().setGrabbed(true);
+		}
+
+		if (Main.getMain().input.getKey(Input.KEY_ESCAPE)) {
+			Var.isInMenu = true;
+			Var.isInGame = false;
+			Main.getMain().input.getMouse().setGrabbed(false);
+		}
+
 	}
 
 	public World getWorld() {

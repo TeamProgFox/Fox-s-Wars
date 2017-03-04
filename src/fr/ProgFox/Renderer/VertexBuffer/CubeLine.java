@@ -1,4 +1,4 @@
-package fr.ProgFox.Utils.VertexBuffer;
+package fr.ProgFox.Renderer.VertexBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
 import fr.ProgFox.Math.Mat4;
@@ -7,11 +7,11 @@ import fr.ProgFox.Renderer.Shader.Shader;
 
 public class CubeLine {
 	public Vec3 color;
-	private VBO cube;
+	private VBO3D cube;
 
 	public CubeLine(Vec3 color) {
 		this.color = color;
-		this.cube = new VBO();
+		this.cube = new VBO3D();
 
 	}
 
@@ -182,8 +182,8 @@ public class CubeLine {
 		}
 	}
 
-	public void render(int mode, int wl, Mat4 perspective, Vec3 pos, Shader shader) {
+	public void render(int mode, int wl, Mat4 perspective, Mat4 transform, Shader shader) {
 		glLineWidth(wl);
-		cube.render(mode, perspective, pos, shader);
+		cube.render(mode, perspective, transform, shader);
 	}
 }

@@ -2,7 +2,7 @@ package fr.ProgFox.Game.World;
 
 import java.util.Random;
 
-import fr.ProgFox.Math.*;
+import fr.ProgFox.Math.Vec2;
 
 public class Noise {
 	private long seed;
@@ -44,7 +44,7 @@ public class Noise {
 	}
 
 	private float interpolate(float a, float b, float t) {
-		
+
 		float ft = (float) (t * Math.PI);
 		float f = (float) ((1f - Math.cos(ft)) * 0.5f);
 		float ret = a * (1f - f) + b * f;

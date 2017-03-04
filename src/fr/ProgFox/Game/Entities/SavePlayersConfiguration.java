@@ -1,6 +1,6 @@
 package fr.ProgFox.Game.Entities;
 
-import java.io.BufferedWriter; 
+import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -9,11 +9,12 @@ import fr.ProgFox.Game.Variables.Var;
 
 public class SavePlayersConfiguration {
 	private LocalPlayer player;
-	public SavePlayersConfiguration(){
-	player = Main.getMain().getGame().getCamera().getPlayer();
+
+	public SavePlayersConfiguration() {
+		player = Main.getMain().getGame().getCamera().getPlayer();
 	}
-	
-	public void save(){
+
+	public void save() {
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter("saves/Player/Player.tpf"));
 			bw.write(Float.toString(player.position.x));
@@ -39,6 +40,6 @@ public class SavePlayersConfiguration {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 }

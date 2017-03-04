@@ -1,6 +1,6 @@
 package fr.ProgFox.Renderer;
 
-import fr.ProgFox.Game.Entities.LocalPlayer; 
+import fr.ProgFox.Game.Entities.LocalPlayer;
 import fr.ProgFox.Game.Variables.Var;
 import fr.ProgFox.Game.World.World;
 import fr.ProgFox.Math.Mat4;
@@ -13,18 +13,16 @@ import fr.ProgFox.Utils.UniqueID;
 public class Camera {
 
 	private float fov, zNear, zFar;
-	
+
 	private LocalPlayer player;
 	public Vec3 position, rotation;
-	public Shader shader;
-	
-	World world;
 
+	World world;
+	
 	public Camera(Vec3 position, Vec3 rotation, World world, String pseudo) {
 		player = new LocalPlayer(world, this, UniqueID.getUniqueID(), pseudo, new Vec3(), new Vec3());
 		player.position = position;
 		player.rotation = rotation;
-		this.shader = new ColorShader();
 		this.position = position;
 		this.rotation = rotation;
 		this.world = world;
@@ -77,7 +75,7 @@ public class Camera {
 		this.zFar = zFar;
 	}
 
-	public Mat4 getPerspectiveProjection() {
+	public Mat4 getProjectionMatrix() {
 		Transform t = new Transform();
 
 		Transform t2 = new Transform();
@@ -86,11 +84,23 @@ public class Camera {
 		t2.rotate(new Vec3(0, 1, 0), rotation.getY());
 
 		Mat4 p = new Mat4().perspective(fov, (float) Display.getWidth() / (float) Display.getHeight(), zNear, zFar);
-		return p.mul(t.toMatrix().mul(t2.toMatrix()));
+		return p;
 
 	}
-	
-	public LocalPlayer getPlayer(){
+
+	public Mat4 getTransform(Vec3 pos, Vec3 rot) {
+		Transform translate = new Transform();
+		Transform t = new Transform();
+		Transform t2 = new Transform();
+		translate.setLocalPosition(new Vec3(-pos.x, -pos.y, -pos.z));
+		t.rotate(new Vec3(1, 0, 0), -rot.getX());
+		t2.rotate(new Vec3(0, 1, 0), rot.getY());
+
+		return t.toMatrix().mul(t2.toMatrix().mul(translate.toMatrix()));
+
+	}
+
+	public LocalPlayer getPlayer() {
 		return player;
 	}
 

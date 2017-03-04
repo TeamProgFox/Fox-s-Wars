@@ -1,4 +1,4 @@
-package fr.ProgFox.Game.Inputs;
+package fr.ProgFox.Inputs;
 
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 

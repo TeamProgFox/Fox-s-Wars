@@ -55,12 +55,13 @@ public class EntityManager {
 			a.render();
 		}
 	}
-	public boolean get(String cP){
-		if(name.contains(cP))
+
+	public boolean get(String cP) {
+		if (name.contains(cP))
 			return true;
 		return false;
 	}
-	
+
 	public ClientPlayer getPlayer(String name) {
 		for (ClientPlayer a : cp) {
 			if (a.name.equals(name)) {
@@ -69,5 +70,5 @@ public class EntityManager {
 		}
 		return null;
 	}
-	
+
 }

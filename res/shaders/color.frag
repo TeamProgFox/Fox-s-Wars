@@ -6,4 +6,5 @@ void main(void)
 {
 
 	frag_color = vec4(v_colors.x, v_colors.y, v_colors.z, v_colors.w) * v_light;
+
 }
