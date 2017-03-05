@@ -4,21 +4,17 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 
-import java.nio.FloatBuffer;
-import java.util.Random;
+import java.nio.*;
+import java.util.*;
 
-import org.lwjgl.BufferUtils;
+import org.lwjgl.*;
 
 import fr.ProgFox.*;
-import fr.ProgFox.Game.Variables.Var;
-import fr.ProgFox.Game.World.Blocks.Block;
-import fr.ProgFox.Game.World.Blocks.GrassBlock;
-import fr.ProgFox.Game.World.Blocks.StoneBlock;
-import fr.ProgFox.Math.Color4f;
-import fr.ProgFox.Math.Vec3;
-import fr.ProgFox.Renderer.Camera;
-import fr.ProgFox.Renderer.Shader.Shader;
-import fr.ProgFox.Renderer.VertexBuffer.CubeLine;
+import fr.ProgFox.Game.Entities.*;
+import fr.ProgFox.Game.Variables.*;
+import fr.ProgFox.Game.World.Blocks.*;
+import fr.ProgFox.Math.*;
+import fr.ProgFox.Renderer.VertexBuffer.*;
 
 public class Chunk {
 
@@ -299,12 +295,12 @@ public class Chunk {
 
 	}
 
-	public void render(Camera cam) {
+	public void render(LocalPlayer player) {
 		isReady = true;
 
 		Main.getMain().getShader().bind();
-		Main.getMain().getShader().setUniform("projectionMatrix", cam.getProjectionMatrix());
-		Main.getMain().getShader().setUniform("modelViewMatrix", cam.getTransform(cam.position, cam.rotation));
+		Main.getMain().getShader().setUniform("projectionMatrix", Main.getMain().getCamera().getProjectionMatrix());
+		Main.getMain().getShader().setUniform("modelViewMatrix",  Main.getMain().getCamera().getTransform(player.position, player.rotation));
 		Main.getMain().getShader().setUniform("light", Var.light);
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
@@ -316,7 +312,7 @@ public class Chunk {
 		glDisableVertexAttribArray(0);
 
 		if (Var.debugMode) {
-			cl.render(GL_LINES, 2, cam.getProjectionMatrix(), cam.getTransform(cam.position, cam.rotation), Main.getMain().getShader());
+			cl.render(GL_LINES, 2, Main.getMain().getCamera().getProjectionMatrix(), Main.getMain().getCamera().getTransform(player.position, player.rotation), Main.getMain().getShader());
 		}
 	}
 
@@ -330,11 +326,12 @@ public class Chunk {
 	public void addBlock(float x, float y, float z, Block block, boolean update) {
 		if (x < 0 || y < 0 || z < 0 || x >= SIZE || y >= HEIGHT || z >= SIZE)
 			return;
-
+		
 		if (blocks[(int) x][(int) y][(int) z] != block) {
 			blocks[(int) x][(int) y][(int) z] = block;
 			if (update) {
 				updateChunk();
+				Main.getMain().getPlayer().getInventory().removeBlockAt(Main.getMain().getPlayer().getInventory().getScrollBar());
 			}
 		}
 	}

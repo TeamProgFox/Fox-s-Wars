@@ -16,8 +16,6 @@ public class Var {
 	public static boolean debugMode;
 	public static boolean grounded = false;
 	public static boolean isInDay = true;
-	public static boolean isInFirstPerson = true;
-	public static boolean isInThirdPerson = !isInFirstPerson;
 	public static boolean isInMenu = true;
 	public static boolean isInGame = false;
 

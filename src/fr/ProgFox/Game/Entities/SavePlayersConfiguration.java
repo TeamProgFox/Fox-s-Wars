@@ -11,7 +11,7 @@ public class SavePlayersConfiguration {
 	private LocalPlayer player;
 
 	public SavePlayersConfiguration() {
-		player = Main.getMain().getGame().getCamera().getPlayer();
+		player = Main.getMain().getGame().getPlayer();
 	}
 
 	public void save() {
@@ -30,11 +30,6 @@ public class SavePlayersConfiguration {
 			bw.write(Boolean.toString(Var.flyMode));
 			bw.newLine();
 			bw.write(Boolean.toString(Var.debugMode));
-			bw.newLine();
-			bw.write(Boolean.toString(Var.isInFirstPerson));
-			bw.newLine();
-			bw.write(Boolean.toString(Var.isInThirdPerson));
-			bw.newLine();
 			bw.flush();
 			bw.close();
 		} catch (IOException e) {

@@ -2,20 +2,16 @@ package fr.ProgFox.Game.Entities;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import fr.ProgFox.Main;
-import fr.ProgFox.Game.Raycast;
-import fr.ProgFox.Game.Variables.Var;
-import fr.ProgFox.Game.World.Chunk;
-import fr.ProgFox.Game.World.World;
-import fr.ProgFox.Game.World.Blocks.Block;
-import fr.ProgFox.Inputs.Input;
-import fr.ProgFox.Math.Mathf;
-import fr.ProgFox.Math.Vec3;
-import fr.ProgFox.Network.PacketBlock;
-import fr.ProgFox.Renderer.Camera;
-import fr.ProgFox.Renderer.Shader.ColorShader;
-import fr.ProgFox.Renderer.Shader.Shader;
-import fr.ProgFox.Renderer.VertexBuffer.CubeLine;
+import fr.ProgFox.*;
+import fr.ProgFox.Game.*;
+import fr.ProgFox.Game.PlayersInventory.*;
+import fr.ProgFox.Game.Variables.*;
+import fr.ProgFox.Game.World.*;
+import fr.ProgFox.Game.World.Blocks.*;
+import fr.ProgFox.Inputs.*;
+import fr.ProgFox.Math.*;
+import fr.ProgFox.Renderer.GUI.*;
+import fr.ProgFox.Renderer.VertexBuffer.*;
 
 public class LocalPlayer extends Entity {
 
@@ -25,22 +21,20 @@ public class LocalPlayer extends Entity {
 	private World world;
 	private Raycast raycast;
 	private CubeLine select;
-	private CubeLine perso;
-	private Camera cam;
+	private Inventory playersInventory;
+	SimpleText sT;
 
-	public LocalPlayer(World world, Camera cam, int id, String name, Vec3 position, Vec3 rotation) {
+	public LocalPlayer(World world, String name, Vec3 position, Vec3 rotation) {
 
 		super(position, rotation);
 		this.world = world;
-		this.cam = cam;
-		this.id = id;
 		this.name = name;
 		Var.selectedPosition = new Vec3(0, 0, 0);
 		raycast = new Raycast(this);
 		select = new CubeLine(new Vec3(1, 1, 1));
-		perso = new CubeLine(new Vec3(0, 0, 0));
-
+		playersInventory = new Inventory();
 		init();
+		sT = new SimpleText("", 0, 0, new Vec3(1, 1, 1));
 	}
 
 	public void init() {
@@ -48,24 +42,31 @@ public class LocalPlayer extends Entity {
 		int y2 = (int) 0;
 		int z2 = (int) 0;
 		select.add(x2, y2, z2, 1, 1, 1, false);
-		perso.add(position.x, position.y, position.z, 0.5f, 2, 0.5f, true);
 
 	}
 
 	public void update() {
 		input();
 		raycast.update();
-		if (Var.isInThirdPerson)
-			perso.update(position.x, position.y, position.z, 0.5f, 1.25f, 0.5f, true);
 		if (raycast.getBlock(world) != null) {
 
 			Var.selectedBlock = world.getBlock(raycast.getBlock(world).x, raycast.getBlock(world).y,
 					raycast.getBlock(world).z);
+			
 			Var.selectedPosition = new Vec3(raycast.getBlock(world).x, raycast.getBlock(world).y,
 					raycast.getBlock(world).z);
 
 		}
+		if (Main.getMain().getInput().getMouse().getDWheel() != 0) {
+			if (Main.getMain().getInput().getMouse().getDWheel() > 0) {
+				playersInventory.addScrollBar((int) Main.getMain().getInput().getMouse().getDWheel() + 1);
+			} else if (Main.getMain().getInput().getMouse().getDWheel() < 0) {
+				playersInventory.addScrollBar((int) Main.getMain().getInput().getMouse().getDWheel() - 1);
+			}
+			sT = new SimpleText(("" + playersInventory.getScrollBar()),100, 200, new Vec3(1, 1, 1));
+		}
 
+		playersInventory.update();
 	}
 
 	public void render() {
@@ -77,10 +78,13 @@ public class LocalPlayer extends Entity {
 
 			updateVBO = false;
 		}
-		if (Var.isInThirdPerson)
-			perso.render(GL_LINES, 2, cam.getProjectionMatrix(), cam.getTransform(cam.position, cam.rotation), Main.getMain().getShader());
-			select.render(GL_LINES, 2, cam.getProjectionMatrix(), cam.getTransform(cam.position, cam.rotation), Main.getMain().getShader());
+		select.render(GL_LINES, 2,
+				Main.getMain().getCamera().getProjectionMatrix(), Main.getMain().getCamera()
+						.getTransform(Main.getMain().getPlayer().position, Main.getMain().getPlayer().rotation),
+				Main.getMain().getShader());
 
+		sT.render();
+		playersInventory.render();
 	}
 
 	float speed = 0.1f;
@@ -91,46 +95,46 @@ public class LocalPlayer extends Entity {
 			return;
 
 		float xDir = 0, yDir = 0, zDir = 0;
-		rotation.addX(Main.getMain().input.getMouse().getDY() / sensibilite);
-		rotation.addY(-Main.getMain().input.getMouse().getDX() / sensibilite);
+		rotation.addX(Main.getMain().getInput().getMouse().getDY() / sensibilite);
+		rotation.addY(-Main.getMain().getInput().getMouse().getDX() / sensibilite);
 		if (rotation.getX() > 90)
 			rotation.setX(90);
 		if (rotation.getX() < -90)
 			rotation.setX(-90);
 
-		if (Main.getMain().input.getKey(Input.KEY_A)) {
+		if (Main.getMain().getInput().getKey(Input.KEY_A)) {
 			speed = 0.8f;
 		} else {
 			speed = 0.1f;
 		}
 
-		if (Main.getMain().input.getKey(Input.KEY_Z)) {
+		if (Main.getMain().getInput().getKey(Input.KEY_Z)) {
 
 			zDir = speed;
 		}
-		if (Main.getMain().input.getKey(Input.KEY_Q)) {
+		if (Main.getMain().getInput().getKey(Input.KEY_Q)) {
 
 			xDir = -speed;
 		}
-		if (Main.getMain().input.getKey(Input.KEY_S)) {
+		if (Main.getMain().getInput().getKey(Input.KEY_S)) {
 
 			zDir = -speed;
 		}
-		if (Main.getMain().input.getKey(Input.KEY_D)) {
+		if (Main.getMain().getInput().getKey(Input.KEY_D)) {
 
 			xDir = speed;
 		}
-		if (Main.getMain().input.getKey(Input.KEY_SPACE) && Var.grounded && !Var.flyMode) {
+		if (Main.getMain().getInput().getKey(Input.KEY_SPACE) && Var.grounded && !Var.flyMode) {
 
 			Var.isJumping = true;
 
 		}
-		if (Main.getMain().input.getKey(Input.KEY_SPACE) && Var.flyMode) {
+		if (Main.getMain().getInput().getKey(Input.KEY_SPACE) && Var.flyMode) {
 
 			yDir = speed;
 
 		}
-		if (Main.getMain().input.getKey(Input.KEY_LEFT_SHIFT) && Var.flyMode) {
+		if (Main.getMain().getInput().getKey(Input.KEY_LEFT_SHIFT) && Var.flyMode) {
 			yDir = -speed;
 		}
 
@@ -155,12 +159,20 @@ public class LocalPlayer extends Entity {
 	Vec3 nowPos;
 
 	public void removeAndAddBlockGestion() {
-		if (Main.getMain().input.getMouse().getButtonDown(0)) {
+		if (Main.getMain().getInput().getMouse().getButtonDown(0)) {
 
 			world.removeBlock(Var.selectedPosition.x, Var.selectedPosition.y, Var.selectedPosition.z, true);
+			
+			if(Var.selectedPosition.equals(new Vec3()))
+				Var.selectedBlock = null;
+			
+			if (Var.selectedBlock != null) {
+				playersInventory.addBlockAt(playersInventory.getScrollBar(),
+						new Block(Var.selectedBlock.getColor(), Var.selectedBlock.getName()));
+			}
 			lastBlock = null;
 		}
-		if (Main.getMain().input.getMouse().getButtonDown(1)) {
+		if (Main.getMain().getInput().getMouse().getButtonDown(1)) {
 
 			int x22 = (int) Var.selectedPosition.x;
 			int y22 = (int) Var.selectedPosition.y;
@@ -183,15 +195,16 @@ public class LocalPlayer extends Entity {
 			int rx = x22 + xp;
 			int ry = y22 + yp;
 			int rz = z22 + zp;
+
 			int posX = (int) Math.abs(position.x);
 			int posY = (int) Math.abs(position.y);
 			int posZ = (int) Math.abs(position.z);
+
 			if (rx == posX && ry == posY - 1 && rz == posZ)
 				return;
 			if (ry == posY && rx == posX && rz == posZ)
 				return;
-			world.addBlock(rx, ry, rz, Block.TESTE, true);
-
+			world.addBlock(rx, ry, rz, playersInventory.getBlockAt(playersInventory.getScrollBar()), true);
 			Chunk.canBreakBlock = false;
 
 		}
@@ -271,6 +284,10 @@ public class LocalPlayer extends Entity {
 		r.setZ(sinY);
 
 		return r;
+	}
+
+	public Inventory getInventory() {
+		return playersInventory;
 	}
 
 }

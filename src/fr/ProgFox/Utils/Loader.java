@@ -39,8 +39,6 @@ public class Loader {
 			game.rotY = Float.parseFloat(br.readLine());
 			Var.flyMode = Boolean.parseBoolean(br.readLine());
 			Var.debugMode = Boolean.parseBoolean(br.readLine());
-			Var.isInFirstPerson = Boolean.parseBoolean(br.readLine());
-			Var.isInThirdPerson = Boolean.parseBoolean(br.readLine());
 			br.close();
 		} catch (FileNotFoundException e) {
 

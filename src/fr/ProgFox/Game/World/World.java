@@ -1,13 +1,11 @@
 package fr.ProgFox.Game.World;
 
-import java.util.Random;
+import java.util.*;
 
-import fr.ProgFox.*;
-import fr.ProgFox.Game.Variables.Var;
-import fr.ProgFox.Game.World.Blocks.Block;
-import fr.ProgFox.Math.Vec3;
-import fr.ProgFox.Network.*;
-import fr.ProgFox.Renderer.Camera;
+import fr.ProgFox.Game.Entities.*;
+import fr.ProgFox.Game.Variables.*;
+import fr.ProgFox.Game.World.Blocks.*;
+import fr.ProgFox.Renderer.*;
 
 public class World {
 	public Noise noise;
@@ -16,18 +14,12 @@ public class World {
 	public Random random;
 	float percentage;
 
-	public Vec3 removeBlock;
-	public boolean removeBlockRequest = false;
-
-	public Vec3 addBlock;
-	public Block block;
 	public Random[][] rand;
-	public boolean addBlockRequest = false;
 
 	public World(long seed, float x, float z) {
 		random = new Random(seed);
 		noise = new Noise(random.nextLong(), 15, 15);
-		noiseColor = new Noise(random.nextLong(), 30, 5);
+		noiseColor = new Noise(random.nextLong(), 1, 1);
 		chunks = new Chunk[1000][1000];
 		rand = new Random[1000][1000];
 
@@ -41,9 +33,9 @@ public class World {
 
 	int renderSize = 5;
 
-	public void update(Camera cam) {
-		float xP = (float) (cam.position.x / 16);
-		float zP = (float) (cam.position.z / 16);
+	public void update(LocalPlayer player) {
+		float xP = (float) (player.position.x / 16);
+		float zP = (float) (player.position.z / 16);
 
 		int x = (int) xP;
 		int z = (int) zP;
@@ -106,9 +98,9 @@ public class World {
 		}
 	}
 
-	public void render(Camera cam) {
-		float xP = (float) (cam.position.x / 16);
-		float zP = (float) (cam.position.z / 16);
+	public void render(LocalPlayer player) {
+		float xP = (float) (player.position.x / 16);
+		float zP = (float) (player.position.z / 16);
 		for (int x = 0; x < 100; x++) {
 			for (int z = 0; z < 100; z++) {
 
@@ -121,22 +113,10 @@ public class World {
 				}
 				if (chunks[x][z] != null && chunks[x][z].canRender) {
 					if (xP < x + renderSize && xP > x - renderSize && zP < z + renderSize && zP > z - renderSize) {
-						chunks[x][z].render(cam);
+						chunks[x][z].render(player);
 					}
 				}
 			}
-		}
-	}
-
-	public void updateWorld() {
-		if (removeBlockRequest) {
-			removeBlock(removeBlock.x, removeBlock.y, removeBlock.z, true);
-			removeBlockRequest = false;
-		}
-
-		if (addBlockRequest) {
-			addBlock(addBlock.x, addBlock.y, addBlock.z, block, true);
-			addBlockRequest = false;
 		}
 	}
 
@@ -172,7 +152,7 @@ public class World {
 	}
 
 	public void addBlock(float x, float y, float z, Block block, boolean update) {
-
+		
 		int xx = (int) (x / Chunk.SIZE);
 		int zz = (int) (z / Chunk.SIZE);
 
@@ -188,7 +168,6 @@ public class World {
 		float z3 = z % Chunk.SIZE;
 
 		chunk.addBlock(x3, y3, z3, block, update);
-		new PacketBlock("addBlock", x, y, z, Block.TESTE.getName(), Main.getMain().getGame().getNetwork());
 	}
 
 	public void removeBlock(float x, float y, float z, boolean update) {
@@ -231,10 +210,6 @@ public class World {
 			if (getChunk(xx, zz - 1) != null) {
 				getChunk(xx, zz - 1).updateChunk();
 			}
-		}
-
-		if (Var.selectedBlock != null) {
-			new PacketBlock("removeBlock", x, y, z, Var.selectedBlock.getName(), Main.getMain().getGame().getNetwork());
 		}
 	}
 

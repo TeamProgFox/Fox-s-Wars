@@ -10,17 +10,16 @@ import fr.ProgFox.Renderer.Shader.*;
 
 public class Main {
 
-	private boolean running = false;
-	private final int FRAME_CAP = 600000000;
-	public static int width = 1200, height = 600;
-
-	private Shader shader;
-
-	public boolean pointButton = false;
 	private static Main main;
-	private Game game;
+	private final int FRAME_CAP = 600000000;
 
-	public Input input;
+	public static int width = 1200, height = 600;
+	public boolean pointButton = false;
+
+	private boolean running = false;
+	private Shader shader;
+	private Game game;
+	private Input input;
 
 	public static void main(String[] args) {
 		main = new Main();
@@ -38,6 +37,7 @@ public class Main {
 		if (Display.wasResized()) {
 			glViewport(0, 0, Display.getWidth(), Display.getHeight());
 			game.updateWhenResized();
+			getPlayer().getInventory().updateWhenResized();
 		}
 
 		game.update();
@@ -118,10 +118,6 @@ public class Main {
 		exit();
 	}
 
-	public void log() {
-		System.out.println("lol");
-	}
-
 	public static Main getMain() {
 		return main;
 	}
@@ -135,10 +131,14 @@ public class Main {
 	}
 
 	public LocalPlayer getPlayer() {
-		return getCamera().getPlayer();
+		return game.getPlayer();
 	}
 
 	public Shader getShader() {
 		return shader;
+	}
+
+	public Input getInput() {
+		return input;
 	}
 }

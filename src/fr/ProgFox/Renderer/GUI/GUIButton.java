@@ -20,13 +20,13 @@ public class GUIButton extends GUI {
 	}
 
 	public void renderGUI() {
-		if (Main.getMain().input.getMouse().getX() > posX && Main.getMain().input.getMouse().getX() < posX + sizeX
-				&& Main.getMain().input.getMouse().getY() > posY
-				&& Main.getMain().input.getMouse().getY() < posY + sizeY) {
+		if (Main.getMain().getInput().getMouse().getX() > posX && Main.getMain().getInput().getMouse().getX() < posX + sizeX
+				&& Main.getMain().getInput().getMouse().getY() > posY
+				&& Main.getMain().getInput().getMouse().getY() < posY + sizeY) {
 			Main.getMain().pointButton = true;
 			setColor(defaultColor.copy().div(1.25f));
 			end();
-			if (Main.getMain().input.getMouse().getButtonDown(0)) {
+			if (Main.getMain().getInput().getMouse().getButtonDown(0)) {
 				isClicked = true;
 			} else {
 				isClicked = false;

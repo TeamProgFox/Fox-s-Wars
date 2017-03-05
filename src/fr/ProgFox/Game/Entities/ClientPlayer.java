@@ -11,11 +11,10 @@ import fr.ProgFox.Renderer.VertexBuffer.CubeLine;
 public class ClientPlayer extends Entity {
 	public CubeLine perso;
 
-	public ClientPlayer(int id, String name, Vec3 pos, Vec3 rot) {
+	public ClientPlayer(String name, Vec3 pos, Vec3 rot) {
 
 		super(pos, rot);
 
-		this.id = id;
 		this.name = name;
 		perso = new CubeLine(new Vec3());
 		position = new Vec3(pos.x, pos.y, pos.z);
@@ -35,10 +34,10 @@ public class ClientPlayer extends Entity {
 
 	public void render() {
 		Camera cam = Main.getMain().getGame().getCamera();
-		if (cam.getPlayer().position.equals(position))
+		if (Main.getMain().getGame().getPlayer().position.equals(position))
 			return;
 
-		perso.render(GL_LINES, 2, cam.getProjectionMatrix(), cam.getTransform(cam.position, cam.rotation), Main.getMain().getShader());
+		perso.render(GL_LINES, 2, cam.getProjectionMatrix(), cam.getTransform(position, rotation), Main.getMain().getShader());
 
 	}
 

@@ -19,15 +19,14 @@ public class VBO2D {
 	private int length = 0;
 
 	public void init(int vertexLenght) {
+		if(buffer != null) {
+			buffer.clear();
+		}
 		buffer = BufferUtils.createFloatBuffer(vertexLenght * 6);
 		length = vertexLenght * 6;
 	}
 
 	public void addVertex(float x, float y, Vec3 color) {
-		if (buffer == null) {
-			buffer = BufferUtils.createFloatBuffer(length);
-		}
-
 		buffer.put(x).put(y).put(0).put(color.x).put(color.y).put(color.z);
 	}
 

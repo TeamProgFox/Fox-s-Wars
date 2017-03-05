@@ -13,7 +13,6 @@ import fr.ProgFox.Game.World.*;
 import fr.ProgFox.Game.World.Blocks.*;
 import fr.ProgFox.Inputs.Input;
 import fr.ProgFox.Math.*;
-import fr.ProgFox.Network.*;
 import fr.ProgFox.Renderer.*;
 import fr.ProgFox.Renderer.GUI.*;
 import fr.ProgFox.Renderer.VertexBuffer.*;
@@ -25,46 +24,32 @@ public class Game implements Runnable {
 	public float posX, posY, posZ;
 	public float rotX, rotY;
 
-	public boolean addBlock = false;
-	public boolean removeBlock = false;
-	public boolean isConnected = false;
-	public boolean removeBlockRequest = false;
-	public boolean addBlockRequest = false;
-	public boolean canContinue = false;
-
 	public List<String> players = new ArrayList<>();
-	public List<Vec3> removePos = new ArrayList<>();
-	public List<Vec3> addPos = new ArrayList<>();
-	public List<Block> add = new ArrayList<>();
-	public List<GestionBlock> gestionBlock = new ArrayList<>();
 
 	public static Scanner sc = new Scanner(System.in);
-
-	private boolean addCLientPlayerRequest = false;
 
 	private Camera cam;
 	private World world;
 	private EntityManager entityManager;
 	private SavePlayersConfiguration spc;
-	private NetworkClient net;
-	private String ClientPlayerName;
-	private Vec3 cpp;
 	private SkyBox skybox;
 	private VBO2D crosser;
 	String pseudo;
 	private GUIButton buttonQuit;
 	private GUIButton buttonResume;
+	private LocalPlayer player;
+	private Cube cube;
+
+
 
 	public Game() {
 
 		Loader.read("saves/Player/Player.tpf", this);
 
-		if (Var.isInThirdPerson == false)
-			Var.isInFirstPerson = true;
 		do {
 
 			pseudo = JOptionPane.showInputDialog("Pseudo : ");
-		} while (pseudo.contains(";") || pseudo == null);
+		} while (pseudo.equals("") || pseudo.contains(";"));
 
 		Block.add(new GrassBlock());
 		Block.add(new LeafBlock());
@@ -73,16 +58,19 @@ public class Game implements Runnable {
 		Block.add(Block.TESTE);
 
 		world = new World(-6956537684988609768L, posX, posZ);
-		cam = new Camera(new Vec3(posX, posY, posZ), new Vec3(rotX, rotY, 0), world, pseudo);
+		cam = new Camera();
 		entityManager = new EntityManager();
 		skybox = new SkyBox(new Vec3(1, 1, 1));
-		net = new NetworkClient("localhost", 2222, pseudo, this);
 		crosser = new VBO2D();
+		player = new LocalPlayer(world, pseudo, new Vec3(posX, posY, posZ), new Vec3(rotX, rotY, 0));
+		cube = new Cube(new Vec3(1, 1, 1));
 
 		cam.setPerspectiveProjection(70.0f, 0.01f, 10000.0f);
-		entityManager.add(getCamera().getPlayer());
-		skybox.add(0, 0, 0, 100);
-		getCamera().getPlayer().setWorld(world);
+		entityManager.add(getPlayer());
+		skybox.add(0, 0, 0, 1000);
+		// cube.add(1, -0.5f, 1, 0.2f, true);
+
+		getPlayer().setWorld(world);
 
 		new Thread(this).start();
 
@@ -127,59 +115,16 @@ public class Game implements Runnable {
 		crosser.update(xx, yy, new Vec3(1, 1, 1));
 		crosser.update(x, yy, new Vec3(1, 1, 1));
 		crosser.updateEnd();
-
+		buttonQuit = new GUIButton(0, 0, 200, 100, new Vec3(1, 0, 0), "Quit game", new Vec3(1, 1, 1));
+		buttonResume = new GUIButton(Display.getWidth() / 2 - 100, Display.getHeight() / 2 - 50, 200, 100,
+				new Vec3(192f / 255f, 192f / 255f, 192f / 255f), "Resume Game", new Vec3(1, 1, 1));
 	}
 
 	public void log(String msg) {
 		System.out.println(msg);
 	}
 
-	public void addClientPlayer(String name, float x, float y, float z) {
-		if (!pseudo.equals(name)) {
-			this.ClientPlayerName = name;
-			this.cpp = new Vec3(x, y, z);
-			players.add(name);
-			addCLientPlayerRequest = true;
-		}
-	}
-
-	public void removeBlock(Vec3 pos) {
-		removeBlockRequest = true;
-		gestionBlock.add(new GestionBlock(pos.x, pos.y, pos.z, "", true));
-	}
-
-	public void addBlock(Vec3 pos, String block) {
-		addBlockRequest = true;
-		gestionBlock.add(new GestionBlock(pos.x, pos.y, pos.z, block, false));
-	}
-
-	public void addBlock2(Vec3 pos, String block) {
-		addPos.add(pos);
-		add.add(Block.getBlock(block));
-		addBlock = true;
-	}
-
-	public void removeBlock2(Vec3 pos) {
-		removePos.add(pos);
-		removeBlock = true;
-	}
-
-	public void controlePlayer(String name, float x, float y, float z) {
-		ClientPlayer e = entityManager.getPlayer(name);
-		if (e != null) {
-			e.position = new Vec3(x, y, z);
-		}
-	}
-
 	public void update() {
-		world.updateWorld();
-
-		if (!canContinue)
-			return;
-		if (!isConnected) {
-			MultiPlayer.rePlace(this);
-		}
-
 		if (Var.isInMenu)
 			spc.save();
 
@@ -188,67 +133,44 @@ public class Game implements Runnable {
 		World.cycleToDay();
 		cam.update();
 		keyboardGestion();
-		multiplayerManager();
-
-		if (addCLientPlayerRequest) {
-			ClientPlayer e = entityManager.getPlayer(ClientPlayerName);
-			if (e == null) {
-				ClientPlayer cP = new ClientPlayer(100, ClientPlayerName, cpp, new Vec3());
-				entityManager.add(cP);
-				addCLientPlayerRequest = false;
-			}
-		}
-
 		ClickedGestion();
 
 	}
 
-	public void multiplayerManager() {
-		Game e = this;
-		new Thread("MultiPlayer") {
-			public void run() {
-				MultiPlayer.sendPos(net, e);
-			}
-		}.start();
-	}
-
 	public void oneSecond() {
-		net.send("player;" + pseudo + ";" + getCamera().getPlayer().position.x + ";"
-				+ getCamera().getPlayer().position.y + ";" + getCamera().getPlayer().position.z);
 	}
 
 	public void run() {
 		while (true) {
-			world.update(cam);
-			MultiPlayer.place(net, this);
+			world.update(player);
 		}
 	}
 
 	public void keyboardGestion() {
-		if (Main.getMain().input.getKeyDown(Input.KEY_F)) {
+
+		if (Main.getMain().getInput().getKeyDown(Input.KEY_F)) {
 			Var.flyMode = !Var.flyMode;
 		}
-		if (Main.getMain().input.getKeyDown(Input.KEY_F3)) {
+
+		if (Main.getMain().getInput().getKeyDown(Input.KEY_F3)) {
 			Var.debugMode = !Var.debugMode;
 		}
-		if (Main.getMain().input.getKeyDown(Input.KEY_F5)) {
-			if (Var.isInFirstPerson) {
-				Var.isInFirstPerson = false;
-				Var.isInThirdPerson = true;
-			} else if (Var.isInThirdPerson) {
-				Var.isInFirstPerson = true;
-				Var.isInThirdPerson = false;
-			}
-		}
+
 	}
 
 	public void render() {
 		entityManager.render();
 		entityManager.renderClientPlayer();
-		world.render(cam);
+		world.render(player);
 
-		skybox.update(cam.position.x, cam.position.y, cam.position.z, 2000);
-		skybox.render(GL_QUADS, cam.getProjectionMatrix(), getCamera().getTransform(cam.position, new Vec3(0, 0, 0)));
+		skybox.update(Main.getMain().getPlayer().position.x, Main.getMain().getPlayer().position.y,
+				Main.getMain().getPlayer().position.z, 2000);
+		skybox.render(GL_QUADS, cam.getProjectionMatrix(),
+				getCamera().getTransform(Main.getMain().getPlayer().position, new Vec3(0, 0, 0)));
+
+		cube.render(GL_QUADS, getCamera().getProjectionMatrix(),
+				getCamera().getTransform(new Vec3(0, 0, 0), new Vec3()));
+
 	}
 
 	public void renderGUI() {
@@ -271,13 +193,13 @@ public class Game implements Runnable {
 		if (buttonResume.isClicked) {
 			Var.isInGame = true;
 			Var.isInMenu = false;
-			Main.getMain().input.getMouse().setGrabbed(true);
+			Main.getMain().getInput().getMouse().setGrabbed(true);
 		}
 
-		if (Main.getMain().input.getKey(Input.KEY_ESCAPE)) {
+		if (Main.getMain().getInput().getKey(Input.KEY_ESCAPE)) {
 			Var.isInMenu = true;
 			Var.isInGame = false;
-			Main.getMain().input.getMouse().setGrabbed(false);
+			Main.getMain().getInput().getMouse().setGrabbed(false);
 		}
 
 	}
@@ -290,8 +212,8 @@ public class Game implements Runnable {
 		return cam;
 	}
 
-	public NetworkClient getNetwork() {
-		return net;
+	public LocalPlayer getPlayer() {
+		return player;
 	}
 
 }

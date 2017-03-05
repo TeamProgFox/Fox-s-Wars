@@ -54,9 +54,7 @@ public class Raycast {
 				return new Vec3(v.x, v.y, v.z);
 
 			}
-
 			Var.selectedPosition = new Vec3();
-
 		}
 
 		return null;

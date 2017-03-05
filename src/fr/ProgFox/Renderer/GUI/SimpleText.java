@@ -10,8 +10,9 @@ import fr.ProgFox.Renderer.VertexBuffer2D.*;
 public class SimpleText extends VBO2D {
 
 	public SimpleText(String s, int x, int y, Vec3 color) {
-		init(s.length() * 25);
-
+		
+		init(s.length() * 50);
+		
 		int startX = x;
 		for (char c : s.toLowerCase().toCharArray()) {
 			if (c == 'a') {
