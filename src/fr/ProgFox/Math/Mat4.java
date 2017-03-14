@@ -123,7 +123,9 @@ public class Mat4 {
 		result.matrix[3][3] = 0.0F;
 		return result;
 	}
-
+	
+	
+	
 	public static Mat4 rotate(float x, float y, float z) {
 		Mat4 result = identity();
 		Mat4 rx = identity();

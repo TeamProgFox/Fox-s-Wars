@@ -3,9 +3,10 @@ package fr.ProgFox.Game.World;
 import java.util.*;
 
 import fr.ProgFox.Game.Entities.*;
+import fr.ProgFox.Game.Models.*;
 import fr.ProgFox.Game.Variables.*;
 import fr.ProgFox.Game.World.Blocks.*;
-import fr.ProgFox.Renderer.*;
+import fr.ProgFox.Math.*;
 
 public class World {
 	public Noise noise;
@@ -13,16 +14,19 @@ public class World {
 	public Chunk[][] chunks;
 	public Random random;
 	float percentage;
+	public FixedModel flower;
 
 	public Random[][] rand;
 
 	public World(long seed, float x, float z) {
+
 		random = new Random(seed);
 		noise = new Noise(random.nextLong(), 15, 15);
 		noiseColor = new Noise(random.nextLong(), 1, 1);
 		chunks = new Chunk[1000][1000];
 		rand = new Random[1000][1000];
-
+		flower = new FixedModel("fleur", 10);
+		
 		for (int xx = 0; xx < 100; xx++) {
 			for (int zz = 0; zz < 100; zz++) {
 				rand[xx][zz] = new Random(seed);
@@ -31,7 +35,7 @@ public class World {
 
 	}
 
-	int renderSize = 5;
+	int renderSize = 8;
 
 	public void update(LocalPlayer player) {
 		float xP = (float) (player.position.x / 16);
@@ -103,21 +107,25 @@ public class World {
 		float zP = (float) (player.position.z / 16);
 		for (int x = 0; x < 100; x++) {
 			for (int z = 0; z < 100; z++) {
-
+				
+				
+				
 				if (chunks[x][z] != null && chunks[x][z].createRequest) {
 					chunks[x][z].createBuffer();
 				}
-
+				
 				if (chunks[x][z] != null && chunks[x][z].updateRequest) {
 					chunks[x][z].updateVBO();
 				}
+				
 				if (chunks[x][z] != null && chunks[x][z].canRender) {
-					if (xP < x + renderSize && xP > x - renderSize && zP < z + renderSize && zP > z - renderSize) {
+					if (xP < x + 4 && xP > x - 4 && zP < z + 4 && zP > z - 4) {
 						chunks[x][z].render(player);
 					}
 				}
 			}
 		}
+		flower.render(new Vec3(0, 50, 0), new Vec3());
 	}
 
 	public static void cycleToDay() {
@@ -152,7 +160,7 @@ public class World {
 	}
 
 	public void addBlock(float x, float y, float z, Block block, boolean update) {
-		
+
 		int xx = (int) (x / Chunk.SIZE);
 		int zz = (int) (z / Chunk.SIZE);
 

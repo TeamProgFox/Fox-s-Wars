@@ -29,7 +29,7 @@ public class VBO2D {
 	public void addVertex(float x, float y, Vec3 color) {
 		buffer.put(x).put(y).put(0).put(color.x).put(color.y).put(color.z);
 	}
-
+	
 	public void clearBuffer() {
 		buffer.clear();
 	}

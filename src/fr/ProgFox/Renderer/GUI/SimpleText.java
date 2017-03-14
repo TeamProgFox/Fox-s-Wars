@@ -491,7 +491,7 @@ public class SimpleText extends VBO2D {
 		glPointSize(1);
 		render(GL_POINTS, Main.getMain().getShader(),
 				Mat4.orthographic(Display.getWidth(), 0, 0, Display.getHeight(), -1, 1),
-				Main.getMain().getCamera().getTransform(new Vec3(), new Vec3()));
+				Main.getMain().getCamera().getModelViewMatrix(new Vec3(), new Vec3()));
 	}
 
 }

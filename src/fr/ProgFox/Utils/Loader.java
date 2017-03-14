@@ -1,30 +1,29 @@
 package fr.ProgFox.Utils;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
-import fr.ProgFox.Game.Game;
-import fr.ProgFox.Game.Variables.Var;
+import fr.ProgFox.Game.*;
+import fr.ProgFox.Game.Variables.*;
 
 public class Loader {
 	public static String loadFile(String path) {
-		BufferedReader reader;
-		String buffer;
-		String result;
-		result = "";
-		try {
-			reader = new BufferedReader(new FileReader(path));
-			while ((buffer = reader.readLine()) != null)
-				result += buffer + "\n";
-			reader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (new File(path).exists()) {
+
+			BufferedReader reader;
+			String buffer;
+			String result;
+			result = "";
+			try {
+				reader = new BufferedReader(new FileReader(path));
+				while ((buffer = reader.readLine()) != null)
+					result += buffer + "\n";
+				reader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return result;
 		}
-		return result;
+		return null;
 	}
 
 	public static void read(String path, Game game) {

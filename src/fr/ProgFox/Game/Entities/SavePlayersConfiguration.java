@@ -35,6 +35,5 @@ public class SavePlayersConfiguration {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 }

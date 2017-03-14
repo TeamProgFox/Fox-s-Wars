@@ -13,7 +13,6 @@ public class GUI {
 	protected int sizeX, sizeY, posX, posY;
 	private VBO2D gui;
 	private Vec3 color;
-	protected boolean isButton = false;
 
 	public void setSize(int sizeX, int sizeY) {
 		this.sizeX = sizeX;
@@ -47,12 +46,24 @@ public class GUI {
 		gui.addVertex(posX, posY + sizeY, color);
 		gui.end();
 	}
+	
+	public void updateEnd() {
+		gui.update(posX, posY, color);
+		gui.update(posX + sizeX, posY, color);
+		gui.update(posX + sizeX, posY + sizeY, color);
+		gui.update(posX, posY + sizeY, color);
+		gui.updateEnd();
+	}
 
-	public void render() {
+	public Vec3 getColor() {
+		return color;
+	}
+	
+	protected void render() {
 
 		gui.render(GL_QUADS, Main.getMain().getShader(),
 				Mat4.orthographic(Display.getWidth(), 0, 0, Display.getHeight(), -1, 1),
-				Main.getMain().getCamera().getTransform(new Vec3(), new Vec3()));
+				Main.getMain().getCamera().getModelViewMatrix(new Vec3(), new Vec3()));
 	}
 
 }

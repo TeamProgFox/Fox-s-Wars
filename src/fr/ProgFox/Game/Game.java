@@ -2,12 +2,18 @@ package fr.ProgFox.Game;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 import javax.swing.*;
 
+import org.lwjgl.opengl.*;
+
 import fr.ProgFox.*;
 import fr.ProgFox.Game.Entities.*;
+import fr.ProgFox.Game.Items.*;
+import fr.ProgFox.Game.Models.*;
 import fr.ProgFox.Game.Variables.*;
 import fr.ProgFox.Game.World.*;
 import fr.ProgFox.Game.World.Blocks.*;
@@ -39,8 +45,7 @@ public class Game implements Runnable {
 	private GUIButton buttonResume;
 	private LocalPlayer player;
 	private Cube cube;
-
-
+	private GUISlider slider;
 
 	public Game() {
 
@@ -56,7 +61,7 @@ public class Game implements Runnable {
 		Block.add(new StoneBlock());
 		Block.add(new WoodBlock());
 		Block.add(Block.TESTE);
-
+		
 		world = new World(-6956537684988609768L, posX, posZ);
 		cam = new Camera();
 		entityManager = new EntityManager();
@@ -68,7 +73,6 @@ public class Game implements Runnable {
 		cam.setPerspectiveProjection(70.0f, 0.01f, 10000.0f);
 		entityManager.add(getPlayer());
 		skybox.add(0, 0, 0, 1000);
-		// cube.add(1, -0.5f, 1, 0.2f, true);
 
 		getPlayer().setWorld(world);
 
@@ -81,9 +85,8 @@ public class Game implements Runnable {
 		buttonQuit = new GUIButton(0, 0, 200, 100, new Vec3(1, 0, 0), "Quit game", new Vec3(1, 1, 1));
 		buttonResume = new GUIButton(Display.getWidth() / 2 - 100, Display.getHeight() / 2 - 50, 200, 100,
 				new Vec3(192f / 255f, 192f / 255f, 192f / 255f), "Resume Game", new Vec3(1, 1, 1));
-
+		slider = new GUISlider(200, 0, 200, 100, new Vec3(1, 1, 0), new Vec3(1, 1, 1));
 		spc = new SavePlayersConfiguration();
-
 		float x, y, xx, yy;
 		int size = 1;
 
@@ -99,6 +102,7 @@ public class Game implements Runnable {
 		crosser.addVertex(xx, yy, new Vec3(1, 1, 1));
 		crosser.addVertex(x, yy, new Vec3(1, 1, 1));
 		crosser.end();
+
 	}
 
 	public void updateWhenResized() {
@@ -118,6 +122,9 @@ public class Game implements Runnable {
 		buttonQuit = new GUIButton(0, 0, 200, 100, new Vec3(1, 0, 0), "Quit game", new Vec3(1, 1, 1));
 		buttonResume = new GUIButton(Display.getWidth() / 2 - 100, Display.getHeight() / 2 - 50, 200, 100,
 				new Vec3(192f / 255f, 192f / 255f, 192f / 255f), "Resume Game", new Vec3(1, 1, 1));
+
+		getPlayer().getInventory().updateGUIWhenResized();
+
 	}
 
 	public void log(String msg) {
@@ -141,6 +148,7 @@ public class Game implements Runnable {
 	}
 
 	public void run() {
+
 		while (true) {
 			world.update(player);
 		}
@@ -166,10 +174,11 @@ public class Game implements Runnable {
 		skybox.update(Main.getMain().getPlayer().position.x, Main.getMain().getPlayer().position.y,
 				Main.getMain().getPlayer().position.z, 2000);
 		skybox.render(GL_QUADS, cam.getProjectionMatrix(),
-				getCamera().getTransform(Main.getMain().getPlayer().position, new Vec3(0, 0, 0)));
+				getCamera().getModelViewMatrix(Main.getMain().getPlayer().position, new Vec3(0, 0, 0)));
 
 		cube.render(GL_QUADS, getCamera().getProjectionMatrix(),
-				getCamera().getTransform(new Vec3(0, 0, 0), new Vec3()));
+				getCamera().getModelViewMatrix(new Vec3(0, 0, 0), new Vec3()));
+
 
 	}
 
@@ -178,10 +187,11 @@ public class Game implements Runnable {
 		if (Var.isInMenu) {
 			buttonQuit.renderGUI();
 			buttonResume.renderGUI();
+			//slider.renderGUI();
 		}
 		crosser.render(GL_QUADS, Main.getMain().getShader(),
 				Mat4.orthographic(Display.getWidth(), 0, 0, Display.getHeight(), -1, 1),
-				cam.getTransform(new Vec3(), new Vec3()));
+				cam.getModelViewMatrix(new Vec3(), new Vec3()));
 
 	}
 

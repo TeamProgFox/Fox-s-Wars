@@ -21,7 +21,7 @@ public class LocalPlayer extends Entity {
 	private World world;
 	private Raycast raycast;
 	private CubeLine select;
-	private Inventory playersInventory;
+	private Inventory inventory;
 	SimpleText sT;
 
 	public LocalPlayer(World world, String name, Vec3 position, Vec3 rotation) {
@@ -32,9 +32,10 @@ public class LocalPlayer extends Entity {
 		Var.selectedPosition = new Vec3(0, 0, 0);
 		raycast = new Raycast(this);
 		select = new CubeLine(new Vec3(1, 1, 1));
-		playersInventory = new Inventory();
+		inventory = new Inventory(this);
 		init();
 		sT = new SimpleText("", 0, 0, new Vec3(1, 1, 1));
+
 	}
 
 	public void init() {
@@ -52,21 +53,23 @@ public class LocalPlayer extends Entity {
 
 			Var.selectedBlock = world.getBlock(raycast.getBlock(world).x, raycast.getBlock(world).y,
 					raycast.getBlock(world).z);
-			
+
 			Var.selectedPosition = new Vec3(raycast.getBlock(world).x, raycast.getBlock(world).y,
 					raycast.getBlock(world).z);
 
 		}
+
 		if (Main.getMain().getInput().getMouse().getDWheel() != 0) {
 			if (Main.getMain().getInput().getMouse().getDWheel() > 0) {
-				playersInventory.addScrollBar((int) Main.getMain().getInput().getMouse().getDWheel() + 1);
-			} else if (Main.getMain().getInput().getMouse().getDWheel() < 0) {
-				playersInventory.addScrollBar((int) Main.getMain().getInput().getMouse().getDWheel() - 1);
+				inventory.addScrollBar(1);
 			}
-			sT = new SimpleText(("" + playersInventory.getScrollBar()),100, 200, new Vec3(1, 1, 1));
+			if (Main.getMain().getInput().getMouse().getDWheel() < 0) {
+				inventory.addScrollBar(-1);
+			}
+			inventory.update();
 		}
+		inventory.update();
 
-		playersInventory.update();
 	}
 
 	public void render() {
@@ -78,13 +81,15 @@ public class LocalPlayer extends Entity {
 
 			updateVBO = false;
 		}
+		inventory.render();
+
 		select.render(GL_LINES, 2,
 				Main.getMain().getCamera().getProjectionMatrix(), Main.getMain().getCamera()
-						.getTransform(Main.getMain().getPlayer().position, Main.getMain().getPlayer().rotation),
+						.getModelViewMatrix(Main.getMain().getPlayer().position, Main.getMain().getPlayer().rotation),
 				Main.getMain().getShader());
 
 		sT.render();
-		playersInventory.render();
+
 	}
 
 	float speed = 0.1f;
@@ -97,13 +102,14 @@ public class LocalPlayer extends Entity {
 		float xDir = 0, yDir = 0, zDir = 0;
 		rotation.addX(Main.getMain().getInput().getMouse().getDY() / sensibilite);
 		rotation.addY(-Main.getMain().getInput().getMouse().getDX() / sensibilite);
+
 		if (rotation.getX() > 90)
 			rotation.setX(90);
 		if (rotation.getX() < -90)
 			rotation.setX(-90);
 
 		if (Main.getMain().getInput().getKey(Input.KEY_A)) {
-			speed = 0.8f;
+			speed = 1f;
 		} else {
 			speed = 0.1f;
 		}
@@ -147,30 +153,25 @@ public class LocalPlayer extends Entity {
 
 		xa *= 0.9f;
 		za *= 0.9f;
-		removeAndAddBlockGestion();
 		actionTimeGestion();
+		removeAndAddBlockGestion();
+
 		if (!Var.flyMode)
 			gravity();
 
 	}
 
-	Block lastBlock;
-	Vec3 lastPos = new Vec3();
-	Vec3 nowPos;
-
 	public void removeAndAddBlockGestion() {
+
 		if (Main.getMain().getInput().getMouse().getButtonDown(0)) {
 
 			world.removeBlock(Var.selectedPosition.x, Var.selectedPosition.y, Var.selectedPosition.z, true);
-			
-			if(Var.selectedPosition.equals(new Vec3()))
-				Var.selectedBlock = null;
-			
 			if (Var.selectedBlock != null) {
-				playersInventory.addBlockAt(playersInventory.getScrollBar(),
-						new Block(Var.selectedBlock.getColor(), Var.selectedBlock.getName()));
+				inventory.addBlockAt(inventory.getScrollBar(), Var.selectedBlock);
 			}
-			lastBlock = null;
+			if (Var.selectedPosition.equals(new Vec3()))
+				Var.selectedBlock = null;
+
 		}
 		if (Main.getMain().getInput().getMouse().getButtonDown(1)) {
 
@@ -202,10 +203,11 @@ public class LocalPlayer extends Entity {
 
 			if (rx == posX && ry == posY - 1 && rz == posZ)
 				return;
+
 			if (ry == posY && rx == posX && rz == posZ)
 				return;
-			world.addBlock(rx, ry, rz, playersInventory.getBlockAt(playersInventory.getScrollBar()), true);
-			Chunk.canBreakBlock = false;
+
+			world.addBlock(rx, ry, rz, inventory.getBlockAt(inventory.getScrollBar()), true);
 
 		}
 	}
@@ -287,7 +289,7 @@ public class LocalPlayer extends Entity {
 	}
 
 	public Inventory getInventory() {
-		return playersInventory;
+		return inventory;
 	}
 
 }

@@ -1,12 +1,14 @@
 package fr.ProgFox.Game.World.Blocks;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import fr.ProgFox.Math.Color4f;
+import fr.ProgFox.Game.Items.*;
+import fr.ProgFox.Math.*;
 
-public class Block {
+public class Block extends Item{
 
+	
+	
 	public static List<Block> blocks = new ArrayList<>();
 
 	public static final Block TESTE = new Block(new Color4f(1f, 1f, 1f, 0f), "TESTE");
@@ -15,6 +17,7 @@ public class Block {
 	public static float sizeX = 1, sizeY = 1, sizeZ = 1;
 
 	public Block(Color4f color, String name) {
+		super("block", true);
 		this.name = name;
 		this.color = color;
 	}
@@ -23,8 +26,9 @@ public class Block {
 		return name;
 	}
 
-	public void setColor(Color4f newColor) {
+	public Block setColor(Color4f newColor) {
 		this.color = newColor;
+		return this;
 	}
 
 	public Color4f getColor() {

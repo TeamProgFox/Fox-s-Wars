@@ -37,7 +37,7 @@ public class ClientPlayer extends Entity {
 		if (Main.getMain().getGame().getPlayer().position.equals(position))
 			return;
 
-		perso.render(GL_LINES, 2, cam.getProjectionMatrix(), cam.getTransform(position, rotation), Main.getMain().getShader());
+		perso.render(GL_LINES, 2, cam.getProjectionMatrix(), cam.getModelViewMatrix(position, rotation), Main.getMain().getShader());
 
 	}
 

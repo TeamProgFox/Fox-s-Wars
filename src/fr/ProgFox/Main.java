@@ -25,7 +25,9 @@ public class Main {
 		main = new Main();
 		main.start();
 	}
-
+	
+	
+	
 	public Main() {
 		input = new Input();
 		Display.create(width, height, "Fox's Wars", input);
@@ -37,7 +39,6 @@ public class Main {
 		if (Display.wasResized()) {
 			glViewport(0, 0, Display.getWidth(), Display.getHeight());
 			game.updateWhenResized();
-			getPlayer().getInventory().updateWhenResized();
 		}
 
 		game.update();
@@ -107,6 +108,7 @@ public class Main {
 					e.printStackTrace();
 				}
 			}
+			
 			if (System.currentTimeMillis() - timer > 1000) {
 				Display.setTitle("Fox's Wars | FPS : " + frames + " TPS : " + ticks);
 				game.oneSecond();

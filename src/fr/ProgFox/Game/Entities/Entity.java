@@ -5,8 +5,8 @@ import fr.ProgFox.Game.World.World;
 import fr.ProgFox.Math.Vec3;
 
 public abstract class Entity {
-	public Vec3 position;
-	public Vec3 rotation;
+	public Vec3 position = new Vec3();
+	public Vec3 rotation = new Vec3();
 
 	public World world;
 

@@ -1,194 +1,212 @@
 package fr.ProgFox.Game.PlayersInventory;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL20.*;
-
-import java.nio.*;
-
-import org.lwjgl.*;
-import org.lwjgl.opengl.*;
 
 import fr.ProgFox.*;
-import fr.ProgFox.Game.Variables.*;
+import fr.ProgFox.Game.Entities.*;
 import fr.ProgFox.Game.World.Blocks.*;
-import fr.ProgFox.Inputs.*;
 import fr.ProgFox.Math.*;
 import fr.ProgFox.Renderer.*;
+import fr.ProgFox.Renderer.GUI.*;
 import fr.ProgFox.Renderer.VertexBuffer2D.*;
 
 public class Inventory {
-	private Block[] blocksInBar;
-	private int[] numberBlocksInBar;
-	private VBO2D[] invBar;
-	private int scrollBar = 0;
-	int vbo = 0;
-	FloatBuffer buffer;
 
-	public Inventory() {
-		blocksInBar = new Block[10];
-		numberBlocksInBar = new int[10];
-		invBar = new VBO2D[10];
-		for (int i = 0; i < invBar.length; i++) {
-			invBar[i] = new VBO2D();
+	VBO2D[] slots;
+	VBO2D[] blocksSlots;
+	Block[] blocks;
+	Vec3[] blocksPos;
+	SimpleText[] blocksCount;
+	VBO2D position;
+	Vec2 pos, lastPos;
+
+	int[] stackBlock;
+
+	int scrollBar;
+
+	LocalPlayer player;
+
+	public Inventory(LocalPlayer player) {
+		this.player = player;
+		slots = new VBO2D[10];
+		position = new VBO2D();
+		pos = new Vec2();
+		blocks = new Block[10];
+		stackBlock = new int[64];
+		blocksSlots = new VBO2D[10];
+		blocksCount = new SimpleText[10];
+		blocksPos = new Vec3[10];
+		lastPos = new Vec2();
+		for (int i = 0; i < 8; i++) {
+			slots[i] = new VBO2D();
+			slots[i].init(8);
+			slots[i].addVertex(0, i * Display.getHeight() / 11, new Vec3());
+			slots[i].addVertex(Display.getHeight() / 11, i * Display.getHeight() / 11, new Vec3());
+
+			slots[i].addVertex(Display.getHeight() / 11, i * Display.getHeight() / 11, new Vec3());
+			slots[i].addVertex(Display.getHeight() / 11, Display.getHeight() / 11, new Vec3());
+
+			slots[i].addVertex(Display.getHeight() / 11, Display.getHeight() / 11, new Vec3());
+			slots[i].addVertex(0, Display.getHeight() / 11, new Vec3());
+
+			slots[i].addVertex(0, Display.getHeight() / 11, new Vec3());
+			slots[i].addVertex(0, i * Display.getHeight() / 11, new Vec3());
+
+			slots[i].end();
+		}
+	}
+
+	public void updateGUIWhenResized() {
+		for (int i = 0; i < 8; i++) {
+			slots[i] = new VBO2D();
+			slots[i].init(8);
+			slots[i].addVertex(0, i * Display.getHeight() / 11, new Vec3());
+			slots[i].addVertex(Display.getHeight() / 11, i * Display.getHeight() / 11, new Vec3());
+
+			slots[i].addVertex(Display.getHeight() / 11, i * Display.getHeight() / 11, new Vec3());
+			slots[i].addVertex(Display.getHeight() / 11, Display.getHeight() / 11, new Vec3());
+
+			slots[i].addVertex(Display.getHeight() / 11, Display.getHeight() / 11, new Vec3());
+			slots[i].addVertex(0, Display.getHeight() / 11, new Vec3());
+
+			slots[i].addVertex(0, Display.getHeight() / 11, new Vec3());
+			slots[i].addVertex(0, i * Display.getHeight() / 11, new Vec3());
+
+			slots[i].end();
 		}
 
+		for (int index = 0; index < 6; index++) {
+			if (blocksSlots[index] != null || blocks[index] != null) {
+				blocksSlots[index] = new VBO2D();
+				blocksSlots[index].init(4);
+				blocksSlots[index].addVertex(Display.getWidth() - Display.getHeight() / 11,
+						index * Display.getHeight() / 11,
+						new Vec3(blocks[index].getColor().r, blocks[index].getColor().g, blocks[index].getColor().b));
+				blocksSlots[index].addVertex(Display.getWidth() - Display.getHeight() / 11 + Display.getHeight() / 11,
+						index * Display.getHeight() / 11,
+						new Vec3(blocks[index].getColor().r, blocks[index].getColor().g, blocks[index].getColor().b));
+				blocksSlots[index].addVertex(Display.getWidth() - Display.getHeight() / 11 + Display.getHeight() / 11,
+						index * Display.getHeight() / 11 + Display.getHeight() / 11,
+						new Vec3(blocks[index].getColor().r, blocks[index].getColor().g, blocks[index].getColor().b));
+				blocksSlots[index].addVertex(Display.getWidth() - Display.getHeight() / 11,
+						index * Display.getHeight() / 11 + Display.getHeight() / 11,
+						new Vec3(blocks[index].getColor().r, blocks[index].getColor().g, blocks[index].getColor().b));
+				blocksSlots[index].end();
+
+			}
+		}
 	}
 
 	public void update() {
-		if (scrollBar > 9)
-			scrollBar = 9;
-
 		if (scrollBar < 0)
 			scrollBar = 0;
+		if (scrollBar > 6)
+			scrollBar = 6;
 
+		pos = new Vec2(Display.getWidth() - Display.getHeight() / 11, scrollBar * Display.getHeight() / 11);
+
+		if (!lastPos.equals(pos)) {
+			lastPos = pos;
+			position.init(4);
+			position.addVertex(pos.x, pos.y, new Vec3(1, 1, 1));
+			position.addVertex(pos.x + Display.getHeight() / 11, pos.y, new Vec3(1, 1, 1));
+			position.addVertex(pos.x + Display.getHeight() / 11, pos.y + Display.getHeight() / 11, new Vec3(1, 1, 1));
+			position.addVertex(pos.x, pos.y + Display.getHeight() / 11, new Vec3(1, 1, 1));
+			position.end();
+		}
 	}
 
 	public void render() {
-		for (int i = 0; i < invBar.length; i++) {
-			invBar[i].render(GL_QUADS, Main.getMain().getShader(),
-					Mat4.orthographic(Display.getWidth(), 0, 0, Display.getHeight(), -1, 1),
-					Main.getMain().getCamera().getTransform(new Vec3(), new Vec3()));
+		for (VBO2D s : slots) {
+			if (s != null) {
+				s.render(GL_LINES, Main.getMain().getShader(),
+						Mat4.orthographic(Display.getWidth(), 0, 0, Display.getHeight(), -1, 1),
+						Main.getMain().getCamera().getModelViewMatrix(
+								new Vec3(-Display.getWidth() + Display.getHeight() / 11, -100, 0), new Vec3()));
+
+			}
+		}
+
+		glDisable(GL_DEPTH_TEST);
+
+		position.render(GL_QUADS, Main.getMain().getShader(),
+				Mat4.orthographic(Display.getWidth(), 0, 0, Display.getHeight(), -1, 1),
+				Main.getMain().getCamera().getModelViewMatrix(new Vec3(0, -100, 0), new Vec3()));
+
+		glEnable(GL_DEPTH_TEST);
+		for (SimpleText s : blocksCount) {
+			if (s != null) {
+				s.render();
+			}
+		}
+
+		for (VBO2D s : blocksSlots) {
+			if (s != null) {
+				s.render(GL_QUADS, Main.getMain().getShader(),
+						Mat4.orthographic(Display.getWidth(), 0, 0, Display.getHeight(), -1, 1),
+						Main.getMain().getCamera().getModelViewMatrix(new Vec3(0, -100, 0), new Vec3()));
+
+			}
+		}
+
+	}
+
+	public void addScrollBar(int value) {
+		scrollBar -= value;
+	}
+
+	public void addBlockAt(int index, Block block) {
+		if (index < 0 || index >= 10)
+			return;
+		if (blocks[index] == null) {
+			blocks[index] = block;
+			blocksSlots[index] = new VBO2D();
+			blocksPos[index] = new Vec3(pos.x, pos.y, 0);
+			blocksSlots[index].init(4);
+			blocksSlots[index].addVertex(pos.x, pos.y,
+					new Vec3(block.getColor().r, block.getColor().g, block.getColor().b));
+			blocksSlots[index].addVertex(pos.x + Display.getHeight() / 11, pos.y,
+					new Vec3(block.getColor().r, block.getColor().g, block.getColor().b));
+			blocksSlots[index].addVertex(pos.x + Display.getHeight() / 11, pos.y + Display.getHeight() / 11,
+					new Vec3(block.getColor().r, block.getColor().g, block.getColor().b));
+			blocksSlots[index].addVertex(pos.x, pos.y + Display.getHeight() / 11,
+					new Vec3(block.getColor().r, block.getColor().g, block.getColor().b));
+			blocksSlots[index].end();
 
 		}
 
-		if (vbo == 0)
-			return;
+		if (blocks[index].getName().equals(block.getName())) {
+			stackBlock[index]++;
+			blocksCount[index] = new SimpleText("" + stackBlock[index], (int) pos.x,
+					(int) pos.y + 100 + Display.getHeight() / 12, new Vec3(0, 0, 0));
+		}
 
-		Main.getMain().getShader().bind();
-		Main.getMain().getShader().setUniform("projectionMatrix", Main.getMain().getCamera().getProjectionMatrix());
-		Main.getMain().getShader().setUniform("modelViewMatrix",
-				Main.getMain().getCamera().getTransform(new Vec3(), new Vec3(0, 0, 0)));
-		Main.getMain().getShader().setUniform("light", Var.light);
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glVertexAttribPointer(0, 3, GL_FLOAT, false, 7 * 4, 0);
-		glVertexAttribPointer(1, 4, GL_FLOAT, true, 7 * 4, 12);
-		glDrawArrays(GL_QUADS, 0, 24);
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(0);
+	}
+
+	public void removeBlockAt(int index) {
+		if (index < 0 || index >= 10)
+			return;
+		if (blocks[index] != null) {
+			stackBlock[index]--;
+			blocksCount[index] = new SimpleText("" + stackBlock[index], (int) pos.x,
+					(int) pos.y + 100 + Display.getHeight() / 12, new Vec3(0, 0, 0));
+		}
+		if (stackBlock[index] <= 0) {
+			blocks[index] = null;
+			blocksSlots[index] = null;
+			blocksCount[index] = null;
+		}
 
 	}
 
 	public Block getBlockAt(int index) {
 		if (index < 0 || index >= 10)
 			return null;
-
-		return blocksInBar[index];
-	}
-
-	float x = 1f, y = -1f, z = 0.75f;
-
-	public void addScrollBar(int value) {
-		scrollBar += value;
-		if (buffer != null) {
-			buffer.clear();
-		}
-
-		Block block = getBlockAt(scrollBar);
-
-		if (block == null) {
-			vbo = 0;
-			return;
-		}
-
-		buffer = BufferUtils.createFloatBuffer(6 * 4 * 7);
-
-		buffer.put(block.BlockDataBack(x, y, z, new Color4f(255, 255, 255)));
-		buffer.put(block.BlockDataFront(x, y, z, new Color4f(255, 255, 255)));
-		buffer.put(block.BlockDataUp(x, y, z, new Color4f(255, 255, 255)));
-		buffer.put(block.BlockDataDown(x, y, z, new Color4f(255, 255, 255)));
-		buffer.put(block.BlockDataRight(x, y, z, new Color4f(255, 255, 255)));
-		buffer.put(block.BlockDataLeft(x, y, z, new Color4f(255, 255, 255)));
-
-		buffer.flip();
-		vbo = GL15.glGenBuffers();
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
-		buffer = null;
+		return blocks[index];
 	}
 
 	public int getScrollBar() {
 		return scrollBar;
-	}
-
-	public void addBlockAt(int index, Block block) {
-		if (index < 0 || index >= 10)
-			return;
-
-		if (block == null) {
-			vbo = 0;
-			return;
-		}
-		
-		if(blocksInBar[index] != null && !block.getName().equals(blocksInBar[index].getName()))
-			return;
-		
-		
-		blocksInBar[index] = block;
-
-		numberBlocksInBar[index]++;
-
-		if (buffer != null) {
-			buffer.clear();
-		}
-
-		invBar[index].init(4);
-		invBar[index].addVertex(index * 100, Display.getHeight() - 100,
-				new Vec3(block.getColor().r, block.getColor().g, block.getColor().b));
-		invBar[index].addVertex(index * 100 + 100, Display.getHeight() - 100,
-				new Vec3(block.getColor().r, block.getColor().g, block.getColor().b));
-		invBar[index].addVertex(index * 100 + 100, Display.getHeight() - 100 + 200,
-				new Vec3(block.getColor().r, block.getColor().g, block.getColor().b));
-		invBar[index].addVertex(index * 100, Display.getHeight() - 100 + 200,
-				new Vec3(block.getColor().r, block.getColor().g, block.getColor().b));
-		invBar[index].end();
-
-		buffer = BufferUtils.createFloatBuffer(6 * 4 * 7);
-
-		buffer.put(block.BlockDataBack(x, y, z, new Color4f(255, 255, 255)));
-		buffer.put(block.BlockDataFront(x, y, z, new Color4f(255, 255, 255)));
-		buffer.put(block.BlockDataUp(x, y, z, new Color4f(255, 255, 255)));
-		buffer.put(block.BlockDataDown(x, y, z, new Color4f(255, 255, 255)));
-		buffer.put(block.BlockDataRight(x, y, z, new Color4f(255, 255, 255)));
-		buffer.put(block.BlockDataLeft(x, y, z, new Color4f(255, 255, 255)));
-
-		buffer.flip();
-		vbo = GL15.glGenBuffers();
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
-		buffer = null;
-	}
-
-	public void updateWhenResized() {
-		for (int i = 0; i < blocksInBar.length; i++) {
-			Block block = blocksInBar[i];
-			if (block == null) {
-				return;
-			}
-			invBar[i].init(4);
-			invBar[i].addVertex(i * 100, Display.getHeight() - 100,
-					new Vec3(block.getColor().r, block.getColor().g, block.getColor().b));
-			invBar[i].addVertex(i * 100 + 100, Display.getHeight() - 100,
-					new Vec3(block.getColor().r, block.getColor().g, block.getColor().b));
-			invBar[i].addVertex(i * 100 + 100, Display.getHeight() - 100 + 200,
-					new Vec3(block.getColor().r, block.getColor().g, block.getColor().b));
-			invBar[i].addVertex(i * 100, Display.getHeight() - 100 + 200,
-					new Vec3(block.getColor().r, block.getColor().g, block.getColor().b));
-			invBar[i].end();
-		}
-	}
-
-	public void removeBlockAt(int index) {
-		if (index < 0 || index >= 10)
-			return;
-		numberBlocksInBar[index]--;
-
-		if (numberBlocksInBar[index] <= 0) {
-			blocksInBar[index] = null;
-			vbo = 0;
-		}
 	}
 
 }

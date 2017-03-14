@@ -21,8 +21,6 @@ public class Keyboard extends GLFWKeyCallback {
 	private ArrayList<Integer> upKeys = new ArrayList<>();
 
 	public void invoke(long window, int key, int scancode, int action, int mods) {
-		// System.out.println("KEY(" + String.valueOf(Character.valueOf((char)
-		// key)) + "): 0x" + Integer.toHexString(key));
 		if (key >= 0) {
 			if (AZERTY) {
 				if (key == Input.KEY_Q) {

@@ -2,7 +2,6 @@ package fr.ProgFox.Renderer;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-
 import java.nio.*;
 
 import org.lwjgl.*;
@@ -45,8 +44,10 @@ public class Display {
 		glfwSwapInterval(0);
 
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_FRONT);
+		
 
 	}
 

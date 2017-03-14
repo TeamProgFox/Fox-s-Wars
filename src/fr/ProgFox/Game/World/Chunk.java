@@ -11,6 +11,7 @@ import org.lwjgl.*;
 
 import fr.ProgFox.*;
 import fr.ProgFox.Game.Entities.*;
+import fr.ProgFox.Game.Models.*;
 import fr.ProgFox.Game.Variables.*;
 import fr.ProgFox.Game.World.Blocks.*;
 import fr.ProgFox.Math.*;
@@ -20,6 +21,7 @@ public class Chunk {
 
 	private int vbo;
 	private int bufferSize;
+	private int flowerCount;
 	private float x, y, z;
 	private boolean isUpdating = false;
 	private boolean isCreating = false;
@@ -29,6 +31,7 @@ public class Chunk {
 	private Tree tree;
 	private Random random;
 	private CubeLine cl;
+	private Vec3[] flowersPos;
 
 	public static final int SIZE = 16;
 	public static final int HEIGHT = 64;
@@ -52,13 +55,12 @@ public class Chunk {
 		this.colorNoise = colorNoise;
 		this.world = world;
 		this.random = seed;
-
 		tree = new Tree(random);
+		flowersPos = new Vec3[10];
 		generate();
 	}
 
 	public void generate() {
-
 		for (int x = 0; x < SIZE; x++) {
 			for (int y = 0; y < HEIGHT; y++) {
 				for (int z = 0; z < SIZE; z++) {
@@ -70,13 +72,10 @@ public class Chunk {
 
 						Color4f fC = Color4f.lerp(new Color4f(0f, 0.9f, 0f), new Color4f(0f, 1f, 0f), v);
 						grounded = noise.getNoise(x2, z2) > y2 - 10;
-						if (blocks[x][y][z] == null) {
-							if (grounded) {
-								blocks[x][y][z] = new StoneBlock();
-							} else {
-								blocks[x][y][z] = new GrassBlock();
-								blocks[x][y][z].setColor(new Color4f(fC.r, fC.g, fC.b, fC.a));
-							}
+						if (grounded) {
+							blocks[x][y][z] = new StoneBlock();
+						} else {
+							blocks[x][y][z] = new GrassBlock().setColor(new Color4f(fC.r, fC.g, fC.b, fC.a));
 						}
 
 						grounded = noise.getNoise(x2, z2) > y2 - 20 && noise.getNoise(x2, z2) < y2 - 19;
@@ -85,23 +84,14 @@ public class Chunk {
 							tree.addTree(x, y, z, this);
 						}
 
+						if (random.nextFloat() > 0.99f && grounded && flowerCount < 10) {
+							flowersPos[flowerCount] = new Vec3(x2, y2, z2);
+							flowerCount++;
+						}
 					}
 				}
 			}
 		}
-	}
-
-	public void generateVegetation() {
-		// for (int x = 0; x < SIZE; x++) {
-		// for (int y = 0; y < HEIGHT; y++) {
-		// for (int z = 0; z < SIZE; z++) {
-		// int x2 = (int) this.x * SIZE + x;
-		// int y2 = (int) this.y * HEIGHT + y;
-		// int z2 = (int) this.z * SIZE + z;
-		//
-		// }
-		// }
-		// }
 	}
 
 	float ao = 0.8f;
@@ -193,6 +183,8 @@ public class Chunk {
 		for (int x = 0; x < SIZE; x++) {
 			for (int y = 0; y < HEIGHT; y++) {
 				for (int z = 0; z < SIZE; z++) {
+					if (blocks[x][y][z] == null)
+						continue;
 					int x2 = (int) this.x * SIZE + x;
 					int y2 = (int) this.y * HEIGHT + y;
 					int z2 = (int) this.z * SIZE + z;
@@ -203,8 +195,6 @@ public class Chunk {
 					boolean right = world.getBlock(x2 + 1, y2, z2) == null;
 					boolean left = world.getBlock(x2 - 1, y2, z2) == null;
 					if (!up && !down && !left && !right && !front && !back)
-						continue;
-					if (blocks[x][y][z] == null)
 						continue;
 					Block block = blocks[x][y][z];
 					int size = 0;
@@ -281,6 +271,7 @@ public class Chunk {
 	public void createBuffer() {
 		if (isCreating || isUpdating)
 			return;
+
 		int x2 = (int) ((int) this.x * SIZE);
 		int y2 = (int) ((int) this.y * HEIGHT);
 		int z2 = (int) ((int) this.z * SIZE);
@@ -300,7 +291,8 @@ public class Chunk {
 
 		Main.getMain().getShader().bind();
 		Main.getMain().getShader().setUniform("projectionMatrix", Main.getMain().getCamera().getProjectionMatrix());
-		Main.getMain().getShader().setUniform("modelViewMatrix",  Main.getMain().getCamera().getTransform(player.position, player.rotation));
+		Main.getMain().getShader().setUniform("modelViewMatrix",
+				Main.getMain().getCamera().getModelViewMatrix(player.position, player.rotation));
 		Main.getMain().getShader().setUniform("light", Var.light);
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
@@ -311,8 +303,15 @@ public class Chunk {
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(0);
 
+		// for(Vec3 a : flores) {
+		// if(a != null)
+		// world.flore.render(new Vec3(a.x, a.y + 1, a.z), new Vec3());
+		// }
+
 		if (Var.debugMode) {
-			cl.render(GL_LINES, 2, Main.getMain().getCamera().getProjectionMatrix(), Main.getMain().getCamera().getTransform(player.position, player.rotation), Main.getMain().getShader());
+			cl.render(GL_LINES, 2, Main.getMain().getCamera().getProjectionMatrix(),
+					Main.getMain().getCamera().getModelViewMatrix(player.position, player.rotation),
+					Main.getMain().getShader());
 		}
 	}
 
@@ -326,7 +325,7 @@ public class Chunk {
 	public void addBlock(float x, float y, float z, Block block, boolean update) {
 		if (x < 0 || y < 0 || z < 0 || x >= SIZE || y >= HEIGHT || z >= SIZE)
 			return;
-		
+
 		if (blocks[(int) x][(int) y][(int) z] != block) {
 			blocks[(int) x][(int) y][(int) z] = block;
 			if (update) {

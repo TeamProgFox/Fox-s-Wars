@@ -72,7 +72,7 @@ public class Camera {
 
 	}
 
-	public Mat4 getTransform(Vec3 pos, Vec3 rot) {
+	public Mat4 getModelViewMatrix(Vec3 pos, Vec3 rot) {
 		Transform translate = new Transform();
 		Transform t = new Transform();
 		Transform t2 = new Transform();
